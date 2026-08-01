@@ -61,17 +61,17 @@ const authenticateToken = (req, res, next) => {
 // ==================== PUBLIC API ROUTES ====================
 
 // Get Showroom Settings & Info
-app.get('/api/settings', (req, res) => {
+app.get(['/api/settings', '/settings'], (req, res) => {
   res.json(db.getSettings());
 });
 
 // Get Categories
-app.get('/api/categories', (req, res) => {
+app.get(['/api/categories', '/categories'], (req, res) => {
   res.json(db.getCategories());
 });
 
 // Get Products (with Search & Filters)
-app.get('/api/products', (req, res) => {
+app.get(['/api/products', '/products'], (req, res) => {
   let products = db.getProducts();
   const { category, search, finish, grade, featured, inStock } = req.query;
 
@@ -109,14 +109,14 @@ app.get('/api/products', (req, res) => {
 });
 
 // Get Single Product Details
-app.get('/api/products/:id', (req, res) => {
+app.get(['/api/products/:id', '/products/:id'], (req, res) => {
   const product = db.getProductById(req.params.id);
   if (!product) return res.status(404).json({ message: 'المنتج غير موجود' });
   res.json(product);
 });
 
 // Admin Login
-app.post('/api/admin/login', (req, res) => {
+app.post(['/api/admin/login', '/admin/login'], (req, res) => {
   const { username, password } = req.body;
   if (username === 'admin' && password === 'admin123') {
     const token = jwt.sign({ username: 'admin', role: 'admin' }, JWT_SECRET, { expiresIn: '24h' });
@@ -128,13 +128,13 @@ app.post('/api/admin/login', (req, res) => {
 // ==================== ADMIN PROTECTED ROUTES ====================
 
 // Update Settings
-app.put('/api/settings', authenticateToken, (req, res) => {
+app.put(['/api/settings', '/settings'], authenticateToken, (req, res) => {
   const updated = db.updateSettings(req.body);
   res.json({ message: 'تم تحديث البيانات بنجاح', settings: updated });
 });
 
 // Upload Product Image (Integrated with Cloudinary)
-app.post('/api/upload', authenticateToken, upload.single('image'), async (req, res) => {
+app.post(['/api/upload', '/upload'], authenticateToken, upload.single('image'), async (req, res) => {
   if (!req.file) {
     return res.status(400).json({ message: 'لم يتم اختيار صورة' });
   }
@@ -163,7 +163,7 @@ app.post('/api/upload', authenticateToken, upload.single('image'), async (req, r
 });
 
 // Add New Product
-app.post('/api/products', authenticateToken, (req, res) => {
+app.post(['/api/products', '/products'], authenticateToken, (req, res) => {
   const { name, category, price } = req.body;
   if (!name || !category || price === undefined) {
     return res.status(400).json({ message: 'الاسم، الفئة، والسعر حقول مطلوبة' });
@@ -173,14 +173,14 @@ app.post('/api/products', authenticateToken, (req, res) => {
 });
 
 // Update Product
-app.put('/api/products/:id', authenticateToken, (req, res) => {
+app.put(['/api/products/:id', '/products/:id'], authenticateToken, (req, res) => {
   const updated = db.updateProduct(req.params.id, req.body);
   if (!updated) return res.status(404).json({ message: 'المنتج غير موجود' });
   res.json({ message: 'تم تحديث بيانات المنتج بنجاح', product: updated });
 });
 
 // Delete Product
-app.delete('/api/products/:id', authenticateToken, (req, res) => {
+app.delete(['/api/products/:id', '/products/:id'], authenticateToken, (req, res) => {
   const success = db.deleteProduct(req.params.id);
   if (!success) return res.status(404).json({ message: 'المنتج غير موجود' });
   res.json({ message: 'تم حذف المنتج بنجاح' });
