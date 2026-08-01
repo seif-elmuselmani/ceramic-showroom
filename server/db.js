@@ -1,8 +1,6 @@
 const fs = require('fs');
 const path = require('path');
 
-const DB_PATH = path.join(__dirname, 'data.json');
-
 // Initial Default Data for Ultra-Luxury Ceramic & Porcelain Showroom (Sama & Elite Quality)
 const initialData = {
   settings: {
@@ -31,7 +29,7 @@ const initialData = {
       category: "بورسلين مستورد",
       price: 590,
       priceUnit: "متر مربع",
-      boxCoverage: 1.44, // m2 per box
+      boxCoverage: 1.44,
       dimensions: "60x120 سم",
       finish: "لامع كريستالي عاكس",
       grade: "فرز أول ممتاز",
@@ -171,35 +169,52 @@ const initialData = {
   ]
 };
 
+// In-Memory Database Store for Serverless & File Persistence
+let memoryCache = JSON.parse(JSON.stringify(initialData));
+
 class JsonDatabase {
   constructor() {
-    this.ensureDb();
+    this.initDb();
   }
 
-  ensureDb() {
-    if (!fs.existsSync(DB_PATH)) {
-      fs.writeFileSync(DB_PATH, JSON.stringify(initialData, null, 2), 'utf8');
+  initDb() {
+    const dbPaths = [
+      path.join(process.cwd(), 'server', 'data.json'),
+      path.join(__dirname, 'data.json')
+    ];
+
+    for (const p of dbPaths) {
+      if (fs.existsSync(p)) {
+        try {
+          const content = fs.readFileSync(p, 'utf8');
+          memoryCache = JSON.parse(content);
+          return;
+        } catch (e) {
+          console.error("Failed reading data.json, fallback to memoryCache:", e);
+        }
+      }
     }
   }
 
   read() {
-    try {
-      const data = fs.readFileSync(DB_PATH, 'utf8');
-      return JSON.parse(data);
-    } catch (err) {
-      console.error("Error reading database:", err);
-      return initialData;
-    }
+    return memoryCache;
   }
 
   write(data) {
-    try {
-      fs.writeFileSync(DB_PATH, JSON.stringify(data, null, 2), 'utf8');
-      return true;
-    } catch (err) {
-      console.error("Error writing to database:", err);
-      return false;
+    memoryCache = data;
+    const dbPaths = [
+      path.join(process.cwd(), 'server', 'data.json'),
+      path.join(__dirname, 'data.json')
+    ];
+
+    for (const p of dbPaths) {
+      try {
+        fs.writeFileSync(p, JSON.stringify(data, null, 2), 'utf8');
+      } catch (err) {
+        // Ignore read-only filesystem errors in Serverless
+      }
     }
+    return true;
   }
 
   getSettings() {
