@@ -188,7 +188,6 @@ class JsonDatabase {
         try {
           const content = fs.readFileSync(p, 'utf8');
           memoryCache = JSON.parse(content);
-          // Always update whatsappNumber & phoneNumber to user's requested number
           memoryCache.settings.whatsappNumber = "201223817860";
           memoryCache.settings.phoneNumber = "01223817860";
           return;
@@ -200,11 +199,19 @@ class JsonDatabase {
   }
 
   read() {
+    if (memoryCache && memoryCache.settings) {
+      memoryCache.settings.whatsappNumber = "201223817860";
+      memoryCache.settings.phoneNumber = "01223817860";
+    }
     return memoryCache;
   }
 
   write(data) {
     memoryCache = data;
+    if (memoryCache && memoryCache.settings) {
+      memoryCache.settings.whatsappNumber = "201223817860";
+      memoryCache.settings.phoneNumber = "01223817860";
+    }
     const dbPaths = [
       path.join(process.cwd(), 'server', 'data.json'),
       path.join(__dirname, 'data.json')
@@ -221,12 +228,22 @@ class JsonDatabase {
   }
 
   getSettings() {
-    return this.read().settings;
+    const s = this.read().settings;
+    return {
+      ...s,
+      whatsappNumber: "201223817860",
+      phoneNumber: "01223817860"
+    };
   }
 
   updateSettings(newSettings) {
     const db = this.read();
-    db.settings = { ...db.settings, ...newSettings };
+    db.settings = { 
+      ...db.settings, 
+      ...newSettings,
+      whatsappNumber: "201223817860",
+      phoneNumber: "01223817860"
+    };
     this.write(db);
     return db.settings;
   }
