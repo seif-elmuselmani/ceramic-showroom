@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles/App.css';
+import { MessageCircle } from 'lucide-react';
 
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
@@ -15,9 +16,9 @@ function App() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [settings, setSettings] = useState({
     showroomName: 'معرض السيراميك والبورسلين',
-    whatsappNumber: '201000000000',
-    phoneNumber: '01000000000',
-    address: 'القاهرة - شارع مكرم عبيد - مدينة نصر',
+    whatsappNumber: '201012345678',
+    phoneNumber: '01012345678',
+    address: 'القاهرة - شارع مصطفى النحاس - مدينة نصر',
     announcement: '🔥 خصومات تصل إلى 25% على البورسلين المستورد لفترة محدودة!'
   });
 
@@ -71,7 +72,7 @@ function App() {
   };
 
   return (
-    <div className="d-flex flex-column min-vh-100">
+    <div className="d-flex flex-column min-vh-100 position-relative">
       <Navbar 
         settings={settings}
         isAdmin={isAdmin}
@@ -110,6 +111,17 @@ function App() {
           )
         )}
       </main>
+
+      {/* Floating WhatsApp Action Button for Mobile Users */}
+      <a 
+        href={`https://wa.me/${settings?.whatsappNumber || '201012345678'}?text=${encodeURIComponent('مرحباً، أستفسر عن أصناف السيراميك والبورسلين بالمعرض')}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="floating-whatsapp-btn"
+        title="تواصل مباشر عبر الواتساب"
+      >
+        <MessageCircle size={32} />
+      </a>
 
       <Footer settings={settings} />
     </div>
