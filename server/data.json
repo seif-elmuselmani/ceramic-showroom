@@ -1,0 +1,176 @@
+{
+  "settings": {
+    "showroomName": "معرض القصر للسيراميك والبورسلين",
+    "tagline": "أفخم تشكيلات السيراميك والبورسلين والأدوات الصحية بأفضل الأسعار",
+    "whatsappNumber": "201000000000",
+    "phoneNumber": "01000000000",
+    "address": "القاهرة - شارع مكرم عبيد - مدينة نصر",
+    "workingHours": "يومياً من 10 صباحاً حتى 11 مساءً",
+    "announcement": "🔥 خصومات تصل إلى 25% على البورسلين المستورد لفترة محدودة!"
+  },
+  "categories": [
+    {
+      "id": "cat-1",
+      "name": "بورسلين",
+      "icon": "Layers"
+    },
+    {
+      "id": "cat-2",
+      "name": "سيراميك أرضيات",
+      "icon": "Grid"
+    },
+    {
+      "id": "cat-3",
+      "name": "سيراميك حوائط",
+      "icon": "Square"
+    },
+    {
+      "id": "cat-4",
+      "name": "رخام وجرانيت",
+      "icon": "Box"
+    },
+    {
+      "id": "cat-5",
+      "name": "ديكورات وموزاييك",
+      "icon": "Sparkles"
+    }
+  ],
+  "products": [
+    {
+      "id": "prod-101",
+      "name": "بورسلين كليوباترا كالاكاتا رخامي 60x120",
+      "code": "POR-CAL-60120",
+      "category": "بورسلين",
+      "price": 420,
+      "priceUnit": "متر مربع",
+      "dimensions": "60x120 سم",
+      "finish": "لامع / كريستال",
+      "grade": "فرز أول",
+      "origin": "مصر (كليوباترا)",
+      "usage": "أرضيات صالونات، ريسبشن، حوائط حمامات فاخرة",
+      "inStock": true,
+      "featured": true,
+      "description": "بورسلين قطع ليزر فاخر بجودة عالية مع تصميم عروق رخامية كالاكاتا إيطالية تُضفي فخامة استثنائية للمكان.",
+      "image": "https://images.unsplash.com/photo-1615873968403-89e068629265?auto=format&fit=crop&w=1000&q=80"
+    },
+    {
+      "id": "prod-102",
+      "name": "سيراميك أرضيات باركيه خشب مط 20x120",
+      "code": "SER-PARK-20120",
+      "category": "سيراميك أرضيات",
+      "price": 220,
+      "priceUnit": "متر مربع",
+      "dimensions": "20x120 سم",
+      "finish": "مطب / ملمس خشب طبيعي",
+      "grade": "فرز أول",
+      "origin": "مصر (الجوهرة)",
+      "usage": "غرف نوم، ريسبشن، مكاتب، طرقات",
+      "inStock": true,
+      "featured": true,
+      "description": "سيراميك بديل الباركيه بملمس الخشب الطبيعي الدافئ، مقاوم للخدش وسهل التنظيف.",
+      "image": "https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=1000&q=80"
+    },
+    {
+      "id": "prod-103",
+      "name": "بورسلين رمادي مودرن خرساني 80x80",
+      "code": "POR-CONC-8080",
+      "category": "بورسلين",
+      "price": 380,
+      "priceUnit": "متر مربع",
+      "dimensions": "80x80 سم",
+      "finish": "نصف لمعة / مات",
+      "grade": "فرز أول",
+      "origin": "مستورد هندي",
+      "usage": "أرضيات مودرن، محلات، ريسبشن",
+      "inStock": true,
+      "featured": true,
+      "description": "بورسلين رمادي بتصميم خرساني مودرن يناسب الديكورات المعاصرة والأسلوب الصناعي Modern Industrial.",
+      "image": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1000&q=80"
+    },
+    {
+      "id": "prod-104",
+      "name": "سيراميك حوائط حمامات بيج مودرن 30x60",
+      "code": "WALL-BEIGE-3060",
+      "category": "سيراميك حوائط",
+      "price": 185,
+      "priceUnit": "متر مربع",
+      "dimensions": "30x60 سم",
+      "finish": "لامع",
+      "grade": "فرز أول",
+      "origin": "مصر (رويال)",
+      "usage": "حوائط حمامات ومطابخ",
+      "inStock": true,
+      "featured": false,
+      "description": "سيراميك حوائط بألوان دافئة وتصميم مموج يعطي اتساعاً وإضاءة ممتازة للمساحات.",
+      "image": "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=1000&q=80"
+    },
+    {
+      "id": "prod-105",
+      "name": "سيراميك مطابخ ديكور موزاييك ملون 30x30",
+      "code": "MOS-KIT-3030",
+      "category": "ديكورات وموزاييك",
+      "price": 250,
+      "priceUnit": "متر مربع",
+      "dimensions": "30x30 سم",
+      "finish": "بريق بارز",
+      "grade": "فرز أول",
+      "origin": "مصر (فينيسيا)",
+      "usage": "خلفية مطابخ (Backsplash)، حوائط ديكورية",
+      "inStock": true,
+      "featured": true,
+      "description": "بلاطات موزاييك هندسية ملوّنة تضفي لمسة فنية وجمالية خلف أسطح المطابخ.",
+      "image": "https://images.unsplash.com/photo-1565538810643-b5bdb714032a?auto=format&fit=crop&w=1000&q=80"
+    },
+    {
+      "id": "prod-106",
+      "name": "جرانيت أرضيات أسود جالاكسي 60x60",
+      "code": "GRA-GAL-6060",
+      "category": "رخام وجرانيت",
+      "price": 680,
+      "priceUnit": "متر مربع",
+      "dimensions": "60x60 سم",
+      "finish": "تلميع مائي عالي",
+      "grade": "فرز أول ممتاز",
+      "origin": "مستورد (الهند)",
+      "usage": "أرضيات مداخل، دراجات سلم، مطابخ رخام",
+      "inStock": true,
+      "featured": true,
+      "description": "جرانيت أسود جالاكسي بفصوص ذهبية طبيعية، شديد التحمل ومقاوم للحرارة والبقع.",
+      "image": "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1000&q=80"
+    },
+    {
+      "id": "prod-107",
+      "name": "سيراميك حوائط ديكور حجري بارز 25x75",
+      "code": "WALL-STONE-2575",
+      "category": "سيراميك حوائط",
+      "price": 210,
+      "priceUnit": "متر مربع",
+      "dimensions": "25x75 سم",
+      "finish": "ملمس بارز / مط",
+      "grade": "فرز أول",
+      "origin": "مصر (بريما)",
+      "usage": "حوائط شاشات، مداخل، حوائط خارجية",
+      "inStock": true,
+      "featured": false,
+      "description": "سيراميك مظهر الحجر الطبيعي البارز يناسب حوائط الريسبشن والتلفزيون والديكورات الداخلية.",
+      "image": "https://images.unsplash.com/photo-1507089947368-19c1da9775ae?auto=format&fit=crop&w=1000&q=80"
+    },
+    {
+      "id": "prod-108",
+      "name": "بورسلين أرضيات أبيض ملكي عاجي 60x60",
+      "code": "POR-IVORY-6060",
+      "category": "بورسلين",
+      "price": 340,
+      "priceUnit": "متر مربع",
+      "dimensions": "60x60 سم",
+      "finish": "سوبر جلوس / عاكس",
+      "grade": "فرز أول",
+      "origin": "مصر (كليوباترا)",
+      "usage": "أرضيات كامل الشقة، مكاتب",
+      "inStock": true,
+      "featured": false,
+      "description": "بورسلين ناصع البياض بعروق بيج خفيفة عاكسة للإضاءة تمنح المكان اتساعاً وإشراقاً.",
+      "image": "https://images.unsplash.com/photo-1527352726752-1903158a3745?auto=format&fit=crop&w=1000&q=80"
+    }
+  ]
+}

@@ -1,0 +1,95 @@
+import React from 'react';
+import { Button } from 'react-bootstrap';
+import { MessageCircle, Eye, Calculator, Sparkles } from 'lucide-react';
+
+const ProductCard = ({ product, onSelectProduct, onOpenCalculator, settings }) => {
+  const whatsappNumber = settings?.whatsappNumber || '201012345678';
+  
+  // Format WhatsApp message link
+  const messageText = `مرحباً، أستفسر عن صنف السيراميك/البورسلين: ${product.name} (كود: ${product.code}) - السعر: ${product.price} ج.م. هل هو متوفر المعرض حالياً؟`;
+  const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(messageText)}`;
+
+  return (
+    <div className="ceramic-card">
+      <div className="card-img-wrapper">
+        <img 
+          src={product.image || 'https://images.unsplash.com/photo-1615873968403-89e068629265?auto=format&fit=crop&w=600&q=80'} 
+          alt={product.name} 
+        />
+        <div className="card-badge">{product.category}</div>
+        
+        {product.inStock ? (
+          <span className="stock-badge bg-success text-white">متوفر بالمخزن</span>
+        ) : (
+          <span className="stock-badge bg-danger text-white">غير متوفر حالياً</span>
+        )}
+
+        {product.featured && (
+          <span style={{ position: 'absolute', bottom: '10px', right: '10px', background: '#d97706', color: '#fff', fontSize: '0.75rem', padding: '3px 8px', borderRadius: '10px', fontWeight: 'bold' }}>
+            🔥 صنف مميز
+          </span>
+        )}
+      </div>
+
+      <div className="card-body-custom">
+        <div className="d-flex justify-content-between align-items-start mb-2">
+          <h5 className="product-title text-truncate" title={product.name}>
+            {product.name}
+          </h5>
+        </div>
+
+        <div className="text-muted small mb-3">كود الصنف: <strong>{product.code}</strong></div>
+
+        <div className="product-specs mb-3">
+          {product.dimensions && <span className="spec-pill">📐 {product.dimensions}</span>}
+          {product.finish && <span className="spec-pill">✨ {product.finish}</span>}
+          {product.grade && <span className="spec-pill">🏅 {product.grade}</span>}
+          {product.origin && <span className="spec-pill">🌍 {product.origin}</span>}
+        </div>
+
+        <div className="mt-auto">
+          <div className="d-flex justify-content-between align-items-baseline mb-3 bg-light p-2 rounded-3 border">
+            <span className="text-muted small fw-bold">سعر المتر بالمعرض:</span>
+            <div>
+              <span className="price-tag">{product.price}</span>
+              <span className="price-unit"> ج.م / {product.priceUnit || 'م2'}</span>
+            </div>
+          </div>
+
+          <div className="d-flex gap-2 mb-2">
+            <Button 
+              className="btn-details flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-2"
+              onClick={() => onSelectProduct(product)}
+            >
+              <Eye size={16} />
+              التفاصيل
+            </Button>
+
+            <Button 
+              variant="outline-warning"
+              className="flex-grow-1 d-flex align-items-center justify-content-center gap-1 py-2 fw-bold text-dark border-warning"
+              onClick={() => onOpenCalculator(product)}
+              title="احسب كمية الكراتين والتكلفة المطلوبة لشقتك"
+            >
+              <Calculator size={16} />
+              احسب الأمتار
+            </Button>
+          </div>
+
+          <a 
+            href={whatsappUrl} 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="btn-whatsapp"
+            title="تواصل مباشر عبر الواتساب"
+          >
+            <MessageCircle size={18} />
+            تواصل عبر الواتساب
+          </a>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default ProductCard;
