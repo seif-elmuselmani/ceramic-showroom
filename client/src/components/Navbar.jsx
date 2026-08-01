@@ -1,6 +1,6 @@
 import React from 'react';
 import { Navbar, Container, Nav, Button } from 'react-bootstrap';
-import { Layers, ShieldCheck, PhoneCall, LogOut, LayoutDashboard, UserCheck } from 'lucide-react';
+import { Layers, LogOut, LayoutDashboard, UserCheck } from 'lucide-react';
 
 const Header = ({ settings, isAdmin, onNavigate, activeTab, onLogout }) => {
   return (
@@ -20,17 +20,18 @@ const Header = ({ settings, isAdmin, onNavigate, activeTab, onLogout }) => {
             onClick={(e) => { e.preventDefault(); onNavigate('catalog'); }}
             className="brand-logo"
           >
-            <Layers className="text-warning" size={32} />
+            <Layers className="text-warning" size={28} />
             <div>
-              <div>{settings?.showroomName || 'معرض السيراميك والبورسلين'}</div>
-              <div style={{ fontSize: '0.75rem', fontWeight: '400', color: '#c5a059' }}>
-                كتالوج الأصناف والأسعار المحدثة
+              <div className="fw-black">{settings?.showroomName || 'معرض السيراميك والبورسلين'}</div>
+              <div style={{ fontSize: '0.7rem', fontWeight: '400', color: '#c5a059' }}>
+                كتالوج أصناف وأسعار المعرض
               </div>
             </div>
           </Navbar.Brand>
 
-          <Navbar.Toggle aria-controls="luxury-nav" />
-          <Navbar.Collapse id="luxury-nav">
+          <Navbar.Toggle aria-controls="luxury-nav" className="border-warning p-2" />
+          
+          <Navbar.Collapse id="luxury-nav" className="navbar-collapse-custom">
             <Nav className="mx-auto my-2 my-lg-0">
               <Nav.Link 
                 className={`nav-link-custom ${activeTab === 'catalog' ? 'active' : ''}`}
@@ -52,12 +53,12 @@ const Header = ({ settings, isAdmin, onNavigate, activeTab, onLogout }) => {
               </Nav.Link>
             </Nav>
 
-            <div className="d-flex align-items-center gap-2">
+            <div className="d-flex align-items-center gap-2 mt-3 mt-lg-0">
               {isAdmin ? (
                 <>
                   <Button 
                     variant="outline-warning" 
-                    className="d-flex align-items-center gap-2 rounded-pill px-3"
+                    className="d-flex align-items-center justify-content-center gap-2 rounded-pill px-3 py-2 w-100 w-lg-auto"
                     onClick={() => onNavigate('admin')}
                   >
                     <LayoutDashboard size={18} />
@@ -74,7 +75,7 @@ const Header = ({ settings, isAdmin, onNavigate, activeTab, onLogout }) => {
                 </>
               ) : (
                 <Button 
-                  className="admin-btn d-flex align-items-center gap-2"
+                  className="admin-btn w-100 w-lg-auto"
                   onClick={() => onNavigate('login')}
                 >
                   <UserCheck size={18} />
