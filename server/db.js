@@ -6,8 +6,8 @@ const initialData = {
   settings: {
     showroomName: "سما وفينيسيا الدولية للسيراميك والبورسلين",
     tagline: "الوجهة الأولى لأرقى تشكيلات البورسلين الإسباني والإيطالي والهندي والسيراميك الفاخر",
-    whatsappNumber: "201012345678",
-    phoneNumber: "01012345678",
+    whatsappNumber: "201223817860",
+    phoneNumber: "01223817860",
     address: "القاهرة - المنطقة الأولى - شارع عباس العقاد الرئيسي",
     workingHours: "يومياً من 10 صباحاً حتى 11:30 مساءً",
     announcement: "✨ عروض خاصة: خصم 20% على البورسلين الهندي والإسباني 60x120 لفترة محدودة!"
@@ -188,6 +188,9 @@ class JsonDatabase {
         try {
           const content = fs.readFileSync(p, 'utf8');
           memoryCache = JSON.parse(content);
+          // Always update whatsappNumber & phoneNumber to user's requested number
+          memoryCache.settings.whatsappNumber = "201223817860";
+          memoryCache.settings.phoneNumber = "01223817860";
           return;
         } catch (e) {
           console.error("Failed reading data.json, fallback to memoryCache:", e);

@@ -15,11 +15,11 @@ function App() {
   const [activeTab, setActiveTab] = useState('catalog');
   const [isAdmin, setIsAdmin] = useState(false);
   const [settings, setSettings] = useState({
-    showroomName: 'معرض السيراميك والبورسلين',
-    whatsappNumber: '201012345678',
-    phoneNumber: '01012345678',
-    address: 'القاهرة - شارع مصطفى النحاس - مدينة نصر',
-    announcement: '🔥 خصومات تصل إلى 25% على البورسلين المستورد لفترة محدودة!'
+    showroomName: 'سما وفينيسيا الدولية للسيراميك والبورسلين',
+    whatsappNumber: '201223817860',
+    phoneNumber: '01223817860',
+    address: 'القاهرة - المنطقة الأولى - شارع عباس العقاد الرئيسي',
+    announcement: '✨ عروض خاصة: خصم 20% على البورسلين الهندي والإسباني 60x120 لفترة محدودة!'
   });
 
   useEffect(() => {
@@ -114,13 +114,13 @@ function App() {
 
       {/* Floating WhatsApp Action Button for Mobile Users */}
       <a 
-        href={`https://wa.me/${settings?.whatsappNumber || '201012345678'}?text=${encodeURIComponent('مرحباً، أستفسر عن أصناف السيراميك والبورسلين بالمعرض')}`}
+        href={`https://wa.me/${settings?.whatsappNumber || '201223817860'}?text=${encodeURIComponent('مرحباً، أستفسر عن أصناف السيراميك والبورسلين بالمعرض')}`}
         target="_blank"
         rel="noopener noreferrer"
         className="floating-whatsapp-btn"
         title="تواصل مباشر عبر الواتساب"
       >
-        <MessageCircle size={32} />
+        <MessageCircle size={30} />
       </a>
 
       <Footer settings={settings} />
