@@ -14,8 +14,8 @@ const JWT_SECRET = 'ceramic_admin_super_secret_key_2026';
 // Cloudinary Configuration for User Account: dv9zhgghq
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME || 'dv9zhgghq',
-  api_key: process.env.CLOUDINARY_API_KEY || '874457588145155', // Fallback or env
-  api_secret: process.env.CLOUDINARY_API_SECRET || 'secret'     // Fallback or env
+  api_key: process.env.CLOUDINARY_API_KEY || '874457588145155',
+  api_secret: process.env.CLOUDINARY_API_SECRET || 'secret'
 });
 
 // Middleware
@@ -25,7 +25,9 @@ app.use(express.json());
 // Ensure local uploads folder exists
 const uploadsDir = path.join(__dirname, 'uploads');
 if (!fs.existsSync(uploadsDir)) {
-  fs.mkdirSync(uploadsDir, { recursive: true });
+  try {
+    fs.mkdirSync(uploadsDir, { recursive: true });
+  } catch (e) {}
 }
 app.use('/uploads', express.static(uploadsDir));
 
@@ -131,16 +133,15 @@ app.put('/api/settings', authenticateToken, (req, res) => {
   res.json({ message: 'تم تحديث البيانات بنجاح', settings: updated });
 });
 
-// Upload Product Image (Integrated with Cloudinary & Local Fallback)
+// Upload Product Image (Integrated with Cloudinary)
 app.post('/api/upload', authenticateToken, upload.single('image'), async (req, res) => {
   if (!req.file) {
     return res.status(400).json({ message: 'لم يتم اختيار صورة' });
   }
 
-  const localUrl = `http://localhost:${PORT}/uploads/${req.file.filename}`;
+  const localUrl = `/uploads/${req.file.filename}`;
 
   try {
-    // Attempt Cloudinary Upload first
     const result = await cloudinary.uploader.upload(req.file.path, {
       folder: 'ceramic_showroom_tiles',
       resource_type: 'image'
@@ -155,10 +156,9 @@ app.post('/api/upload', authenticateToken, upload.single('image'), async (req, r
       });
     }
   } catch (err) {
-    console.log('⚠️ Cloudinary upload skipped, using local upload server URL:', err.message);
+    console.log('⚠️ Cloudinary upload skipped, using local upload:', err.message);
   }
 
-  // Fallback to local server URL
   res.json({ imageUrl: localUrl, filename: req.file.filename, source: 'local' });
 });
 
@@ -186,8 +186,12 @@ app.delete('/api/products/:id', authenticateToken, (req, res) => {
   res.json({ message: 'تم حذف المنتج بنجاح' });
 });
 
-// Start Express Server
-app.listen(PORT, () => {
-  console.log(`🚀 Ceramic Showroom Server running on http://localhost:${PORT}`);
-  console.log(`☁️ Cloudinary integrated for Cloud: dv9zhgghq`);
-});
+// Only listen if executed directly
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`🚀 Ceramic Showroom Server running on http://localhost:${PORT}`);
+    console.log(`☁️ Cloudinary integrated for Cloud: dv9zhgghq`);
+  });
+}
+
+module.exports = app;
