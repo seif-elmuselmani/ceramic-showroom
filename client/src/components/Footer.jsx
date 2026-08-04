@@ -2,7 +2,7 @@ import React from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
 import { MapPin, Phone, Clock, MessageSquare, Facebook } from 'lucide-react';
 
-const Footer = ({ settings, onNavigate }) => {
+const Footer = ({ settings, onNavigate, categories = [] }) => {
   // Split the address dynamically by "|" to display branch cards nicely
   const branches = settings?.address?.split('|') || [];
 
@@ -31,7 +31,7 @@ const Footer = ({ settings, onNavigate }) => {
               </div>
             </div>
             <p className="footer-desc mb-4">
-              {settings?.tagline || 'نوفر لك أفضل تشكيلات السيراميك والبورسلين المحلي والمستورد بأعلى درجات الجودة وأفضل أسعار السوق.'}
+              {settings?.tagline || 'معرض السيد الجزار - فخامة السيراميك والبورسلين في مكان واحد بأفضل الأسعار'}
             </p>
             
             {/* Elegant Circular Social Icons */}
@@ -88,31 +88,43 @@ const Footer = ({ settings, onNavigate }) => {
           <Col lg={3} md={6} className="ps-lg-5">
             <h5 className="footer-title-sec">تصفح الكتالوج</h5>
             <ul className="footer-links list-unstyled">
-              <li>
-                <a href="#" onClick={(e) => { e.preventDefault(); onNavigate && onNavigate('catalog'); }}>
-                  بورسلين مستورد
-                </a>
-              </li>
-              <li>
-                <a href="#" onClick={(e) => { e.preventDefault(); onNavigate && onNavigate('catalog'); }}>
-                  بورسلين محلي
-                </a>
-              </li>
-              <li>
-                <a href="#" onClick={(e) => { e.preventDefault(); onNavigate && onNavigate('catalog'); }}>
-                  سيراميك أرضيات
-                </a>
-              </li>
-              <li>
-                <a href="#" onClick={(e) => { e.preventDefault(); onNavigate && onNavigate('catalog'); }}>
-                  سيراميك حوائط
-                </a>
-              </li>
-              <li>
-                <a href="#" onClick={(e) => { e.preventDefault(); onNavigate && onNavigate('catalog'); }}>
-                  أطقم حمامات وخلاطات
-                </a>
-              </li>
+              {categories && categories.length > 0 ? (
+                categories.map((cat) => (
+                  <li key={cat.id}>
+                    <a href="#" onClick={(e) => { e.preventDefault(); onNavigate && onNavigate('catalog', cat.name); }}>
+                      {cat.name}
+                    </a>
+                  </li>
+                ))
+              ) : (
+                <>
+                  <li>
+                    <a href="#" onClick={(e) => { e.preventDefault(); onNavigate && onNavigate('catalog'); }}>
+                      بورسلين مستورد
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#" onClick={(e) => { e.preventDefault(); onNavigate && onNavigate('catalog'); }}>
+                      بورسلين محلي
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#" onClick={(e) => { e.preventDefault(); onNavigate && onNavigate('catalog'); }}>
+                      سيراميك أرضيات
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#" onClick={(e) => { e.preventDefault(); onNavigate && onNavigate('catalog'); }}>
+                      سيراميك حوائط
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#" onClick={(e) => { e.preventDefault(); onNavigate && onNavigate('catalog'); }}>
+                      أطقم حمامات وخلاطات
+                    </a>
+                  </li>
+                </>
+              )}
             </ul>
           </Col>
 

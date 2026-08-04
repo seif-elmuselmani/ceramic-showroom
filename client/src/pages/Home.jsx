@@ -6,14 +6,14 @@ import ProductModal from '../components/ProductModal';
 import TileCalculatorModal from '../components/TileCalculatorModal';
 import { getProducts, getCategories } from '../services/api';
 
-const Home = ({ settings }) => {
+const Home = ({ settings, categoryFilter = 'الكل', setCategoryFilter }) => {
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   // Filters state
-  const [selectedCategory, setSelectedCategory] = useState('الكل');
+  const [selectedCategory, setSelectedCategory] = useState(categoryFilter);
   const [selectedSubcategory, setSelectedSubcategory] = useState('الكل');
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedFinish, setSelectedFinish] = useState('الكل');
@@ -27,6 +27,11 @@ const Home = ({ settings }) => {
   useEffect(() => {
     fetchCategories();
   }, []);
+
+  useEffect(() => {
+    setSelectedCategory(categoryFilter);
+    setSelectedSubcategory('الكل');
+  }, [categoryFilter]);
 
   useEffect(() => {
     fetchProducts();
@@ -214,7 +219,11 @@ const Home = ({ settings }) => {
                 <button
                   key={cat.id}
                   className={`category-chip ${selectedCategory === cat.name ? 'active' : ''}`}
-                  onClick={() => { setSelectedCategory(cat.name); setSelectedSubcategory('الكل'); }}
+                  onClick={() => { 
+                    setSelectedCategory(cat.name); 
+                    setSelectedSubcategory('الكل'); 
+                    if (setCategoryFilter) setCategoryFilter(cat.name);
+                  }}
                 >
                   {cat.name}
                 </button>

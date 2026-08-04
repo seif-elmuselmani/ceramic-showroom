@@ -10,11 +10,13 @@ import AdminLogin from './pages/AdminLogin';
 import AdminDashboard from './pages/AdminDashboard';
 import Contact from './pages/Contact';
 
-import { getSettings } from './services/api';
+import { getSettings, getCategories } from './services/api';
 
 function App() {
   const [activeTab, setActiveTab] = useState('catalog');
   const [isAdmin, setIsAdmin] = useState(false);
+  const [categories, setCategories] = useState([]);
+  const [categoryFilter, setCategoryFilter] = useState('الكل');
   const [settings, setSettings] = useState({
     showroomName: 'السيد الجزار للسيراميك والبورسلين',
     whatsappNumber: '201001366499',
@@ -42,6 +44,7 @@ function App() {
     }
 
     fetchSettings();
+    fetchCategories();
   }, []);
 
   const fetchSettings = async () => {
@@ -55,12 +58,26 @@ function App() {
     }
   };
 
-  const handleNavigate = (tab) => {
+  const fetchCategories = async () => {
+    try {
+      const res = await getCategories();
+      if (res.data) {
+        setCategories(res.data);
+      }
+    } catch (err) {
+      console.error('Error loading categories:', err);
+    }
+  };
+
+  const handleNavigate = (tab, catName = null) => {
     if (tab === 'admin' && !isAdmin) {
       setActiveTab('login');
       return;
     }
     setActiveTab(tab);
+    if (catName) {
+      setCategoryFilter(catName);
+    }
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -87,11 +104,19 @@ function App() {
 
       <main className="flex-grow-1">
         {activeTab === 'catalog' && (
-          <Home settings={settings} />
+          <Home 
+            settings={settings} 
+            categoryFilter={categoryFilter}
+            setCategoryFilter={setCategoryFilter}
+          />
         )}
 
         {activeTab === 'featured' && (
-          <Home settings={settings} />
+          <Home 
+            settings={settings} 
+            categoryFilter={categoryFilter}
+            setCategoryFilter={setCategoryFilter}
+          />
         )}
 
         {activeTab === 'contact' && (
@@ -131,7 +156,7 @@ function App() {
         <MessageCircle size={30} />
       </a>
 
-      <Footer settings={settings} onNavigate={handleNavigate} />
+      <Footer settings={settings} onNavigate={handleNavigate} categories={categories} />
     </div>
   );
 }
