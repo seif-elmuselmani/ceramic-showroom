@@ -103,62 +103,84 @@ const authenticateToken = (req, res, next) => {
 // ==================== PUBLIC API ROUTES ====================
 
 // Get Showroom Settings & Info
-app.get(['/api/settings', '/settings'], (req, res) => {
-  res.json(db.getSettings());
+app.get(['/api/settings', '/settings'], async (req, res) => {
+  try {
+    const settings = await db.getSettings();
+    res.json(settings);
+  } catch (err) {
+    console.error("Failed fetching settings:", err);
+    res.status(500).json({ message: 'خطأ في جلب بيانات المعرض' });
+  }
 });
 
 // Get Categories
-app.get(['/api/categories', '/categories'], (req, res) => {
-  res.json(db.getCategories());
+app.get(['/api/categories', '/categories'], async (req, res) => {
+  try {
+    const categories = await db.getCategories();
+    res.json(categories);
+  } catch (err) {
+    console.error("Failed fetching categories:", err);
+    res.status(500).json({ message: 'خطأ في جلب تصنيفات المعرض' });
+  }
 });
 
 // Get Products (with Search & Filters)
-app.get(['/api/products', '/products'], (req, res) => {
-  let products = db.getProducts();
-  const { category, subcategory, search, finish, grade, featured, inStock } = req.query;
+app.get(['/api/products', '/products'], async (req, res) => {
+  try {
+    let products = await db.getProducts();
+    const { category, subcategory, search, finish, grade, featured, inStock } = req.query;
 
-  if (category && category !== 'الكل') {
-    products = products.filter(p => p.category === category);
+    if (category && category !== 'الكل') {
+      products = products.filter(p => p.category === category);
+    }
+
+    if (subcategory && subcategory !== 'الكل') {
+      products = products.filter(p => p.subcategory === subcategory);
+    }
+
+    if (finish && finish !== 'الكل') {
+      products = products.filter(p => p.finish && p.finish.includes(finish));
+    }
+
+    if (grade && grade !== 'الكل') {
+      products = products.filter(p => p.grade === grade);
+    }
+
+    if (featured === 'true') {
+      products = products.filter(p => p.featured);
+    }
+
+    if (inStock === 'true') {
+      products = products.filter(p => p.inStock);
+    }
+
+    if (search) {
+      const q = search.toLowerCase();
+      products = products.filter(p => 
+        p.name.toLowerCase().includes(q) ||
+        p.code.toLowerCase().includes(q) ||
+        (p.description && p.description.toLowerCase().includes(q)) ||
+        (p.dimensions && p.dimensions.includes(q))
+      );
+    }
+
+    res.json(products);
+  } catch (err) {
+    console.error("Failed fetching products:", err);
+    res.status(500).json({ message: 'خطأ في جلب المنتجات' });
   }
-
-  if (subcategory && subcategory !== 'الكل') {
-    products = products.filter(p => p.subcategory === subcategory);
-  }
-
-  if (finish && finish !== 'الكل') {
-    products = products.filter(p => p.finish && p.finish.includes(finish));
-  }
-
-  if (grade && grade !== 'الكل') {
-    products = products.filter(p => p.grade === grade);
-  }
-
-  if (featured === 'true') {
-    products = products.filter(p => p.featured);
-  }
-
-  if (inStock === 'true') {
-    products = products.filter(p => p.inStock);
-  }
-
-  if (search) {
-    const q = search.toLowerCase();
-    products = products.filter(p => 
-      p.name.toLowerCase().includes(q) ||
-      p.code.toLowerCase().includes(q) ||
-      (p.description && p.description.toLowerCase().includes(q)) ||
-      (p.dimensions && p.dimensions.includes(q))
-    );
-  }
-
-  res.json(products);
 });
 
 // Get Single Product Details
-app.get(['/api/products/:id', '/products/:id'], (req, res) => {
-  const product = db.getProductById(req.params.id);
-  if (!product) return res.status(404).json({ message: 'المنتج غير موجود' });
-  res.json(product);
+app.get(['/api/products/:id', '/products/:id'], async (req, res) => {
+  try {
+    const product = await db.getProductById(req.params.id);
+    if (!product) return res.status(404).json({ message: 'المنتج غير موجود' });
+    res.json(product);
+  } catch (err) {
+    console.error("Failed fetching product details:", err);
+    res.status(500).json({ message: 'خطأ في جلب تفاصيل المنتج' });
+  }
 });
 
 // Admin Login (Secure with Bcrypt and Rate Limiting)
@@ -190,9 +212,14 @@ app.post(['/api/admin/login', '/admin/login'], loginLimiter, async (req, res) =>
 // ==================== ADMIN PROTECTED ROUTES ====================
 
 // Update Settings
-app.put(['/api/settings', '/settings'], authenticateToken, (req, res) => {
-  const updated = db.updateSettings(req.body);
-  res.json({ message: 'تم تحديث البيانات بنجاح', settings: updated });
+app.put(['/api/settings', '/settings'], authenticateToken, async (req, res) => {
+  try {
+    const updated = await db.updateSettings(req.body);
+    res.json({ message: 'تم تحديث البيانات بنجاح', settings: updated });
+  } catch (err) {
+    console.error("Failed updating settings:", err);
+    res.status(500).json({ message: 'خطأ في حفظ البيانات' });
+  }
 });
 
 // Upload Product Image (Integrated with Cloudinary & Rate Limiting)
@@ -225,27 +252,42 @@ app.post(['/api/upload', '/upload'], authenticateToken, uploadLimiter, upload.si
 });
 
 // Add New Product
-app.post(['/api/products', '/products'], authenticateToken, (req, res) => {
+app.post(['/api/products', '/products'], authenticateToken, async (req, res) => {
   const { name, category, price } = req.body;
   if (!name || !category || price === undefined) {
     return res.status(400).json({ message: 'الاسم، الفئة، والسعر حقول مطلوبة' });
   }
-  const newProduct = db.addProduct(req.body);
-  res.status(201).json({ message: 'تم إضافة المنتج بنجاح', product: newProduct });
+  try {
+    const newProduct = await db.addProduct(req.body);
+    res.status(201).json({ message: 'تم إضافة المنتج بنجاح', product: newProduct });
+  } catch (err) {
+    console.error("Failed adding product:", err);
+    res.status(500).json({ message: 'خطأ في إضافة المنتج لقاعدة البيانات' });
+  }
 });
 
 // Update Product
-app.put(['/api/products/:id', '/products/:id'], authenticateToken, (req, res) => {
-  const updated = db.updateProduct(req.params.id, req.body);
-  if (!updated) return res.status(404).json({ message: 'المنتج غير موجود' });
-  res.json({ message: 'تم تحديث بيانات المنتج بنجاح', product: updated });
+app.put(['/api/products/:id', '/products/:id'], authenticateToken, async (req, res) => {
+  try {
+    const updated = await db.updateProduct(req.params.id, req.body);
+    if (!updated) return res.status(404).json({ message: 'المنتج غير موجود' });
+    res.json({ message: 'تم تحديث بيانات المنتج بنجاح', product: updated });
+  } catch (err) {
+    console.error("Failed updating product:", err);
+    res.status(500).json({ message: 'خطأ في تحديث بيانات المنتج' });
+  }
 });
 
 // Delete Product
-app.delete(['/api/products/:id', '/products/:id'], authenticateToken, (req, res) => {
-  const success = db.deleteProduct(req.params.id);
-  if (!success) return res.status(404).json({ message: 'المنتج غير موجود' });
-  res.json({ message: 'تم حذف المنتج بنجاح' });
+app.delete(['/api/products/:id', '/products/:id'], authenticateToken, async (req, res) => {
+  try {
+    const success = await db.deleteProduct(req.params.id);
+    if (!success) return res.status(404).json({ message: 'المنتج غير موجود' });
+    res.json({ message: 'تم حذف المنتج بنجاح' });
+  } catch (err) {
+    console.error("Failed deleting product:", err);
+    res.status(500).json({ message: 'خطأ في حذف المنتج' });
+  }
 });
 
 // Express Error Handling Middleware (Catches Multer / Image upload errors)

@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const mongoose = require('mongoose');
 
 // Initial Default Data for Ultra-Luxury Ceramic & Porcelain Showroom (Sama & Elite Quality)
 const initialData = {
@@ -15,7 +16,9 @@ const initialData = {
     mapUrl2: "https://www.bing.com/maps/search?v=2&pc=FACEBK&mid=8100&mkt=en-US&FORM=FBKPL1&q=%D8%A7%D9%84%D8%B9%D9%86%D9%88%D8%A7%D9%86%3A+%D8%A8%D9%86%D9%87%D8%A7+-%D8%A8%D8%B1%D8%AC+%D8%A7%D9%84%D8%B3%D9%86%D9%87%D9%88%D9%89+%E2%80%93+%D8%A8%D8%AC%D9%88%D8%A7%D8%B1+%D9%83%D9%88%D8%A8%D8%B1%D9%8A+%D8%A7%D9%84%D8%B4%D9%85%D9%88%D8%AA%2C+Benha%2C+Egypt%2C+013&cp=30.460002%7E31.183300&lvl=13.4&style=r",
     address: "فرع 1: بنها - مدخل بنها القبلي - برج العطار | فرع 2: بنها - برج السنهوي - بجوار كوبري الشموت",
     workingHours: "يومياً من 10 صباحاً حتى 11:30 مساءً",
-    announcement: "✨ عروض خاصة: خصم 20% على البورسلين الهندي والإسباني 60x120 لفترة محدودة!"
+    announcement: "✨ عروض خاصة: خصم 20% على البورسلين الهندي والإسباني 60x120 لفترة محدودة!",
+    address1: "بنها - مدخل بنها القبلي - برج العطار",
+    address2: "فرع 2: بنها - برج السنهوي - بجوار كوبري الشموت"
   },
   categories: [
     { id: "cat-1", name: "بورسلين مستورد", icon: "Layers", subcategories: ["إسباني", "هندي", "إيطالي", "أردني"] },
@@ -119,7 +122,7 @@ const initialData = {
       usage: "خلفية المطابخ، حوائط الدش، المداخل",
       inStock: true,
       featured: true,
-      description: "موزاييك مطعم بجزئيات زجاجية وكريستال ذهبي يمنح لمسة فنية ساحرة للمكان.",
+      description: "موزاييك مطعم بجزيئات زجاجية وكريستال ذهبي يمنح لمسة فنية ساحرة للمكان.",
       image: "https://images.unsplash.com/photo-1565538810643-b5bdb714032a?auto=format&fit=crop&w=1000&q=80"
     },
     {
@@ -220,8 +223,117 @@ const initialData = {
   ]
 };
 
-// In-Memory Database Store for Serverless & File Persistence
+// In-Memory Database Store fallback
 let memoryCache = JSON.parse(JSON.stringify(initialData));
+
+// Mongoose Schema Definitions
+const SettingsSchema = new mongoose.Schema({
+  showroomName: { type: String, default: "السيد الجزار للسيراميك والبورسلين" },
+  tagline: { type: String, default: "" },
+  whatsappNumber: { type: String, default: "" },
+  phoneNumber: { type: String, default: "" },
+  facebookUrl: { type: String, default: "" },
+  tiktokUrl: { type: String, default: "" },
+  mapUrl: { type: String, default: "" },
+  mapUrl1: { type: String, default: "" },
+  mapUrl2: { type: String, default: "" },
+  address: { type: String, default: "" },
+  workingHours: { type: String, default: "" },
+  announcement: { type: String, default: "" },
+  address1: { type: String, default: "" },
+  address2: { type: String, default: "" }
+}, { minimize: false });
+
+const CategorySchema = new mongoose.Schema({
+  id: { type: String, required: true, unique: true },
+  name: { type: String, required: true },
+  icon: { type: String, required: true },
+  subcategories: [String]
+});
+
+const ProductSchema = new mongoose.Schema({
+  id: { type: String, required: true, unique: true, index: true },
+  name: { type: String, required: true },
+  code: { type: String, required: true, index: true },
+  category: { type: String, required: true, index: true },
+  subcategory: { type: String, index: true },
+  price: { type: Number, required: true },
+  priceUnit: { type: String, default: "متر مربع" },
+  boxCoverage: { type: Number, default: 1.44 },
+  dimensions: String,
+  finish: String,
+  grade: String,
+  origin: String,
+  usage: String,
+  inStock: { type: Boolean, default: true },
+  featured: { type: Boolean, default: false },
+  description: String,
+  image: String
+});
+
+let Settings, Category, Product;
+let isConnected = false;
+
+// Seed data if database collections are empty
+async function seedDatabaseIfNeeded() {
+  try {
+    const productCount = await Product.countDocuments();
+    if (productCount === 0) {
+      console.log("🌱 Database is empty. Seeding initial data to MongoDB...");
+      
+      // Seed settings (only if none exists)
+      const settingsCount = await Settings.countDocuments();
+      if (settingsCount === 0) {
+        await Settings.create(initialData.settings);
+      }
+      
+      // Seed categories (only if none exists)
+      const categoryCount = await Category.countDocuments();
+      if (categoryCount === 0) {
+        await Category.insertMany(initialData.categories);
+      }
+      
+      // Seed products
+      await Product.insertMany(initialData.products);
+      
+      console.log("🌱 Database successfully seeded with initialData");
+    }
+  } catch (err) {
+    console.error("⚠️ Failed to seed MongoDB database:", err.message);
+  }
+}
+
+// Cached MongoDB Connection Manager
+async function connectToMongo() {
+  if (isConnected) {
+    return true;
+  }
+  const uri = process.env.MONGODB_URI;
+  if (!uri) {
+    return false;
+  }
+  try {
+    const dbConnection = await mongoose.connect(uri, {
+      serverSelectionTimeoutMS: 5000
+    });
+    isConnected = dbConnection.connections[0].readyState === 1;
+    
+    // Register Models inside connection scope
+    Settings = mongoose.models.Settings || mongoose.model('Settings', SettingsSchema);
+    Category = mongoose.models.Category || mongoose.model('Category', CategorySchema);
+    Product = mongoose.models.Product || mongoose.model('Product', ProductSchema);
+    
+    console.log("🔌 Connected to MongoDB Atlas successfully");
+    
+    // Seed Database if empty
+    await seedDatabaseIfNeeded();
+    return true;
+  } catch (err) {
+    console.error("❌ Failed to connect to MongoDB Atlas:", err.message);
+    isConnected = false;
+    return false;
+  }
+}
 
 class JsonDatabase {
   constructor() {
@@ -229,6 +341,7 @@ class JsonDatabase {
   }
 
   initDb() {
+    // If running in development, we load local cache
     const dbPaths = [
       path.join(process.cwd(), 'server', 'data.json'),
       path.join(__dirname, 'data.json')
@@ -274,7 +387,7 @@ class JsonDatabase {
           });
           
           if (migrated) {
-            this.write(memoryCache);
+            this.writeLocal(memoryCache);
           }
           return;
         } catch (e) {
@@ -283,12 +396,8 @@ class JsonDatabase {
       }
     }
   }
-  read() {
-    return memoryCache;
-  }
 
-  write(data) {
-    memoryCache = data;
+  writeLocal(data) {
     const dbPaths = [
       path.join(process.cwd(), 'server', 'data.json'),
       path.join(__dirname, 'data.json')
@@ -298,76 +407,148 @@ class JsonDatabase {
       try {
         fs.writeFileSync(p, JSON.stringify(data, null, 2), 'utf8');
       } catch (err) {
-        // Ignore read-only filesystem errors in Serverless
+        // Ignore read-only filesystem errors in Vercel
       }
     }
     return true;
   }
 
-  getSettings() {
-    return this.read().settings;
+  async getSettings() {
+    if (process.env.MONGODB_URI) {
+      const connected = await connectToMongo();
+      if (connected) {
+        let s = await Settings.findOne().lean();
+        if (!s) {
+          s = await Settings.create(initialData.settings);
+        }
+        return s;
+      }
+    }
+    return memoryCache.settings;
   }
 
-  updateSettings(newSettings) {
-    const db = this.read();
-    db.settings = { 
-      ...db.settings, 
+  async updateSettings(newSettings) {
+    if (process.env.MONGODB_URI) {
+      const connected = await connectToMongo();
+      if (connected) {
+        let s = await Settings.findOne();
+        if (!s) {
+          s = new Settings(initialData.settings);
+        }
+        Object.assign(s, newSettings);
+        await s.save();
+        return s.toObject();
+      }
+    }
+    memoryCache.settings = { 
+      ...memoryCache.settings, 
       ...newSettings
     };
-    this.write(db);
-    return db.settings;
+    this.writeLocal(memoryCache);
+    return memoryCache.settings;
   }
 
-  getCategories() {
-    return this.read().categories;
+  async getCategories() {
+    if (process.env.MONGODB_URI) {
+      const connected = await connectToMongo();
+      if (connected) {
+        const cats = await Category.find().lean();
+        if (cats && cats.length > 0) {
+          return cats;
+        }
+      }
+    }
+    return memoryCache.categories;
   }
 
-  getProducts() {
-    return this.read().products;
+  async getProducts() {
+    if (process.env.MONGODB_URI) {
+      const connected = await connectToMongo();
+      if (connected) {
+        return await Product.find().sort({ _id: -1 }).lean();
+      }
+    }
+    return memoryCache.products;
   }
 
-  getProductById(id) {
-    const db = this.read();
-    return db.products.find(p => p.id === id);
+  async getProductById(id) {
+    if (process.env.MONGODB_URI) {
+      const connected = await connectToMongo();
+      if (connected) {
+        return await Product.findOne({ id }).lean();
+      }
+    }
+    return memoryCache.products.find(p => p.id === id);
   }
 
-  addProduct(productData) {
-    const db = this.read();
-    const newProduct = {
-      id: "prod-" + Date.now(),
-      inStock: true,
-      featured: false,
-      priceUnit: "متر مربع",
+  async addProduct(productData) {
+    const id = "prod-" + Date.now();
+    const cleanProduct = {
+      id,
+      inStock: productData.inStock !== undefined ? productData.inStock : true,
+      featured: productData.featured !== undefined ? productData.featured : false,
+      priceUnit: productData.priceUnit || "متر مربع",
       boxCoverage: Number(productData.boxCoverage) || 1.44,
       ...productData,
       price: Number(productData.price) || 0
     };
-    db.products.unshift(newProduct);
-    this.write(db);
-    return newProduct;
+
+    if (process.env.MONGODB_URI) {
+      const connected = await connectToMongo();
+      if (connected) {
+        const newProduct = await Product.create(cleanProduct);
+        return newProduct.toObject();
+      }
+    }
+
+    memoryCache.products.unshift(cleanProduct);
+    this.writeLocal(memoryCache);
+    return cleanProduct;
   }
 
-  updateProduct(id, productData) {
-    const db = this.read();
-    const index = db.products.findIndex(p => p.id === id);
+  async updateProduct(id, productData) {
+    if (process.env.MONGODB_URI) {
+      const connected = await connectToMongo();
+      if (connected) {
+        const updateFields = { ...productData };
+        if (productData.price !== undefined) updateFields.price = Number(productData.price);
+        if (productData.boxCoverage !== undefined) updateFields.boxCoverage = Number(productData.boxCoverage);
+
+        const updated = await Product.findOneAndUpdate(
+          { id },
+          { $set: updateFields },
+          { new: true }
+        ).lean();
+        return updated;
+      }
+    }
+
+    const index = memoryCache.products.findIndex(p => p.id === id);
     if (index === -1) return null;
 
-    db.products[index] = {
-      ...db.products[index],
+    memoryCache.products[index] = {
+      ...memoryCache.products[index],
       ...productData,
-      price: Number(productData.price) ?? db.products[index].price,
-      boxCoverage: Number(productData.boxCoverage) ?? db.products[index].boxCoverage
+      price: productData.price !== undefined ? Number(productData.price) : memoryCache.products[index].price,
+      boxCoverage: productData.boxCoverage !== undefined ? Number(productData.boxCoverage) : memoryCache.products[index].boxCoverage
     };
-    this.write(db);
-    return db.products[index];
+    this.writeLocal(memoryCache);
+    return memoryCache.products[index];
   }
 
-  deleteProduct(id) {
-    const db = this.read();
-    const filtered = db.products.filter(p => p.id !== id);
-    if (filtered.length === db.products.length) return false;
-    db.products = filtered;
-    this.write(db);
+  async deleteProduct(id) {
+    if (process.env.MONGODB_URI) {
+      const connected = await connectToMongo();
+      if (connected) {
+        const result = await Product.deleteOne({ id });
+        return result.deletedCount > 0;
+      }
+    }
+
+    const filtered = memoryCache.products.filter(p => p.id !== id);
+    if (filtered.length === memoryCache.products.length) return false;
+    memoryCache.products = filtered;
+    this.writeLocal(memoryCache);
     return true;
   }
 }
