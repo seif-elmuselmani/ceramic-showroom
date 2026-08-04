@@ -9,7 +9,7 @@ const Header = ({ settings, isAdmin, onNavigate, activeTab, onLogout }) => {
       {settings?.announcement && (
         <div className="announcement-bar d-flex justify-content-center align-items-center px-3 py-3 text-center">
           <div className="d-flex align-items-center gap-2 justify-content-center">
-            <Megaphone size={20} className="text-warning animate-pulse flex-shrink-0" />
+            <Megaphone size={20} className="animate-pulse flex-shrink-0" style={{ color: '#1e150b' }} />
             <span className="announcement-text" style={{ fontSize: '0.98rem' }}>{settings.announcement}</span>
           </div>
         </div>
