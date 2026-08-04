@@ -7,10 +7,10 @@ const Header = ({ settings, isAdmin, onNavigate, activeTab, onLogout }) => {
     <header className="sticky-top">
       {/* Announcement Bar */}
       {settings?.announcement && (
-        <div className="announcement-bar d-flex justify-content-center align-items-center px-3 py-2 text-center">
+        <div className="announcement-bar d-flex justify-content-center align-items-center px-3 py-3 text-center">
           <div className="d-flex align-items-center gap-2 justify-content-center">
-            <Megaphone size={16} className="text-warning animate-pulse flex-shrink-0" />
-            <span className="announcement-text">{settings.announcement}</span>
+            <Megaphone size={20} className="text-warning animate-pulse flex-shrink-0" />
+            <span className="announcement-text" style={{ fontSize: '0.98rem' }}>{settings.announcement}</span>
           </div>
         </div>
       )}
