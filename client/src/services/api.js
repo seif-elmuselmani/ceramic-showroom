@@ -46,4 +46,8 @@ export const uploadImage = (formData) => api.post('/upload', formData, {
   headers: { 'Content-Type': 'multipart/form-data' }
 });
 
+export const addCategory = (data) => api.post('/categories', data);
+export const updateCategory = (id, data) => api.put(`/categories/${id}`, data);
+export const deleteCategory = (id) => api.delete(`/categories/${id}`);
+
 export default api;

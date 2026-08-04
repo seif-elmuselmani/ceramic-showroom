@@ -551,6 +551,105 @@ class JsonDatabase {
     this.writeLocal(memoryCache);
     return true;
   }
+
+  async addCategory(catData) {
+    const id = "cat-" + Date.now();
+    
+    // Automatically match suitable Lucide icon names based on the Arabic name of the category
+    let icon = "Layers";
+    const nameLower = (catData.name || "").toLowerCase();
+    if (nameLower.includes("حمام") || nameLower.includes("خلاط") || nameLower.includes("وحدات") || nameLower.includes("حوض")) {
+      icon = "Bath";
+    } else if (nameLower.includes("سيراميك") || nameLower.includes("بورسلين") || nameLower.includes("بلاط")) {
+      icon = "Grid";
+    } else if (nameLower.includes("ديكور") || nameLower.includes("موزاييك") || nameLower.includes("فن") || nameLower.includes("لوح")) {
+      icon = "Sparkles";
+    } else if (nameLower.includes("رخام") || nameLower.includes("جرانيت") || nameLower.includes("حجر")) {
+      icon = "Home";
+    }
+
+    const cleanCat = {
+      id,
+      name: catData.name,
+      icon,
+      subcategories: Array.isArray(catData.subcategories) ? catData.subcategories : []
+    };
+
+    if (process.env.MONGODB_URI) {
+      const connected = await connectToMongo();
+      if (connected) {
+        const newCat = await Category.create(cleanCat);
+        return newCat.toObject();
+      }
+    }
+
+    memoryCache.categories.push(cleanCat);
+    this.writeLocal(memoryCache);
+    return cleanCat;
+  }
+
+  async updateCategory(id, catData) {
+    let icon = catData.icon;
+    if (catData.name && !icon) {
+      icon = "Layers";
+      const nameLower = catData.name.toLowerCase();
+      if (nameLower.includes("حمام") || nameLower.includes("خلاط") || nameLower.includes("وحدات") || nameLower.includes("حوض")) {
+        icon = "Bath";
+      } else if (nameLower.includes("سيراميك") || nameLower.includes("بورسلين") || nameLower.includes("بلاط")) {
+        icon = "Grid";
+      } else if (nameLower.includes("ديكور") || nameLower.includes("موزاييك") || nameLower.includes("فن") || nameLower.includes("لوح")) {
+        icon = "Sparkles";
+      } else if (nameLower.includes("رخام") || nameLower.includes("جرانيت") || nameLower.includes("حجر")) {
+        icon = "Home";
+      }
+    }
+
+    if (process.env.MONGODB_URI) {
+      const connected = await connectToMongo();
+      if (connected) {
+        const updateFields = {
+          name: catData.name,
+          subcategories: catData.subcategories
+        };
+        if (icon) updateFields.icon = icon;
+
+        const updated = await Category.findOneAndUpdate(
+          { id },
+          { $set: updateFields },
+          { new: true }
+        ).lean();
+        return updated;
+      }
+    }
+
+    const index = memoryCache.categories.findIndex(c => c.id === id);
+    if (index === -1) return null;
+
+    memoryCache.categories[index] = {
+      ...memoryCache.categories[index],
+      name: catData.name !== undefined ? catData.name : memoryCache.categories[index].name,
+      icon: icon !== undefined ? icon : memoryCache.categories[index].icon,
+      subcategories: catData.subcategories !== undefined ? catData.subcategories : memoryCache.categories[index].subcategories
+    };
+    this.writeLocal(memoryCache);
+    return memoryCache.categories[index];
+  }
+
+  async deleteCategory(id) {
+    if (process.env.MONGODB_URI) {
+      const connected = await connectToMongo();
+      if (connected) {
+        const result = await Category.deleteOne({ id });
+        return result.deletedCount > 0;
+      }
+    }
+
+    const filtered = memoryCache.categories.filter(c => c.id !== id);
+    if (filtered.length === memoryCache.categories.length) return false;
+    memoryCache.categories = filtered;
+    this.writeLocal(memoryCache);
+    return true;
+  }
 }
 
 module.exports = new JsonDatabase();

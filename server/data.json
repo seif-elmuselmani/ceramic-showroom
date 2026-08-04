@@ -83,8 +83,23 @@
       "icon": "Bath",
       "subcategories": [
         "خلاطات وحنفيات",
-        "وحدات وأحواض",
-        "قعدات وإكسسوارات"
+        "وحدات وأحواض"
+      ]
+    },
+    {
+      "id": "cat-1785856197609",
+      "name": "Test",
+      "icon": "Layers",
+      "subcategories": [
+        "Test1"
+      ]
+    },
+    {
+      "id": "cat-1785856281000",
+      "name": "Test1",
+      "icon": "Grid",
+      "subcategories": [
+        "اسباني"
       ]
     }
   ],

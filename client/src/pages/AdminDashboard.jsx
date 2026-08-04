@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Card, Table, Button, Form, Modal, Badge, Tab, Tabs, Alert, Spinner, InputGroup } from 'react-bootstrap';
 import { PlusCircle, Edit, Trash2, Layers, DollarSign, PackageCheck, PackageX, Settings, Search, RefreshCw, Upload, Check } from 'lucide-react';
-import { getProducts, getCategories, addProduct, updateProduct, deleteProduct, updateSettings, uploadImage } from '../services/api';
+import { getProducts, getCategories, addProduct, updateProduct, deleteProduct, updateSettings, uploadImage, addCategory, updateCategory, deleteCategory } from '../services/api';
 
 const AdminDashboard = ({ settings, onSettingsUpdated }) => {
   const [products, setProducts] = useState([]);
@@ -36,6 +36,16 @@ const AdminDashboard = ({ settings, onSettingsUpdated }) => {
     featured: false
   });
   const [uploadingImage, setUploadingImage] = useState(false);
+
+  // Category CRUD state
+  const [showCategoryModal, setShowCategoryModal] = useState(false);
+  const [editingCategory, setEditingCategory] = useState(null);
+  const [categoryFormData, setCategoryFormData] = useState({
+    name: '',
+    icon: 'Layers',
+    subcategories: []
+  });
+  const [newSubcategory, setNewSubcategory] = useState('');
 
   // Modal State for Quick Price Edit
   const [showPriceModal, setShowPriceModal] = useState(false);
@@ -238,6 +248,88 @@ const AdminDashboard = ({ settings, onSettingsUpdated }) => {
     } catch (err) {
       console.error('Settings error:', err);
       alert('فشل تحديث الإعدادات');
+    }
+  };
+
+  // Open Category Modal
+  const handleOpenCategoryModal = (cat = null) => {
+    if (cat) {
+      setEditingCategory(cat);
+      setCategoryFormData({
+        name: cat.name || '',
+        icon: cat.icon || 'Layers',
+        subcategories: Array.isArray(cat.subcategories) ? [...cat.subcategories] : []
+      });
+    } else {
+      setEditingCategory(null);
+      setCategoryFormData({
+        name: '',
+        icon: 'Layers',
+        subcategories: []
+      });
+    }
+    setNewSubcategory('');
+    setShowCategoryModal(true);
+  };
+
+  // Add subcategory tag
+  const handleAddSubcategory = () => {
+    const cleanSub = newSubcategory.trim();
+    if (cleanSub && !categoryFormData.subcategories.includes(cleanSub)) {
+      setCategoryFormData(prev => ({
+        ...prev,
+        subcategories: [...prev.subcategories, cleanSub]
+      }));
+      setNewSubcategory('');
+    }
+  };
+
+  // Remove subcategory tag
+  const handleRemoveSubcategory = (subToRemove) => {
+    setCategoryFormData(prev => ({
+      ...prev,
+      subcategories: prev.subcategories.filter(s => s !== subToRemove)
+    }));
+  };
+
+  // Submit Category
+  const handleCategorySubmit = async (e) => {
+    e.preventDefault();
+    if (!categoryFormData.name.trim()) return;
+
+    try {
+      if (editingCategory) {
+        await updateCategory(editingCategory.id, categoryFormData);
+        showSuccess(`تم تحديث التصنيف "${categoryFormData.name}" بنجاح!`);
+      } else {
+        await addCategory(categoryFormData);
+        showSuccess(`تم إضافة التصنيف الجديد "${categoryFormData.name}" بنجاح!`);
+      }
+      setShowCategoryModal(false);
+      fetchDashboardData();
+    } catch (err) {
+      console.error('Category submit error:', err);
+      alert(err.response?.data?.message || 'حدث خطأ أثناء حفظ التصنيف');
+    }
+  };
+
+  // Delete Category
+  const handleDeleteCategory = async (cat) => {
+    const affectedProducts = products.filter(p => p.category === cat.name);
+    let confirmMsg = `هل أنت متأكد من حذف التصنيف "${cat.name}"؟`;
+    if (affectedProducts.length > 0) {
+      confirmMsg = `🚨 تنبيه هام: هذا التصنيف يحتوي على عدد (${affectedProducts.length}) منتج حالي بالمعرض. حذف التصنيف قد يجعل المنتجات معلّقة بدون فئة واضحة. هل أنت متأكد من الحذف نهائياً؟`;
+    }
+    
+    if (window.confirm(confirmMsg)) {
+      try {
+        await deleteCategory(cat.id);
+        showSuccess(`تم حذف التصنيف "${cat.name}" بنجاح.`);
+        fetchDashboardData();
+      } catch (err) {
+        console.error('Delete category error:', err);
+        alert(err.response?.data?.message || 'حدث خطأ أثناء الحذف');
+      }
     }
   };
 
@@ -699,6 +791,93 @@ const AdminDashboard = ({ settings, onSettingsUpdated }) => {
               </Form>
             </Card>
           </Tab>
+
+          <Tab eventKey="categories" title="إدارة تصنيفات المعرض">
+            <Card className="admin-card">
+              <div className="d-flex justify-content-between align-items-center mb-4">
+                <h4 className="fw-bold mb-0 d-flex align-items-center gap-2">
+                  <Layers className="text-warning" size={24} />
+                  إدارة التصنيفات والفئات الفرعية
+                </h4>
+                <Button 
+                  variant="warning" 
+                  className="fw-bold text-dark d-flex align-items-center gap-2"
+                  onClick={() => handleOpenCategoryModal()}
+                >
+                  <PlusCircle size={18} /> إضافة تصنيف جديد
+                </Button>
+              </div>
+
+              <div className="table-responsive">
+                <Table hover className="table-custom">
+                  <thead>
+                    <tr>
+                      <th style={{ width: '120px' }}>الأيقونة</th>
+                      <th>اسم التصنيف</th>
+                      <th>الفئات الفرعية</th>
+                      <th className="text-center" style={{ width: '200px' }}>الإجراءات</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {categories.length === 0 ? (
+                      <tr>
+                        <td colSpan="4" className="text-center py-4 text-muted">
+                          لا توجد تصنيفات حالية.
+                        </td>
+                      </tr>
+                    ) : (
+                      categories.map((cat) => (
+                        <tr key={cat.id}>
+                          <td>
+                            <Badge bg="light" className="text-dark border p-2 d-flex align-items-center justify-content-center gap-2" style={{ width: 'fit-content' }}>
+                              <Layers size={16} className="text-warning" />
+                              <code>{cat.icon || 'Layers'}</code>
+                            </Badge>
+                          </td>
+                          <td>
+                            <strong className="text-dark fs-6">{cat.name}</strong>
+                          </td>
+                          <td>
+                            <div className="d-flex flex-wrap gap-1">
+                              {cat.subcategories && cat.subcategories.length > 0 ? (
+                                cat.subcategories.map((sub, sIdx) => (
+                                  <Badge key={sIdx} bg="info" className="text-dark bg-opacity-25">
+                                    {sub}
+                                  </Badge>
+                                ))
+                              ) : (
+                                <span className="text-muted small">لا توجد فئات فرعية مضافة</span>
+                              )}
+                            </div>
+                          </td>
+                          <td>
+                            <div className="d-flex justify-content-center gap-2">
+                              <Button 
+                                size="sm" 
+                                variant="outline-primary"
+                                onClick={() => handleOpenCategoryModal(cat)}
+                                title="تعديل التصنيف والفئات الفرعية"
+                              >
+                                <Edit size={16} /> تعديل
+                              </Button>
+                              <Button 
+                                size="sm" 
+                                variant="outline-danger"
+                                onClick={() => handleDeleteCategory(cat)}
+                                title="حذف التصنيف"
+                              >
+                                <Trash2 size={16} /> حذف
+                              </Button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </Table>
+              </div>
+            </Card>
+          </Tab>
         </Tabs>
       </Container>
 
@@ -936,6 +1115,78 @@ const AdminDashboard = ({ settings, onSettingsUpdated }) => {
           <Button variant="secondary" size="sm" onClick={() => setShowPriceModal(false)}>إلغاء</Button>
           <Button variant="success" size="sm" onClick={handleSavePrice} className="px-3 fw-bold">تحديث السعر</Button>
         </Modal.Footer>
+      </Modal>
+
+      {/* Add / Edit Category Modal */}
+      <Modal show={showCategoryModal} onHide={() => setShowCategoryModal(false)} centered className="modal-luxury">
+        <Modal.Header closeButton className="bg-dark text-white border-bottom border-warning">
+          <Modal.Title className="fw-bold fs-6">
+            {editingCategory ? `تعديل التصنيف: ${editingCategory.name}` : 'إضافة تصنيف جديد للمعرض'}
+          </Modal.Title>
+        </Modal.Header>
+
+        <Form onSubmit={handleCategorySubmit}>
+          <Modal.Body className="p-3">
+            <Form.Group className="mb-3">
+              <Form.Label className="fw-bold">اسم التصنيف</Form.Label>
+              <Form.Control
+                type="text"
+                required
+                value={categoryFormData.name}
+                onChange={(e) => setCategoryFormData({ ...categoryFormData, name: e.target.value })}
+                className="custom-input"
+                placeholder="مثال: بورسلين مستورد"
+              />
+            </Form.Group>
+
+            <Form.Group className="mb-3">
+              <Form.Label className="fw-bold">الفئات الفرعية (Subcategories)</Form.Label>
+              <InputGroup className="mb-2">
+                <Form.Control
+                  type="text"
+                  value={newSubcategory}
+                  onChange={(e) => setNewSubcategory(e.target.value)}
+                  className="custom-input"
+                  placeholder="اكتب فئة فرعية واضغط إضافة (مثال: إسباني)"
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      handleAddSubcategory();
+                    }
+                  }}
+                />
+                <Button variant="warning" className="text-dark fw-bold" onClick={handleAddSubcategory}>إضافة</Button>
+              </InputGroup>
+
+              <div className="d-flex flex-wrap gap-2 mt-2 bg-light p-2 rounded border" style={{ minHeight: '50px' }}>
+                {categoryFormData.subcategories.length === 0 ? (
+                  <span className="text-muted small my-auto">لا توجد فئات فرعية مضافة حتى الآن. اكتب بالأعلى واضغط إضافة.</span>
+                ) : (
+                  categoryFormData.subcategories.map((sub, idx) => (
+                    <Badge key={idx} bg="info" className="text-dark bg-opacity-25 p-2 d-flex align-items-center gap-2">
+                      {sub}
+                      <span 
+                        style={{ cursor: 'pointer', fontWeight: 'bold' }} 
+                        className="text-danger ml-1" 
+                        onClick={() => handleRemoveSubcategory(sub)}
+                        title="إزالة"
+                      >
+                        ×
+                      </span>
+                    </Badge>
+                  ))
+                )}
+              </div>
+            </Form.Group>
+          </Modal.Body>
+
+          <Modal.Footer className="bg-light p-2">
+            <Button variant="secondary" size="sm" onClick={() => setShowCategoryModal(false)}>إلغاء</Button>
+            <Button type="submit" className="admin-btn px-4 py-2">
+              {editingCategory ? 'حفظ التعديلات' : 'إنشاء التصنيف'}
+            </Button>
+          </Modal.Footer>
+        </Form>
       </Modal>
     </div>
   );

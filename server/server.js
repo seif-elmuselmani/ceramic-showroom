@@ -290,6 +290,45 @@ app.delete(['/api/products/:id', '/products/:id'], authenticateToken, async (req
   }
 });
 
+// Add New Category
+app.post(['/api/categories', '/categories'], authenticateToken, async (req, res) => {
+  const { name, icon } = req.body;
+  if (!name || !icon) {
+    return res.status(400).json({ message: 'اسم الفئة والشعار حقول مطلوبة' });
+  }
+  try {
+    const newCategory = await db.addCategory(req.body);
+    res.status(201).json({ message: 'تم إضافة الفئة بنجاح', category: newCategory });
+  } catch (err) {
+    console.error("Failed adding category:", err);
+    res.status(500).json({ message: 'خطأ في إضافة الفئة' });
+  }
+});
+
+// Update Category
+app.put(['/api/categories/:id', '/categories/:id'], authenticateToken, async (req, res) => {
+  try {
+    const updated = await db.updateCategory(req.params.id, req.body);
+    if (!updated) return res.status(404).json({ message: 'الفئة غير موجودة' });
+    res.json({ message: 'تم تحديث الفئة بنجاح', category: updated });
+  } catch (err) {
+    console.error("Failed updating category:", err);
+    res.status(500).json({ message: 'خطأ في تحديث الفئة' });
+  }
+});
+
+// Delete Category
+app.delete(['/api/categories/:id', '/categories/:id'], authenticateToken, async (req, res) => {
+  try {
+    const success = await db.deleteCategory(req.params.id);
+    if (!success) return res.status(404).json({ message: 'الفئة غير موجودة' });
+    res.json({ message: 'تم حذف الفئة بنجاح' });
+  } catch (err) {
+    console.error("Failed deleting category:", err);
+    res.status(500).json({ message: 'خطأ في حذف الفئة' });
+  }
+});
+
 // Express Error Handling Middleware (Catches Multer / Image upload errors)
 app.use((err, req, res, next) => {
   if (err.message && err.message.includes('نوع الملف')) {
