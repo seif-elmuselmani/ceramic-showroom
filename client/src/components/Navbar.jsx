@@ -18,9 +18,13 @@ const Header = ({ settings, isAdmin, onNavigate, activeTab, onLogout }) => {
           <Navbar.Brand 
             href="#" 
             onClick={(e) => { e.preventDefault(); onNavigate('catalog'); }}
-            className="brand-logo"
+            className="brand-logo d-flex align-items-center gap-2"
           >
-            <Layers className="text-warning" size={28} />
+            <img 
+              src="/Logo.png" 
+              alt={settings?.showroomName || 'معرض السيراميك والبورسلين'} 
+              style={{ width: '45px', height: '45px', objectFit: 'cover', borderRadius: '50%', border: '2px solid var(--primary-gold)' }} 
+            />
             <div>
               <div className="fw-black">{settings?.showroomName || 'معرض السيراميك والبورسلين'}</div>
               <div style={{ fontSize: '0.7rem', fontWeight: '400', color: '#c5a059' }}>
@@ -54,7 +58,7 @@ const Header = ({ settings, isAdmin, onNavigate, activeTab, onLogout }) => {
             </Nav>
 
             <div className="d-flex align-items-center gap-2 mt-3 mt-lg-0">
-              {isAdmin ? (
+              {isAdmin && (
                 <>
                   <Button 
                     variant="outline-warning" 
@@ -73,14 +77,6 @@ const Header = ({ settings, isAdmin, onNavigate, activeTab, onLogout }) => {
                     <LogOut size={18} />
                   </Button>
                 </>
-              ) : (
-                <Button 
-                  className="admin-btn w-100 w-lg-auto"
-                  onClick={() => onNavigate('login')}
-                >
-                  <UserCheck size={18} />
-                  دخول الأدمن
-                </Button>
               )}
             </div>
           </Navbar.Collapse>

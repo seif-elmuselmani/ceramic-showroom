@@ -6,7 +6,7 @@ const ProductModal = ({ product, show, onHide, settings }) => {
   if (!product) return null;
 
   const whatsappNumber = settings?.whatsappNumber || '201000000000';
-  const messageText = `مرحباً، أرغب في الاستفسار وحجز الصنف التالي:\n- الاسم: ${product.name}\n- الكود: ${product.code}\n- السعر: ${product.price} ج.م / ${product.priceUnit || 'م2'}\n- الفئة: ${product.category}`;
+  const messageText = `مرحباً، أرغب في الاستفسار وحجز الصنف التالي:\n- الاسم: ${product.name}\n- الكود: ${product.code}\n- السعر: ${product.price} ج.م / ${product.priceUnit || 'م2'}\n- الفئة: ${product.category}${product.subcategory ? ` (${product.subcategory})` : ''}`;
   const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(messageText)}`;
 
   return (
@@ -30,10 +30,11 @@ const ProductModal = ({ product, show, onHide, settings }) => {
             </div>
           </Col>
 
-          <Col md={6} className="d-flex flex-direction-column justify-content-between">
+          <Col md={6} className="d-flex flex-column justify-content-between">
             <div>
               <div className="d-flex align-items-center gap-2 mb-2">
                 <Badge bg="warning" text="dark" className="px-3 py-2 fs-6">{product.category}</Badge>
+                {product.subcategory && <Badge bg="info" className="text-dark bg-opacity-25 px-3 py-2 fs-6">{product.subcategory}</Badge>}
                 {product.inStock ? (
                   <Badge bg="success" className="px-3 py-2 fs-6 d-flex align-items-center gap-1">
                     <CheckCircle2 size={16} /> متوفر بالمعرض

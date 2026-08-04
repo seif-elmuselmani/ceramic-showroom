@@ -14,6 +14,7 @@ const Home = ({ settings }) => {
 
   // Filters state
   const [selectedCategory, setSelectedCategory] = useState('الكل');
+  const [selectedSubcategory, setSelectedSubcategory] = useState('الكل');
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedFinish, setSelectedFinish] = useState('الكل');
   const [selectedGrade, setSelectedGrade] = useState('الكل');
@@ -29,12 +30,12 @@ const Home = ({ settings }) => {
 
   useEffect(() => {
     fetchProducts();
-  }, [selectedCategory, selectedFinish, selectedGrade]);
+  }, [selectedCategory, selectedSubcategory, selectedFinish, selectedGrade]);
 
   const fetchCategories = async () => {
     try {
       const res = await getCategories();
-      setCategories([{ id: 'all', name: 'الكل' }, ...res.data]);
+      setCategories([{ id: 'all', name: 'الكل', subcategories: [] }, ...res.data]);
     } catch (err) {
       console.error('Error fetching categories:', err);
     }
@@ -46,6 +47,7 @@ const Home = ({ settings }) => {
       setError(null);
       const params = {};
       if (selectedCategory !== 'الكل') params.category = selectedCategory;
+      if (selectedSubcategory !== 'الكل') params.subcategory = selectedSubcategory;
       if (selectedFinish !== 'الكل') params.finish = selectedFinish;
       if (selectedGrade !== 'الكل') params.grade = selectedGrade;
       
@@ -77,6 +79,9 @@ const Home = ({ settings }) => {
       if (sortBy === 'priceDesc') return b.price - a.price;
       return 0;
     });
+
+  const activeCategoryObj = categories.find(c => c.name === selectedCategory);
+  const showSubcategories = activeCategoryObj && activeCategoryObj.subcategories && activeCategoryObj.subcategories.length > 0;
 
   return (
     <div>
@@ -121,25 +126,25 @@ const Home = ({ settings }) => {
             
             <Col lg={5} className="mt-4 mt-lg-0">
               <Row className="g-3">
-                <Col sm={6}>
+                <Col xs={6} sm={6}>
                   <div className="stat-badge">
                     <div className="stat-number">+1000</div>
                     <div className="stat-label">تصميم صنف فريد بالمعرض</div>
                   </div>
                 </Col>
-                <Col sm={6}>
+                <Col xs={6} sm={6}>
                   <div className="stat-badge">
                     <div className="stat-number">100%</div>
                     <div className="stat-label">فرز أول ممتاز مضمون</div>
                   </div>
                 </Col>
-                <Col sm={6}>
+                <Col xs={6} sm={6}>
                   <div className="stat-badge">
                     <div className="stat-number">60x120</div>
                     <div className="stat-label">أحجام بورسلين عملاقة</div>
                   </div>
                 </Col>
-                <Col sm={6}>
+                <Col xs={6} sm={6}>
                   <div className="stat-badge">
                     <div className="stat-number">حاسبة</div>
                     <div className="stat-label">حساب الكراتين تلقائياً</div>
@@ -199,21 +204,49 @@ const Home = ({ settings }) => {
             </Col>
           </Row>
 
-          {/* Category Chips */}
-          <div className="d-flex flex-wrap gap-2 mt-4 pt-3 border-top">
-            <span className="text-muted fw-bold d-flex align-items-center gap-1 me-2">
+          {/* Category Chips (Horizontally scrollable on mobile for better space usage) */}
+          <div className="d-flex align-items-center mt-4 pt-3 border-top overflow-hidden">
+            <span className="text-muted fw-bold d-flex align-items-center gap-1 me-3 flex-shrink-0">
               <Layers size={18} /> الفئات:
             </span>
-            {categories.map((cat) => (
-              <button
-                key={cat.id}
-                className={`category-chip ${selectedCategory === cat.name ? 'active' : ''}`}
-                onClick={() => setSelectedCategory(cat.name)}
-              >
-                {cat.name}
-              </button>
-            ))}
+            <div className="category-scroll-container flex-grow-1">
+              {categories.map((cat) => (
+                <button
+                  key={cat.id}
+                  className={`category-chip ${selectedCategory === cat.name ? 'active' : ''}`}
+                  onClick={() => { setSelectedCategory(cat.name); setSelectedSubcategory('الكل'); }}
+                >
+                  {cat.name}
+                </button>
+              ))}
+            </div>
           </div>
+
+          {/* Subcategory Chips */}
+          {showSubcategories && (
+            <div className="d-flex align-items-center mt-3 pt-3 border-top overflow-hidden animate-fade-in">
+              <span className="text-muted fw-bold d-flex align-items-center gap-1 me-3 flex-shrink-0" style={{ fontSize: '0.9rem' }}>
+                <Sparkles size={16} className="text-warning" /> الأنواع:
+              </span>
+              <div className="category-scroll-container flex-grow-1">
+                <button
+                  className={`category-chip ${selectedSubcategory === 'الكل' ? 'active' : ''}`}
+                  onClick={() => setSelectedSubcategory('الكل')}
+                >
+                  الكل
+                </button>
+                {activeCategoryObj.subcategories.map((sub, sIdx) => (
+                  <button
+                    key={sIdx}
+                    className={`category-chip ${selectedSubcategory === sub ? 'active' : ''}`}
+                    onClick={() => setSelectedSubcategory(sub)}
+                  >
+                    {sub}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </Container>
 
@@ -246,7 +279,7 @@ const Home = ({ settings }) => {
             <p className="text-muted small">يمكنك إعادة التعيين لاستعراض باقي الأصناف والمنتجات.</p>
             <button 
               className="btn btn-outline-warning rounded-pill px-4"
-              onClick={() => { setSelectedCategory('الكل'); setSearchTerm(''); setSelectedFinish('الكل'); }}
+              onClick={() => { setSelectedCategory('الكل'); setSelectedSubcategory('الكل'); setSearchTerm(''); setSelectedFinish('الكل'); }}
             >
               عرض كافة أصناف المعرض
             </button>

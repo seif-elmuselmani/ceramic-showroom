@@ -4,22 +4,27 @@ const path = require('path');
 // Initial Default Data for Ultra-Luxury Ceramic & Porcelain Showroom (Sama & Elite Quality)
 const initialData = {
   settings: {
-    showroomName: "سما وفينيسيا الدولية للسيراميك والبورسلين",
-    tagline: "الوجهة الأولى لأرقى تشكيلات البورسلين الإسباني والإيطالي والهندي والسيراميك الفاخر",
-    whatsappNumber: "201223817860",
-    phoneNumber: "01223817860",
-    address: "القاهرة - المنطقة الأولى - شارع عباس العقاد الرئيسي",
+    showroomName: "السيد الجزار للسيراميك والبورسلين",
+    tagline: "تشطيب شقتك بيبدأ من عندنا 👌 بنوفر ليك جميع انواع السيراميك والبورسلين وأطقم الحمامات والوحدات",
+    whatsappNumber: "201001366499",
+    phoneNumber: "01001366499",
+    facebookUrl: "https://www.facebook.com/share/1DMrALiUKx/",
+    tiktokUrl: "https://www.tiktok.com/@ceramicaelgazar?_r=1&_t=ZS-98ZoTHkIMQ0",
+    mapUrl: "https://www.bing.com/maps/search?v=2&pc=FACEBK&mid=8100&mkt=en-US&FORM=FBKPL1&q=%D8%A7%D9%84%D8%B9%D9%86%D9%88%D8%A7%D9%86%3A+%D8%A8%D9%86%D9%87%D8%A7+-%D8%A8%D8%B1%D8%AC+%D8%A7%D9%84%D8%B3%D9%86%D9%87%D9%88%D9%89+%E2%80%93+%D8%A8%D8%AC%D9%88%D8%A7%D8%B1+%D9%83%D9%88%D8%A8%D8%B1%D9%8A+%D8%A7%D9%84%D8%B4%D9%85%D9%88%D8%AA%2C+Benha%2C+Egypt%2C+013&cp=30.460002%7E31.183300&lvl=13.4&style=r",
+    mapUrl1: "https://www.google.com/maps/search/?api=1&query=%D8%A8%D8%B1%D8%AC+%D8%A7%D9%84%D8%B9%D8%B7%D8%A7%D8%B1+%D9%85%D8%AF%D8%AE%D9%84+%D8%A8%D9%86%D9%87%D8%A7+%D8%A7%D9%84%D9%82%D8%A8%D9%84%D9%8A",
+    mapUrl2: "https://www.bing.com/maps/search?v=2&pc=FACEBK&mid=8100&mkt=en-US&FORM=FBKPL1&q=%D8%A7%D9%84%D8%B9%D9%86%D9%88%D8%A7%D9%86%3A+%D8%A8%D9%86%D9%87%D8%A7+-%D8%A8%D8%B1%D8%AC+%D8%A7%D9%84%D8%B3%D9%86%D9%87%D9%88%D9%89+%E2%80%93+%D8%A8%D8%AC%D9%88%D8%A7%D8%B1+%D9%83%D9%88%D8%A8%D8%B1%D9%8A+%D8%A7%D9%84%D8%B4%D9%85%D9%88%D8%AA%2C+Benha%2C+Egypt%2C+013&cp=30.460002%7E31.183300&lvl=13.4&style=r",
+    address: "فرع 1: بنها - مدخل بنها القبلي - برج العطار | فرع 2: بنها - برج السنهوي - بجوار كوبري الشموت",
     workingHours: "يومياً من 10 صباحاً حتى 11:30 مساءً",
     announcement: "✨ عروض خاصة: خصم 20% على البورسلين الهندي والإسباني 60x120 لفترة محدودة!"
   },
   categories: [
-    { id: "cat-1", name: "بورسلين مستورد", icon: "Layers" },
-    { id: "cat-2", name: "بورسلين محلي", icon: "Grid" },
-    { id: "cat-3", name: "سيراميك أرضيات", icon: "Square" },
-    { id: "cat-4", name: "سيراميك حوائط حمامات ومطابخ", icon: "Layout" },
-    { id: "cat-5", name: "رخام وجرانيت طبيعي", icon: "Box" },
-    { id: "cat-6", name: "ديكورات وموزاييك وفن", icon: "Sparkles" },
-    { id: "cat-7", name: "أطقم حمامات وخلاطات", icon: "Bath" }
+    { id: "cat-1", name: "بورسلين مستورد", icon: "Layers", subcategories: ["إسباني", "هندي", "إيطالي", "أردني"] },
+    { id: "cat-2", name: "بورسلين محلي", icon: "Grid", subcategories: ["كليوباترا", "الجوهرة", "رويال"] },
+    { id: "cat-3", name: "سيراميك أرضيات", icon: "Square", subcategories: ["باركيه خشب", "رخامي", "حجري ومط"] },
+    { id: "cat-4", name: "سيراميك حوائط حمامات ومطابخ", icon: "Layout", subcategories: ["موزاييك وديكور", "بلاطات كبيرة", "كلاسيك"] },
+    { id: "cat-5", name: "رخام وجرانيت طبيعي", icon: "Box", subcategories: ["إيطالي", "مصري طبيعي", "جرانيت مستورد"] },
+    { id: "cat-6", name: "ديكورات وموزاييك وفن", icon: "Sparkles", subcategories: ["موزاييك زجاجي", "لوحات فنية", "ستيل وإكسسوار"] },
+    { id: "cat-7", name: "أطقم حمامات وخلاطات", icon: "Bath", subcategories: ["خلاطات وحنفيات", "وحدات وأحواض", "قعدات وإكسسوارات"] }
   ],
   products: [
     {
@@ -27,6 +32,7 @@ const initialData = {
       name: "بورسلين إسباني كالاكاتا جولدن 60x120 سوبر جلوس",
       code: "ESP-CAL-60120",
       category: "بورسلين مستورد",
+      subcategory: "إسباني",
       price: 590,
       priceUnit: "متر مربع",
       boxCoverage: 1.44,
@@ -45,6 +51,7 @@ const initialData = {
       name: "بورسلين هندي خرساني رمادي داكن 80x80 مط",
       code: "IND-CONC-8080",
       category: "بورسلين مستورد",
+      subcategory: "هندي",
       price: 430,
       priceUnit: "متر مربع",
       boxCoverage: 1.92,
@@ -63,6 +70,7 @@ const initialData = {
       name: "سيراميك أرضيات باركيه أركاديا خشب داكن 20x120",
       code: "SER-PARK-DARK",
       category: "سيراميك أرضيات",
+      subcategory: "باركيه خشب",
       price: 245,
       priceUnit: "متر مربع",
       boxCoverage: 1.20,
@@ -81,6 +89,7 @@ const initialData = {
       name: "سيراميك حوائط حمامات ستاتواريو أبيض رخامي 30x90",
       code: "WALL-STAT-3090",
       category: "سيراميك حوائط حمامات ومطابخ",
+      subcategory: "بلاطات كبيرة",
       price: 260,
       priceUnit: "متر مربع",
       boxCoverage: 1.35,
@@ -99,6 +108,7 @@ const initialData = {
       name: "ديكور حوائط موزاييك ذهبي وأسود هرمي 30x30",
       code: "MOS-GOLD-3030",
       category: "ديكورات وموزاييك وفن",
+      subcategory: "موزاييك زجاجي",
       price: 320,
       priceUnit: "متر مربع",
       boxCoverage: 1.00,
@@ -117,6 +127,7 @@ const initialData = {
       name: "رخام إيطالي طبيعي بوتشينو كلاسيك 60x60",
       code: "MARB-BOT-6060",
       category: "رخام وجرانيت طبيعي",
+      subcategory: "إيطالي",
       price: 850,
       priceUnit: "متر مربع",
       boxCoverage: 1.44,
@@ -135,6 +146,7 @@ const initialData = {
       name: "بورسلين إيطالي نيرو ماركينا أسود 60x120",
       code: "POR-MARQ-BLACK",
       category: "بورسلين مستورد",
+      subcategory: "إيطالي",
       price: 640,
       priceUnit: "متر مربع",
       boxCoverage: 1.44,
@@ -153,10 +165,11 @@ const initialData = {
       name: "سيراميك مطابخ فنتج أنقرة مسدس 25x25",
       code: "SER-HEX-2525",
       category: "سيراميك حوائط حمامات ومطابخ",
+      subcategory: "موزاييك وديكور",
       price: 230,
       priceUnit: "متر مربع",
       boxCoverage: 1.00,
-      dimensions: "25x25 سم",
+      dimensions: "25x25 sm",
       finish: "مط زخرفي",
       grade: "فرز أول",
       origin: "مصر (رويال)",
@@ -165,6 +178,44 @@ const initialData = {
       featured: false,
       description: "بلاط مسدس الشكل بزخارف هندسية أندلسية كلاسيكية يناسب الديكور الكلاسيكي والمودرن.",
       image: "https://images.unsplash.com/photo-1527352726752-1903158a3745?auto=format&fit=crop&w=1000&q=80"
+    },
+    {
+      id: "prod-209",
+      name: "بورسلين أردني صخري بيج 60x60 نخب أول",
+      code: "JOR-ROCK-6060",
+      category: "بورسلين مستورد",
+      subcategory: "أردني",
+      price: 380,
+      priceUnit: "متر مربع",
+      boxCoverage: 1.44,
+      dimensions: "60x60 سم",
+      finish: "مط ملمس ناعم مقاوم للانزلاق",
+      grade: "فرز أول نخب ممتاز",
+      origin: "الأردن (معامل الخزف الأردنية)",
+      usage: "أرضيات مطابخ وحمامات، تراسات خارجية، ممرات عالية الحركة",
+      inStock: true,
+      featured: true,
+      description: "بورسلين أردني فائق الجودة ذو لون بيج صخري طبيعي دافئ. متين ومقاوم للرطوبة والأحماض ودرجات الحرارة، مناسب جداً للأماكن المفتوحة والداخلية.",
+      image: "https://images.unsplash.com/photo-1595428774223-ef52624120d2?auto=format&fit=crop&w=1000&q=80"
+    },
+    {
+      id: "prod-210",
+      name: "وحدة حوض حمام خشبية معلقة كلاسيك 80 سم مع خلاط إيطالي",
+      code: "BATH-VAN-80CLASS",
+      category: "أطقم حمامات وخلاطات",
+      subcategory: "وحدات وأحواض",
+      price: 4500,
+      priceUnit: "قطعة بالخلاط",
+      boxCoverage: 1.00,
+      dimensions: "80 سم عرض",
+      finish: "خشب معالج مقاوم للمياه دهان بولي يوريثان",
+      grade: "فرز أول ممتاز",
+      origin: "تقفيل محلي إكسسوارات مستوردة",
+      usage: "حمامات رئيسية وحمامات ضيوف",
+      inStock: true,
+      featured: true,
+      description: "وحدة حمام راقية مصنوعة من خشب MDF المعالج ضد الرطوبة والمياه. تشتمل على حوض بورسلين تركي أبيض وخلاط مياه إيطالي مطلي كروم فضي مضاد للصدأ.",
+      image: "https://images.unsplash.com/photo-1620626011761-996317b69798?auto=format&fit=crop&w=1000&q=80"
     }
   ]
 };
@@ -188,8 +239,43 @@ class JsonDatabase {
         try {
           const content = fs.readFileSync(p, 'utf8');
           memoryCache = JSON.parse(content);
-          memoryCache.settings.whatsappNumber = "201223817860";
-          memoryCache.settings.phoneNumber = "01223817860";
+          
+          let migrated = false;
+          
+          // 1. Migrate Categories
+          initialData.categories.forEach(initCat => {
+            const cachedCat = memoryCache.categories.find(c => c.id === initCat.id);
+            if (cachedCat) {
+              if (!cachedCat.subcategories || cachedCat.subcategories.length === 0) {
+                cachedCat.subcategories = initCat.subcategories;
+                migrated = true;
+              }
+            }
+          });
+          
+          // 2. Migrate Products (assign default subcategories to initial products if missing)
+          initialData.products.forEach(initProd => {
+            const cachedProd = memoryCache.products.find(p => p.id === initProd.id);
+            if (cachedProd) {
+              if (!cachedProd.subcategory) {
+                cachedProd.subcategory = initProd.subcategory;
+                migrated = true;
+              }
+            }
+          });
+
+          // Ensure any products without a subcategory have a default value
+          memoryCache.products.forEach(prod => {
+            if (!prod.subcategory) {
+              const matchedCat = initialData.categories.find(c => c.name === prod.category);
+              prod.subcategory = (matchedCat && matchedCat.subcategories && matchedCat.subcategories[0]) || '';
+              migrated = true;
+            }
+          });
+          
+          if (migrated) {
+            this.write(memoryCache);
+          }
           return;
         } catch (e) {
           console.error("Failed reading data.json, fallback to memoryCache:", e);
@@ -197,21 +283,12 @@ class JsonDatabase {
       }
     }
   }
-
   read() {
-    if (memoryCache && memoryCache.settings) {
-      memoryCache.settings.whatsappNumber = "201223817860";
-      memoryCache.settings.phoneNumber = "01223817860";
-    }
     return memoryCache;
   }
 
   write(data) {
     memoryCache = data;
-    if (memoryCache && memoryCache.settings) {
-      memoryCache.settings.whatsappNumber = "201223817860";
-      memoryCache.settings.phoneNumber = "01223817860";
-    }
     const dbPaths = [
       path.join(process.cwd(), 'server', 'data.json'),
       path.join(__dirname, 'data.json')
@@ -228,21 +305,14 @@ class JsonDatabase {
   }
 
   getSettings() {
-    const s = this.read().settings;
-    return {
-      ...s,
-      whatsappNumber: "201223817860",
-      phoneNumber: "01223817860"
-    };
+    return this.read().settings;
   }
 
   updateSettings(newSettings) {
     const db = this.read();
     db.settings = { 
       ...db.settings, 
-      ...newSettings,
-      whatsappNumber: "201223817860",
-      phoneNumber: "01223817860"
+      ...newSettings
     };
     this.write(db);
     return db.settings;

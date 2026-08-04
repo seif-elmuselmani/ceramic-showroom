@@ -8,6 +8,7 @@ import Footer from './components/Footer';
 import Home from './pages/Home';
 import AdminLogin from './pages/AdminLogin';
 import AdminDashboard from './pages/AdminDashboard';
+import Contact from './pages/Contact';
 
 import { getSettings } from './services/api';
 
@@ -15,10 +16,13 @@ function App() {
   const [activeTab, setActiveTab] = useState('catalog');
   const [isAdmin, setIsAdmin] = useState(false);
   const [settings, setSettings] = useState({
-    showroomName: 'سما وفينيسيا الدولية للسيراميك والبورسلين',
-    whatsappNumber: '201223817860',
-    phoneNumber: '01223817860',
-    address: 'القاهرة - المنطقة الأولى - شارع عباس العقاد الرئيسي',
+    showroomName: 'السيد الجزار للسيراميك والبورسلين',
+    whatsappNumber: '201001366499',
+    phoneNumber: '01001366499',
+    facebookUrl: 'https://www.facebook.com/share/1DMrALiUKx/',
+    tiktokUrl: 'https://www.tiktok.com/@ceramicaelgazar?_r=1&_t=ZS-98ZoTHkIMQ0',
+    mapUrl: 'https://www.bing.com/maps/search?v=2&pc=FACEBK&mid=8100&mkt=en-US&FORM=FBKPL1&q=%D8%A7%D9%84%D8%B9%D9%86%D9%88%D8%A7%D9%86%3A+%D8%A8%D9%86%D9%87%D8%A7+-%D8%A8%D8%B1%D8%AC+%D8%A7%D9%84%D8%B3%D9%86%D9%87%D9%88%D9%89+%E2%80%93+%D8%A8%D8%AC%D9%88%D8%A7%D8%B1+%D9%83%D9%88%D8%A8%D8%B1%D9%8A+%D8%A7%D9%84%D8%B4%D9%85%D9%88%D8%AA%2C+Benha%2C+Egypt%2C+013&cp=30.460002%7E31.183300&lvl=13.4&style=r',
+    address: 'فرع 1: بنها - مدخل بنها القبلي - برج العطار | فرع 2: بنها - برج السنهوي - بجوار كوبري الشموت',
     announcement: '✨ عروض خاصة: خصم 20% على البورسلين الهندي والإسباني 60x120 لفترة محدودة!'
   });
 
@@ -27,6 +31,14 @@ function App() {
     const token = localStorage.getItem('ceramic_admin_token');
     if (token) {
       setIsAdmin(true);
+    }
+
+    // Check if the URL has ?manage=true or hash is #admin-login to trigger secret login page
+    const queryParams = new URLSearchParams(window.location.search);
+    if (queryParams.get('manage') === 'true' || window.location.hash === '#admin-login') {
+      setActiveTab('login');
+      // Clean up URL parameters/hash to keep it hidden
+      window.history.replaceState({}, document.title, window.location.pathname);
     }
 
     fetchSettings();
@@ -46,14 +58,6 @@ function App() {
   const handleNavigate = (tab) => {
     if (tab === 'admin' && !isAdmin) {
       setActiveTab('login');
-      return;
-    }
-    if (tab === 'contact') {
-      setActiveTab('catalog');
-      setTimeout(() => {
-        const elem = document.getElementById('contact-section');
-        if (elem) elem.scrollIntoView({ behavior: 'smooth' });
-      }, 100);
       return;
     }
     setActiveTab(tab);
@@ -90,6 +94,10 @@ function App() {
           <Home settings={settings} />
         )}
 
+        {activeTab === 'contact' && (
+          <Contact settings={settings} />
+        )}
+
         {activeTab === 'login' && (
           <AdminLogin 
             onLoginSuccess={handleLoginSuccess}
@@ -123,7 +131,7 @@ function App() {
         <MessageCircle size={30} />
       </a>
 
-      <Footer settings={settings} />
+      <Footer settings={settings} onNavigate={handleNavigate} />
     </div>
   );
 }

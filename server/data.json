@@ -1,21 +1,92 @@
 {
   "settings": {
-    "showroomName": "سما وفينيسيا الدولية للسيراميك والبورسلين",
-    "tagline": "الوجهة الأولى لأرقى تشكيلات البورسلين الإسباني والإيطالي والهندي والسيراميك الفاخر",
-    "whatsappNumber": "201223817860",
-    "phoneNumber": "01223817860",
-    "address": "القاهرة - المنطقة الأولى - شارع عباس العقاد الرئيسي",
+    "showroomName": "السيد الجزار للسيراميك والبورسلين",
+    "tagline": "تشطيب شقتك بيبدأ من عندنا 👌 بنوفر ليك جميع انواع السيراميك والبورسلين وأطقم الحمامات والوحدات",
+    "whatsappNumber": "201001366499",
+    "phoneNumber": "01001366499",
+    "facebookUrl": "https://www.facebook.com/share/1DMrALiUKx/",
+    "tiktokUrl": "https://www.tiktok.com/@ceramicaelgazar?_r=1&_t=ZS-98ZoTHkIMQ0",
+    "mapUrl": "https://www.bing.com/maps/search?v=2&pc=FACEBK&mid=8100&mkt=en-US&FORM=FBKPL1&q=%D8%A7%D9%84%D8%B9%D9%86%D9%88%D8%A7%D9%86%3A+%D8%A8%D9%86%D9%87%D8%A7+-%D8%A8%D8%B1%D8%AC+%D8%A7%D9%84%D8%B3%D9%86%D9%87%D9%88%D9%89+%E2%80%93+%D8%A8%D8%AC%D9%88%D8%A7%D8%B1+%D9%83%D9%88%D8%A8%D8%B1%D9%8A+%D8%A7%D9%84%D8%B4%D9%85%D9%88%D8%AA%2C+Benha%2C+Egypt%2C+013&cp=30.460002%7E31.183300&lvl=13.4&style=r",
+    "mapUrl1": "",
+    "mapUrl2": "",
+    "address": "فرع 1: بنها - مدخل بنها القبلي - برج العطار | فرع 2: فرع 2: بنها - برج السنهوي - بجوار كوبري الشموت",
     "workingHours": "يومياً من 10 صباحاً حتى 11:30 مساءً",
-    "announcement": "✨ عروض خاصة: خصم 20% على البورسلين الهندي والإسباني 60x120 لفترة محدودة!"
+    "announcement": "✨ عروض خاصة: خصم 20% على البورسلين الهندي والإسباني 60x120 لفترة محدودة!",
+    "address1": "بنها - مدخل بنها القبلي - برج العطار",
+    "address2": "فرع 2: بنها - برج السنهوي - بجوار كوبري الشموت"
   },
   "categories": [
-    { "id": "cat-1", "name": "بورسلين مستورد", "icon": "Layers" },
-    { "id": "cat-2", "name": "بورسلين محلي", "icon": "Grid" },
-    { "id": "cat-3", "name": "سيراميك أرضيات", "icon": "Square" },
-    { "id": "cat-4", "name": "سيراميك حوائط حمامات ومطابخ", "icon": "Layout" },
-    { "id": "cat-5", "name": "رخام وجرانيت طبيعي", "icon": "Box" },
-    { "id": "cat-6", "name": "ديكورات وموزاييك وفن", "icon": "Sparkles" },
-    { "id": "cat-7", "name": "أطقم حمامات وخلاطات", "icon": "Bath" }
+    {
+      "id": "cat-1",
+      "name": "بورسلين مستورد",
+      "icon": "Layers",
+      "subcategories": [
+        "إسباني",
+        "هندي",
+        "إيطالي",
+        "أردني"
+      ]
+    },
+    {
+      "id": "cat-2",
+      "name": "بورسلين محلي",
+      "icon": "Grid",
+      "subcategories": [
+        "كليوباترا",
+        "الجوهرة",
+        "رويال"
+      ]
+    },
+    {
+      "id": "cat-3",
+      "name": "سيراميك أرضيات",
+      "icon": "Square",
+      "subcategories": [
+        "باركيه خشب",
+        "رخامي",
+        "حجري ومط"
+      ]
+    },
+    {
+      "id": "cat-4",
+      "name": "سيراميك حوائط حمامات ومطابخ",
+      "icon": "Layout",
+      "subcategories": [
+        "موزاييك وديكور",
+        "بلاطات كبيرة",
+        "كلاسيك"
+      ]
+    },
+    {
+      "id": "cat-5",
+      "name": "رخام وجرانيت طبيعي",
+      "icon": "Box",
+      "subcategories": [
+        "إيطالي",
+        "مصري طبيعي",
+        "جرانيت مستورد"
+      ]
+    },
+    {
+      "id": "cat-6",
+      "name": "ديكورات وموزاييك وفن",
+      "icon": "Sparkles",
+      "subcategories": [
+        "موزاييك زجاجي",
+        "لوحات فنية",
+        "ستيل وإكسسوار"
+      ]
+    },
+    {
+      "id": "cat-7",
+      "name": "أطقم حمامات وخلاطات",
+      "icon": "Bath",
+      "subcategories": [
+        "خلاطات وحنفيات",
+        "وحدات وأحواض",
+        "قعدات وإكسسوارات"
+      ]
+    }
   ],
   "products": [
     {
@@ -23,9 +94,9 @@
       "name": "بورسلين إسباني كالاكاتا جولدن 60x120 سوبر جلوس",
       "code": "ESP-CAL-60120",
       "category": "بورسلين مستورد",
-      "price": 590,
+      "price": 100,
       "priceUnit": "متر مربع",
-      "boxCoverage": 1.44,
+      "boxCoverage": null,
       "dimensions": "60x120 سم",
       "finish": "لامع كريستالي عاكس",
       "grade": "فرز أول ممتاز",
@@ -34,7 +105,8 @@
       "inStock": true,
       "featured": true,
       "description": "بورسلين إسباني ناصع مع عروق ذهبية ورمادية دقيقة بتقنية 3D Digital HD. مقاوم للبقع والأحماض وقطع ليزر بدون فواصل تقريباً.",
-      "image": "https://images.unsplash.com/photo-1615873968403-89e068629265?auto=format&fit=crop&w=1000&q=80"
+      "image": "https://images.unsplash.com/photo-1615873968403-89e068629265?auto=format&fit=crop&w=1000&q=80",
+      "subcategory": "إسباني"
     },
     {
       "id": "prod-202",
@@ -52,7 +124,8 @@
       "inStock": true,
       "featured": true,
       "description": "تصميم خرساني عصري يمنح المكان اتساعاً ولمسة مودرن فاخرة. مخصص للأماكن عالية الحركة.",
-      "image": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1000&q=80"
+      "image": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1000&q=80",
+      "subcategory": "هندي"
     },
     {
       "id": "prod-203",
@@ -61,7 +134,7 @@
       "category": "سيراميك أرضيات",
       "price": 245,
       "priceUnit": "متر مربع",
-      "boxCoverage": 1.20,
+      "boxCoverage": 1.2,
       "dimensions": "20x120 سم",
       "finish": "ملمس باركيه خشبي بارز",
       "grade": "فرز أول",
@@ -70,14 +143,15 @@
       "inStock": true,
       "featured": true,
       "description": "سيراميك بديل الخشب الطبيعي بعروق بارزة تمنع الانزلاق وتمنح دفئاً راقياً للديكور.",
-      "image": "https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=1000&q=80"
+      "image": "https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=1000&q=80",
+      "subcategory": "باركيه خشب"
     },
     {
       "id": "prod-204",
       "name": "سيراميك حوائط حمامات ستاتواريو أبيض رخامي 30x90",
       "code": "WALL-STAT-3090",
       "category": "سيراميك حوائط حمامات ومطابخ",
-      "price": 260,
+      "price": 200,
       "priceUnit": "متر مربع",
       "boxCoverage": 1.35,
       "dimensions": "30x90 سم",
@@ -88,7 +162,8 @@
       "inStock": true,
       "featured": false,
       "description": "بلاطات حوائط بمقاس كبير وعروق رمادية متناسقة تُعطي إحساس الرخام الطبيعي المتصل.",
-      "image": "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=1000&q=80"
+      "image": "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=1000&q=80",
+      "subcategory": "بلاطات كبيرة"
     },
     {
       "id": "prod-205",
@@ -97,7 +172,7 @@
       "category": "ديكورات وموزاييك وفن",
       "price": 320,
       "priceUnit": "متر مربع",
-      "boxCoverage": 1.00,
+      "boxCoverage": 1,
       "dimensions": "30x30 سم",
       "finish": "بريق بارز 3D",
       "grade": "فرز أول ممتاز",
@@ -106,7 +181,8 @@
       "inStock": true,
       "featured": true,
       "description": "موزاييك مطعم بجزئيات زجاجية وكريستال ذهبي يمنح لمسة فنية ساحرة للمكان.",
-      "image": "https://images.unsplash.com/photo-1565538810643-b5bdb714032a?auto=format&fit=crop&w=1000&q=80"
+      "image": "https://images.unsplash.com/photo-1565538810643-b5bdb714032a?auto=format&fit=crop&w=1000&q=80",
+      "subcategory": "موزاييك زجاجي"
     },
     {
       "id": "prod-206",
@@ -124,7 +200,8 @@
       "inStock": true,
       "featured": true,
       "description": "رخام طبيعي إيطالي مستورد بلون كريمي دافئ وعروق طبيعية لا تتكرر.",
-      "image": "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1000&q=80"
+      "image": "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1000&q=80",
+      "subcategory": "إيطالي"
     },
     {
       "id": "prod-207",
@@ -142,25 +219,65 @@
       "inStock": true,
       "featured": true,
       "description": "بورسلين أسود ملكي بعروق بيضاء كالثلج، يعطي طابع الفخامة والرقي المطلق.",
-      "image": "https://images.unsplash.com/photo-1507089947368-19c1da9775ae?auto=format&fit=crop&w=1000&q=80"
+      "image": "https://images.unsplash.com/photo-1507089947368-19c1da9775ae?auto=format&fit=crop&w=1000&q=80",
+      "subcategory": "إيطالي"
     },
     {
       "id": "prod-208",
       "name": "سيراميك مطابخ فنتج أنقرة مسدس 25x25",
-      code: "SER-HEX-2525",
-      category: "سيراميك حوائط حمامات ومطابخ",
-      price: 230,
-      priceUnit: "متر مربع",
-      boxCoverage: 1.00,
-      dimensions: "25x25 سم",
-      finish: "مط زخرفي",
-      grade: "فرز أول",
-      origin: "مصر (رويال)",
-      usage: "حوائط وأرضيات مطابخ وديكورات",
-      inStock: true,
-      featured: false,
-      description: "بلاط مسدس الشكل بزخارف هندسية أندلسية كلاسيكية يناسب الديكور الكلاسيكي والمودرن.",
-      image: "https://images.unsplash.com/photo-1527352726752-1903158a3745?auto=format&fit=crop&w=1000&q=80"
+      "code": "SER-HEX-2525",
+      "category": "سيراميك حوائط حمامات ومطابخ",
+      "price": 230,
+      "priceUnit": "متر مربع",
+      "boxCoverage": 1,
+      "dimensions": "25x25 سم",
+      "finish": "مط زخرفي",
+      "grade": "فرز أول",
+      "origin": "مصر (رويال)",
+      "usage": "حوائط وأرضيات مطابخ وديكورات",
+      "inStock": true,
+      "featured": false,
+      "description": "بلاط مسدس الشكل بزخارف هندسية أندلسية كلاسيكية يناسب الديكور الكلاسيكي والمودرن.",
+      "image": "https://images.unsplash.com/photo-1527352726752-1903158a3745?auto=format&fit=crop&w=1000&q=80",
+      "subcategory": "موزاييك وديكور"
+    },
+    {
+      "id": "prod-209",
+      "name": "بورسلين أردني صخري بيج 60x60 نخب أول",
+      "code": "JOR-ROCK-6060",
+      "category": "بورسلين مستورد",
+      "price": 380,
+      "priceUnit": "متر مربع",
+      "boxCoverage": 1.44,
+      "dimensions": "60x60 سم",
+      "finish": "مط ملمس ناعم مقاوم للانزلاق",
+      "grade": "فرز أول نخب ممتاز",
+      "origin": "الأردن (معامل الخزف الأردنية)",
+      "usage": "أرضيات مطابخ وحمامات، تراسات خارجية، ممرات عالية الحركة",
+      "inStock": true,
+      "featured": true,
+      "description": "بورسلين أردني فائق الجودة ذو لون بيج صخري طبيعي دافئ. متين ومقاوم للرطوبة والأحماض ودرجات الحرارة، مناسب جداً للأماكن المفتوحة والداخلية.",
+      "image": "https://images.unsplash.com/photo-1595428774223-ef52624120d2?auto=format&fit=crop&w=1000&q=80",
+      "subcategory": "أردني"
+    },
+    {
+      "id": "prod-210",
+      "name": "وحدة حوض حمام خشبية معلقة كلاسيك 80 سم مع خلاط إيطالي",
+      "code": "BATH-VAN-80CLASS",
+      "category": "أطقم حمامات وخلاطات",
+      "price": 4500,
+      "priceUnit": "قطعة بالخلاط",
+      "boxCoverage": 1,
+      "dimensions": "80 سم عرض",
+      "finish": "خشب معالج مقاوم للمياه دهان بولي يوريثان",
+      "grade": "فرز أول ممتاز",
+      "origin": "تقفيل محلي إكسسوارات مستوردة",
+      "usage": "حمامات رئيسية وحمامات ضيوف",
+      "inStock": true,
+      "featured": true,
+      "description": "وحدة حمام راقية مصنوعة من خشب MDF المعالج ضد الرطوبة والمياه. تشتمل على حوض بورسلين تركي أبيض وخلاط مياه إيطالي مطلي كروم فضي مضاد للصدأ.",
+      "image": "https://images.unsplash.com/photo-1620626011761-996317b69798?auto=format&fit=crop&w=1000&q=80",
+      "subcategory": "وحدات وأحواض"
     }
   ]
 }

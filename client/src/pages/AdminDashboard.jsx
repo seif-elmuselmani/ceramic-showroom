@@ -21,6 +21,7 @@ const AdminDashboard = ({ settings, onSettingsUpdated }) => {
     name: '',
     code: '',
     category: 'بورسلين مستورد',
+    subcategory: '',
     price: '',
     priceUnit: 'متر مربع',
     boxCoverage: '1.44',
@@ -42,15 +43,27 @@ const AdminDashboard = ({ settings, onSettingsUpdated }) => {
   const [newPrice, setNewPrice] = useState('');
 
   // Settings State
-  const [settingsForm, setSettingsForm] = useState(settings || {});
+  const initializeSettings = (settingsData) => {
+    if (!settingsData) return {};
+    const parts = settingsData.address?.split('|') || [];
+    const addr1 = settingsData.address1 || parts[0]?.replace(/^فرع \d+:\s*/i, '')?.trim() || '';
+    const addr2 = settingsData.address2 || parts[1]?.replace(/^فرع \d+:\s*/i, '')?.trim() || '';
+    return {
+      ...settingsData,
+      address1: addr1,
+      address2: addr2
+    };
+  };
+
+  const [settingsForm, setSettingsForm] = useState(() => initializeSettings(settings));
+
+  useEffect(() => {
+    if (settings) setSettingsForm(initializeSettings(settings));
+  }, [settings]);
 
   useEffect(() => {
     fetchDashboardData();
   }, []);
-
-  useEffect(() => {
-    if (settings) setSettingsForm(settings);
-  }, [settings]);
 
   const fetchDashboardData = async () => {
     try {
@@ -83,6 +96,7 @@ const AdminDashboard = ({ settings, onSettingsUpdated }) => {
         name: prod.name || '',
         code: prod.code || '',
         category: prod.category || 'بورسلين مستورد',
+        subcategory: prod.subcategory || '',
         price: prod.price || '',
         priceUnit: prod.priceUnit || 'متر مربع',
         boxCoverage: prod.boxCoverage || '1.44',
@@ -98,10 +112,14 @@ const AdminDashboard = ({ settings, onSettingsUpdated }) => {
       });
     } else {
       setEditingProduct(null);
+      const defaultCategory = categories[0]?.name || 'بورسلين مستورد';
+      const defaultCategoryObj = categories.find(c => c.name === defaultCategory);
+      const defaultSubcategory = defaultCategoryObj?.subcategories?.[0] || '';
       setFormData({
         name: '',
         code: 'SER-' + Math.floor(1000 + Math.random() * 9000),
-        category: categories[0]?.name || 'بورسلين مستورد',
+        category: defaultCategory,
+        subcategory: defaultSubcategory,
         price: '',
         priceUnit: 'متر مربع',
         boxCoverage: '1.44',
@@ -242,7 +260,7 @@ const AdminDashboard = ({ settings, onSettingsUpdated }) => {
         <Container>
           <div className="d-flex flex-wrap justify-content-between align-items-center gap-3">
             <div>
-              <h3 className="fw-bold mb-1 d-flex align-items-center gap-2 text-white">
+              <h3 className="fw-bold mb-1 d-flex align-items-center gap-2 text-dark">
                 <Layers className="text-warning" size={26} />
                 لوحة تحكم إدارة السيراميك والبورسلين
               </h3>
@@ -368,9 +386,10 @@ const AdminDashboard = ({ settings, onSettingsUpdated }) => {
                             <div className="flex-grow-1">
                               <h6 className="fw-bold mb-1 text-dark">{prod.name}</h6>
                               <div className="text-muted small">كود: <code>{prod.code}</code> | {prod.dimensions}</div>
-                              <div className="d-flex align-items-center gap-2 mt-1">
+                              <div className="d-flex flex-wrap align-items-center gap-2 mt-1">
                                 <Badge bg="secondary">{prod.category}</Badge>
-                                <span className="small text-muted">{prod.origin || 'مصر'}</span>
+                                {prod.subcategory && <Badge bg="info" className="text-dark bg-opacity-25" style={{ fontSize: '0.7rem' }}>{prod.subcategory}</Badge>}
+                                <span className="small text-muted">🌍 {prod.origin || 'مصر'}</span>
                               </div>
                             </div>
                           </div>
@@ -461,8 +480,11 @@ const AdminDashboard = ({ settings, onSettingsUpdated }) => {
                                 <div className="text-muted small">الكود: <code>{prod.code}</code> | المقاس: {prod.dimensions}</div>
                               </td>
                               <td>
-                                <Badge bg="secondary" className="mb-1">{prod.category}</Badge>
-                                <div className="small text-muted">🌍 {prod.origin || 'مصر'}</div>
+                                <div className="d-flex flex-column gap-1 align-items-start">
+                                  <Badge bg="secondary">{prod.category}</Badge>
+                                  {prod.subcategory && <Badge bg="info" className="text-dark bg-opacity-25" style={{ fontSize: '0.7rem' }}>{prod.subcategory}</Badge>}
+                                </div>
+                                <div className="small text-muted mt-1">🌍 {prod.origin || 'مصر'}</div>
                               </td>
                               <td>
                                 <div className="fw-bold text-success fs-5">{prod.price} ج.م</div>
@@ -572,12 +594,82 @@ const AdminDashboard = ({ settings, onSettingsUpdated }) => {
                 </Form.Group>
 
                 <Form.Group className="mb-3">
-                  <Form.Label className="fw-bold">عنوان الفرع والمعرض الرئيسي</Form.Label>
+                  <Form.Label className="fw-bold">رابط صفحة فيسبوك المعرض (Facebook Page Link)</Form.Label>
+                  <Form.Control
+                    type="url"
+                    value={settingsForm.facebookUrl || ''}
+                    onChange={(e) => setSettingsForm({ ...settingsForm, facebookUrl: e.target.value })}
+                    className="custom-input"
+                    placeholder="مثال: https://www.facebook.com/..."
+                  />
+                </Form.Group>
+
+                <Form.Group className="mb-3">
+                  <Form.Label className="fw-bold">رابط تيك توك المعرض (TikTok Profile Link)</Form.Label>
+                  <Form.Control
+                    type="url"
+                    value={settingsForm.tiktokUrl || ''}
+                    onChange={(e) => setSettingsForm({ ...settingsForm, tiktokUrl: e.target.value })}
+                    className="custom-input"
+                    placeholder="مثال: https://www.tiktok.com/@..."
+                  />
+                </Form.Group>
+
+                <Form.Group className="mb-3">
+                  <Form.Label className="fw-bold">عنوان الفرع 1 (مدخل بنها القبلي - برج العطار)</Form.Label>
                   <Form.Control
                     type="text"
-                    value={settingsForm.address || ''}
-                    onChange={(e) => setSettingsForm({ ...settingsForm, address: e.target.value })}
+                    value={settingsForm.address1 || ''}
+                    onChange={(e) => {
+                      const addr1 = e.target.value;
+                      const addr2 = settingsForm.address2 || '';
+                      setSettingsForm({ 
+                        ...settingsForm, 
+                        address1: addr1,
+                        address: `فرع 1: ${addr1} | فرع 2: ${addr2}` 
+                      });
+                    }}
                     className="custom-input"
+                  />
+                </Form.Group>
+
+                <Form.Group className="mb-3">
+                  <Form.Label className="fw-bold">عنوان الفرع 2 (برج السنهوي - كوبري الشموت)</Form.Label>
+                  <Form.Control
+                    type="text"
+                    value={settingsForm.address2 || ''}
+                    onChange={(e) => {
+                      const addr1 = settingsForm.address1 || '';
+                      const addr2 = e.target.value;
+                      setSettingsForm({ 
+                        ...settingsForm, 
+                        address2: addr2,
+                        address: `فرع 1: ${addr1} | فرع 2: ${addr2}` 
+                      });
+                    }}
+                    className="custom-input"
+                  />
+                </Form.Group>
+
+                <Form.Group className="mb-3">
+                  <Form.Label className="fw-bold">رابط الخريطة الجغرافية للفرع 1 (مدخل بنها القبلي - برج العطار)</Form.Label>
+                  <Form.Control
+                    type="url"
+                    value={settingsForm.mapUrl1 || ''}
+                    onChange={(e) => setSettingsForm({ ...settingsForm, mapUrl1: e.target.value })}
+                    className="custom-input"
+                    placeholder="مثال: https://www.google.com/maps/..."
+                  />
+                </Form.Group>
+
+                <Form.Group className="mb-3">
+                  <Form.Label className="fw-bold">رابط الخريطة الجغرافية للفرع 2 (برج السنهوي - كوبري الشموت)</Form.Label>
+                  <Form.Control
+                    type="url"
+                    value={settingsForm.mapUrl2 || ''}
+                    onChange={(e) => setSettingsForm({ ...settingsForm, mapUrl2: e.target.value })}
+                    className="custom-input"
+                    placeholder="مثال: https://www.bing.com/maps/..."
                   />
                 </Form.Group>
 
@@ -652,10 +744,31 @@ const AdminDashboard = ({ settings, onSettingsUpdated }) => {
                   <Form.Label className="fw-bold">الفئة الرئيسية</Form.Label>
                   <Form.Select
                     value={formData.category}
-                    onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                    onChange={(e) => {
+                      const newCat = e.target.value;
+                      const newCatObj = categories.find(c => c.name === newCat);
+                      const defaultSub = newCatObj?.subcategories?.[0] || '';
+                      setFormData({ ...formData, category: newCat, subcategory: defaultSub });
+                    }}
                     className="custom-input"
                   >
                     {categories.map(c => <option key={c.id} value={c.name}>{c.name}</option>)}
+                  </Form.Select>
+                </Form.Group>
+              </Col>
+
+              <Col xs={6} md={4}>
+                <Form.Group>
+                  <Form.Label className="fw-bold">الفئة الفرعية</Form.Label>
+                  <Form.Select
+                    value={formData.subcategory}
+                    onChange={(e) => setFormData({ ...formData, subcategory: e.target.value })}
+                    className="custom-input"
+                    required
+                  >
+                    {(categories.find(c => c.name === formData.category)?.subcategories || []).map((sub, sIdx) => (
+                      <option key={sIdx} value={sub}>{sub}</option>
+                    ))}
                   </Form.Select>
                 </Form.Group>
               </Col>

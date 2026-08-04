@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
@@ -5,20 +6,47 @@ const fs = require('fs');
 const jwt = require('jsonwebtoken');
 const multer = require('multer');
 const cloudinary = require('cloudinary').v2;
+const helmet = require('helmet');
+const bcrypt = require('bcryptjs');
+const rateLimit = require('express-rate-limit');
 const db = require('./db');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
-const JWT_SECRET = 'ceramic_admin_super_secret_key_2026';
+const JWT_SECRET = process.env.JWT_SECRET || 'ceramic_admin_super_secret_key_2026';
 
-// Cloudinary Configuration for User Account: dv9zhgghq
+if (!process.env.JWT_SECRET) {
+  console.warn("⚠️ WARNING: JWT_SECRET environment variable is not set. Using insecure default fallback.");
+}
+
+// Cloudinary Configuration
 cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME || 'dv9zhgghq',
-  api_key: process.env.CLOUDINARY_API_KEY || '874457588145155',
-  api_secret: process.env.CLOUDINARY_API_SECRET || 'secret'
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET
+});
+
+// Rate limiters for security
+const loginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 10, // Limit each IP to 10 login attempts per windowMs
+  message: { message: 'محاولات دخول كثيرة خاطئة، يرجى المحاولة بعد 15 دقيقة.' },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+const uploadLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000, // 1 hour
+  max: 30, // Limit each IP to 30 uploads per hour
+  message: { message: 'لقد تجاوزت الحد الأقصى لرفع الصور المسموح به في الساعة.' },
+  standardHeaders: true,
+  legacyHeaders: false,
 });
 
 // Middleware
+app.use(helmet({
+  crossOriginResourcePolicy: false, // Allow cross-origin images to load statically
+}));
 app.use(cors());
 app.use(express.json());
 
@@ -38,11 +66,25 @@ const storage = multer.diskStorage({
   },
   filename: (req, file, cb) => {
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-    const ext = path.extname(file.originalname);
-    cb(null, 'tile-' + uniqueSuffix + ext);
+    const ext = path.extname(file.originalname).toLowerCase();
+    const safeExt = ['.jpg', '.jpeg', '.png', '.webp'].includes(ext) ? ext : '.jpg';
+    cb(null, 'tile-' + uniqueSuffix + safeExt);
   }
 });
-const upload = multer({ storage });
+
+const allowedExtensions = ['.jpg', '.jpeg', '.png', '.webp'];
+const upload = multer({ 
+  storage,
+  fileFilter: (req, file, cb) => {
+    const allowedMimeTypes = ['image/jpeg', 'image/png', 'image/webp'];
+    const ext = path.extname(file.originalname).toLowerCase();
+    if (allowedMimeTypes.includes(file.mimetype) && allowedExtensions.includes(ext)) {
+      cb(null, true);
+    } else {
+      cb(new Error('نوع الملف أو الامتداد غير مدعوم! يرجى رفع صور فقط بصيغة (JPG, JPEG, PNG, WEBP)'));
+    }
+  }
+});
 
 // Auth Middleware
 const authenticateToken = (req, res, next) => {
@@ -73,10 +115,14 @@ app.get(['/api/categories', '/categories'], (req, res) => {
 // Get Products (with Search & Filters)
 app.get(['/api/products', '/products'], (req, res) => {
   let products = db.getProducts();
-  const { category, search, finish, grade, featured, inStock } = req.query;
+  const { category, subcategory, search, finish, grade, featured, inStock } = req.query;
 
   if (category && category !== 'الكل') {
     products = products.filter(p => p.category === category);
+  }
+
+  if (subcategory && subcategory !== 'الكل') {
+    products = products.filter(p => p.subcategory === subcategory);
   }
 
   if (finish && finish !== 'الكل') {
@@ -115,13 +161,29 @@ app.get(['/api/products/:id', '/products/:id'], (req, res) => {
   res.json(product);
 });
 
-// Admin Login
-app.post(['/api/admin/login', '/admin/login'], (req, res) => {
+// Admin Login (Secure with Bcrypt and Rate Limiting)
+app.post(['/api/admin/login', '/admin/login'], loginLimiter, async (req, res) => {
   const { username, password } = req.body;
-  if (username === 'admin' && password === 'admin123') {
-    const token = jwt.sign({ username: 'admin', role: 'admin' }, JWT_SECRET, { expiresIn: '24h' });
-    return res.json({ token, username: 'الأدمن الرئيسي', message: 'تم تسجيل الدخول بنجاح' });
+  const adminUser = process.env.ADMIN_USER;
+  const adminPassHash = process.env.ADMIN_PASS_HASH;
+  
+  if (!adminUser || !adminPassHash) {
+    console.error("❌ CRITICAL SECURITY ERROR: ADMIN_USER or ADMIN_PASS_HASH environment variables are not set!");
+    return res.status(500).json({ message: 'خطأ داخلي في إعدادات الأمان للخادم' });
   }
+
+  try {
+    const isUserMatch = (username === adminUser);
+    const isPasswordMatch = await bcrypt.compare(password, adminPassHash);
+
+    if (isUserMatch && isPasswordMatch) {
+      const token = jwt.sign({ username: adminUser, role: 'admin' }, JWT_SECRET, { expiresIn: '24h' });
+      return res.json({ token, username: 'الأدمن الرئيسي', message: 'تم تسجيل الدخول بنجاح' });
+    }
+  } catch (err) {
+    console.error("Authentication check failed:", err);
+  }
+
   res.status(401).json({ message: 'اسم المستخدم أو كلمة المرور غير صحيحة' });
 });
 
@@ -133,8 +195,8 @@ app.put(['/api/settings', '/settings'], authenticateToken, (req, res) => {
   res.json({ message: 'تم تحديث البيانات بنجاح', settings: updated });
 });
 
-// Upload Product Image (Integrated with Cloudinary)
-app.post(['/api/upload', '/upload'], authenticateToken, upload.single('image'), async (req, res) => {
+// Upload Product Image (Integrated with Cloudinary & Rate Limiting)
+app.post(['/api/upload', '/upload'], authenticateToken, uploadLimiter, upload.single('image'), async (req, res) => {
   if (!req.file) {
     return res.status(400).json({ message: 'لم يتم اختيار صورة' });
   }
@@ -184,6 +246,17 @@ app.delete(['/api/products/:id', '/products/:id'], authenticateToken, (req, res)
   const success = db.deleteProduct(req.params.id);
   if (!success) return res.status(404).json({ message: 'المنتج غير موجود' });
   res.json({ message: 'تم حذف المنتج بنجاح' });
+});
+
+// Express Error Handling Middleware (Catches Multer / Image upload errors)
+app.use((err, req, res, next) => {
+  if (err.message && err.message.includes('نوع الملف')) {
+    return res.status(400).json({ message: err.message });
+  }
+  if (err instanceof multer.MulterError) {
+    return res.status(400).json({ message: `خطأ في تحميل الملف: ${err.message}` });
+  }
+  res.status(500).json({ message: 'حدث خطأ داخلي في الخادم' });
 });
 
 // Only listen if executed directly

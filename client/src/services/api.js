@@ -18,6 +18,19 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+// Automatically logout on 401 or 403 token expiration/invalidity
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response && (error.response.status === 401 || error.response.status === 403)) {
+      localStorage.removeItem('ceramic_admin_token');
+      // Trigger a clean reload to sync the UI state back to public mode
+      window.location.reload();
+    }
+    return Promise.reject(error);
+  }
+);
+
 export const getSettings = () => api.get('/settings');
 export const getCategories = () => api.get('/categories');
 export const getProducts = (params) => api.get('/products', { params });
