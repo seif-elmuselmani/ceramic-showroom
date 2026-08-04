@@ -1200,3 +1200,53 @@ p, h1, h2, h3, h4, h5, h6, span, div, a {
   color: #1e293b !important;
   user-select: none !important;
 }
+
+/* Custom Switch Gold Styling */
+.custom-switch .form-check-input:checked {
+  background-color: var(--primary-gold) !important;
+  border-color: var(--primary-gold) !important;
+}
+.custom-switch .form-check-input {
+  cursor: pointer;
+}
+.custom-switch .form-check-label {
+  cursor: pointer;
+  margin-right: 8px; /* RTL spacing */
+}
+
+/* No Results Premium Card */
+.no-results-card {
+  border: 1px solid rgba(197, 160, 89, 0.15) !important;
+  background: radial-gradient(circle at top right, rgba(252, 251, 247, 0.6) 0%, #ffffff 100%) !important;
+}
+
+.no-results-bg-glow {
+  position: absolute;
+  top: -100px;
+  right: -100px;
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, rgba(197, 160, 89, 0.05) 0%, rgba(255, 255, 255, 0) 70%);
+  z-index: 0;
+  pointer-events: none;
+}
+
+.no-results-icon-wrapper {
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(197, 160, 89, 0.08);
+}
+
+.no-results-card:hover .no-results-icon-wrapper {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(197, 160, 89, 0.15);
+}
+
+.animate-bounce {
+  animation: bounce-anim 2s infinite;
+}
+
+@keyframes bounce-anim {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+

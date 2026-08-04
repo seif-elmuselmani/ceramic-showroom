@@ -19,6 +19,7 @@ const Home = ({ settings, categoryFilter = 'الكل', setCategoryFilter }) => {
   const [selectedFinish, setSelectedFinish] = useState('الكل');
   const [selectedGrade, setSelectedGrade] = useState('الكل');
   const [sortBy, setSortBy] = useState('newest');
+  const [inStockOnly, setInStockOnly] = useState(false); // In-stock only filter state
 
   // Modal States
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -35,7 +36,7 @@ const Home = ({ settings, categoryFilter = 'الكل', setCategoryFilter }) => {
 
   useEffect(() => {
     fetchProducts();
-  }, [selectedCategory, selectedSubcategory, selectedFinish, selectedGrade]);
+  }, [selectedCategory, selectedSubcategory, selectedFinish, selectedGrade, inStockOnly]);
 
   const fetchCategories = async () => {
     try {
@@ -55,6 +56,7 @@ const Home = ({ settings, categoryFilter = 'الكل', setCategoryFilter }) => {
       if (selectedSubcategory !== 'الكل') params.subcategory = selectedSubcategory;
       if (selectedFinish !== 'الكل') params.finish = selectedFinish;
       if (selectedGrade !== 'الكل') params.grade = selectedGrade;
+      if (inStockOnly) params.inStock = 'true';
       
       const res = await getProducts(params);
       setProducts(res.data);
@@ -209,6 +211,48 @@ const Home = ({ settings, categoryFilter = 'الكل', setCategoryFilter }) => {
             </Col>
           </Row>
 
+          {/* Active Filters Summary, In-Stock Toggle, & Reset Button */}
+          <div className="d-flex flex-wrap justify-content-between align-items-center mt-3 pt-3 border-top gap-3">
+            {/* Left side: Live results badge & In-stock Toggle */}
+            <div className="d-flex align-items-center gap-3 flex-wrap">
+              {/* Live Results Count Badge */}
+              <Badge bg="warning" text="dark" className="px-3 py-2 rounded-pill fw-bold fs-7 shadow-sm d-flex align-items-center gap-1">
+                <span>🔍</span>
+                <span>تم العثور على {filteredProducts.length} صنف</span>
+              </Badge>
+
+              {/* In-Stock Toggle Switch */}
+              <Form.Check 
+                type="switch"
+                id="in-stock-only-switch"
+                label="المتوفر في المخازن فقط للتسليم الفوري"
+                checked={inStockOnly}
+                onChange={(e) => setInStockOnly(e.target.checked)}
+                className="fw-bold text-dark custom-switch flex-shrink-0"
+              />
+            </div>
+
+            {/* Right side: Reset Filters Button (Appears dynamically if any filter is set) */}
+            {(selectedCategory !== 'الكل' || selectedSubcategory !== 'الكل' || selectedFinish !== 'الكل' || searchTerm !== '' || inStockOnly) && (
+              <Button 
+                variant="outline-danger" 
+                size="sm" 
+                className="d-flex align-items-center gap-1 fw-bold px-3 py-1.5 rounded-pill"
+                onClick={() => {
+                  setSelectedCategory('الكل');
+                  setSelectedSubcategory('الكل');
+                  setSelectedFinish('الكل');
+                  setSearchTerm('');
+                  setInStockOnly(false);
+                  if (setCategoryFilter) setCategoryFilter('الكل');
+                }}
+              >
+                <span>🔄</span>
+                <span>إعادة ضبط الفلاتر</span>
+              </Button>
+            )}
+          </div>
+
           {/* Category Chips (Horizontally scrollable on mobile for better space usage) */}
           <div className="d-flex align-items-center mt-4 pt-3 border-top overflow-hidden">
             <span className="text-muted fw-bold d-flex align-items-center gap-1 me-3 flex-shrink-0">
@@ -282,16 +326,31 @@ const Home = ({ settings, categoryFilter = 'الكل', setCategoryFilter }) => {
             <p className="text-muted mt-3 fw-bold">جاري استدعاء الأصناف والأسعار المحدثة...</p>
           </div>
         ) : filteredProducts.length === 0 ? (
-          <div className="text-center py-5 bg-white rounded-4 border p-5">
-            <Layers className="text-muted mb-3" size={48} />
-            <h5 className="fw-bold text-dark">لا توجد أصناف مطابقة لفلتر البحث حالياً</h5>
-            <p className="text-muted small">يمكنك إعادة التعيين لاستعراض باقي الأصناف والمنتجات.</p>
-            <button 
-              className="btn btn-outline-warning rounded-pill px-4"
-              onClick={() => { setSelectedCategory('الكل'); setSelectedSubcategory('الكل'); setSearchTerm(''); setSelectedFinish('الكل'); }}
-            >
-              عرض كافة أصناف المعرض
-            </button>
+          <div className="no-results-card text-center py-5 p-5 shadow-sm rounded-4 border bg-white position-relative overflow-hidden">
+            <div className="no-results-bg-glow"></div>
+            <div className="position-relative z-1">
+              <div className="no-results-icon-wrapper mx-auto mb-4 bg-light rounded-circle d-flex align-items-center justify-content-center" style={{ width: '80px', height: '80px' }}>
+                <Search size={36} className="text-warning animate-bounce" />
+              </div>
+              <h4 className="fw-bold text-dark mb-2">عذراً، لم نجد أي أصناف تطابق فلاتر البحث الحالية</h4>
+              <p className="text-muted mx-auto mb-4" style={{ maxWidth: '480px', fontSize: '0.9rem' }}>
+                جرب تغيير كلمات البحث، أو قم بإلغاء بعض الفلاتر النشطة لإظهار المزيد من السيراميك والبورسلين الفاخر بالمعرض.
+              </p>
+              <Button 
+                variant="warning"
+                className="px-4 py-2.5 fw-bold text-dark rounded-pill shadow-sm"
+                onClick={() => {
+                  setSelectedCategory('الكل');
+                  setSelectedSubcategory('الكل');
+                  setSelectedFinish('الكل');
+                  setSearchTerm('');
+                  setInStockOnly(false);
+                  if (setCategoryFilter) setCategoryFilter('الكل');
+                }}
+              >
+                🔄 إعادة تعيين كافة الفلاتر والبحث
+              </Button>
+            </div>
           </div>
         ) : (
           <Row className="g-4">
