@@ -1,14 +1,17 @@
 import React from 'react';
 import { Navbar, Container, Nav, Button } from 'react-bootstrap';
-import { Layers, LogOut, LayoutDashboard, UserCheck } from 'lucide-react';
+import { Layers, LogOut, LayoutDashboard, UserCheck, Megaphone } from 'lucide-react';
 
 const Header = ({ settings, isAdmin, onNavigate, activeTab, onLogout }) => {
   return (
     <header className="sticky-top">
       {/* Announcement Bar */}
       {settings?.announcement && (
-        <div className="announcement-bar">
-          <span>{settings.announcement}</span>
+        <div className="announcement-bar d-flex justify-content-center align-items-center px-3 py-2 text-center">
+          <div className="d-flex align-items-center gap-2 justify-content-center">
+            <Megaphone size={16} className="text-warning animate-pulse flex-shrink-0" />
+            <span className="announcement-text">{settings.announcement}</span>
+          </div>
         </div>
       )}
 
