@@ -1,12 +1,33 @@
 import React from 'react';
 import { Button } from 'react-bootstrap';
-import { MessageCircle, Eye, Calculator } from 'lucide-react';
+import { MessageCircle, Eye, Calculator, Share2 } from 'lucide-react';
 
 const ProductCard = ({ product, onSelectProduct, onOpenCalculator, settings }) => {
   const whatsappNumber = settings?.whatsappNumber || '201012345678';
   
   const messageText = `مرحباً، أستفسر عن صنف السيراميك/البورسلين: ${product.name} (كود: ${product.code}) - السعر: ${product.price} ج.م. هل هو متوفر المعرض حالياً؟`;
   const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(messageText)}`;
+
+  const handleShare = async (e) => {
+    e.preventDefault();
+    const shareUrl = `${window.location.origin}${window.location.pathname}?product=${product.id}`;
+    const shareData = {
+      title: product.name,
+      text: `شاهد سيراميك/بورسلين: ${product.name} (كود: ${product.code}) - في معرض السيد الجزار`,
+      url: shareUrl
+    };
+
+    try {
+      if (navigator.share) {
+        await navigator.share(shareData);
+      } else {
+        await navigator.clipboard.writeText(shareUrl);
+        alert('📋 تم نسخ رابط الصنف بنجاح! يمكنك إرساله ومشاركته الآن.');
+      }
+    } catch (err) {
+      console.error('Error sharing:', err);
+    }
+  };
 
   return (
     <div className="ceramic-card">
@@ -31,32 +52,22 @@ const ProductCard = ({ product, onSelectProduct, onOpenCalculator, settings }) =
         )}
       </div>
 
-      <div className="card-body-custom">
-        <div className="d-flex justify-content-between align-items-start mb-1">
-          <h5 className="product-title text-truncate" title={product.name}>
-            {product.name}
-          </h5>
-        </div>
-
-        <div className="text-muted small mb-2">كود: <strong>{product.code}</strong></div>
-
-        <div className="product-specs mb-3">
-          {product.dimensions && <span className="spec-pill">📐 {product.dimensions}</span>}
-          {product.finish && <span className="spec-pill">✨ {product.finish}</span>}
-          {product.grade && <span className="spec-pill">🏅 {product.grade}</span>}
+      <div className="card-body-luxury">
+        <h5 className="card-title-luxury">{product.name}</h5>
+        <div className="card-code-luxury">كود الصنف: <span>{product.code}</span></div>
+        
+        <div className="card-specs-row mb-3">
+          {product.dimensions && <span className="spec-pill">📐 {product.dimensions} سم</span>}
           {product.origin && <span className="spec-pill">🌍 {product.origin}</span>}
+          {product.finish && <span className="spec-pill">✨ {product.finish}</span>}
         </div>
 
-        <div className="mt-auto">
-          <div className="d-flex justify-content-between align-items-baseline mb-3 bg-light p-2 rounded-3 border">
-            <span className="text-muted small fw-bold">سعر المتر بالمعرض:</span>
-            <div>
-              <span className="price-tag">{product.price}</span>
-              <span className="price-unit"> ج.م/{product.priceUnit || 'م²'}</span>
-            </div>
+        <div className="card-footer-luxury">
+          <div className="price-tag-luxury">
+            <span className="price-num">{product.price}</span>
+            <span className="price-currency">ج.م / {product.priceUnit || 'م2'}</span>
           </div>
 
-          {/* Action Buttons for Mobile & Desktop */}
           <div className="d-flex gap-2 mb-2">
             <Button 
               className="btn-details flex-grow-1 d-flex align-items-center justify-content-center gap-1"
@@ -77,16 +88,28 @@ const ProductCard = ({ product, onSelectProduct, onOpenCalculator, settings }) =
             </Button>
           </div>
 
-          <a 
-            href={whatsappUrl} 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="btn-whatsapp"
-            title="تواصل مباشر عبر الواتساب"
-          >
-            <MessageCircle size={18} />
-            تواصل عبر الواتساب
-          </a>
+          <div className="d-flex gap-2">
+            <a 
+              href={whatsappUrl} 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="btn-whatsapp flex-grow-1"
+              title="تواصل مباشر عبر الواتساب"
+            >
+              <MessageCircle size={18} />
+              تواصل عبر الواتساب
+            </a>
+            
+            <Button
+              variant="outline-secondary"
+              onClick={handleShare}
+              className="d-flex align-items-center justify-content-center px-3"
+              style={{ minHeight: '44px', border: '1px solid #cbd5e1' }}
+              title="مشاركة الصنف"
+            >
+              <Share2 size={18} className="text-secondary" />
+            </Button>
+          </div>
         </div>
       </div>
     </div>

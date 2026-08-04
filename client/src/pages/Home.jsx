@@ -41,6 +41,26 @@ const Home = ({ settings, categoryFilter = 'الكل', setCategoryFilter }) => {
     fetchProducts();
   }, [selectedCategory, selectedSubcategory, selectedFinish, selectedGrade, inStockOnly]);
 
+  // Deep Link Parser: Automatically open modal if ?product=ID is present in URL
+  useEffect(() => {
+    if (products.length > 0) {
+      const queryParams = new URLSearchParams(window.location.search);
+      const productId = queryParams.get('product');
+      if (productId) {
+        const prod = products.find(p => p.id === productId || p._id === productId);
+        if (prod) {
+          setSelectedProduct(prod);
+          setTimeout(() => {
+            const grid = document.getElementById('catalog-grid');
+            if (grid) {
+              grid.scrollIntoView({ behavior: 'smooth' });
+            }
+          }, 300);
+        }
+      }
+    }
+  }, [products]);
+
   const fetchCategories = async () => {
     try {
       const res = await getCategories();

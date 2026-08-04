@@ -1,6 +1,6 @@
 import React from 'react';
 import { Modal, Button, Badge, Row, Col } from 'react-bootstrap';
-import { MessageCircle, CheckCircle2, ShieldAlert, Sparkles, MapPin, Tag } from 'lucide-react';
+import { MessageCircle, CheckCircle2, ShieldAlert, Sparkles, MapPin, Tag, Share2 } from 'lucide-react';
 
 const ProductModal = ({ product, show, onHide, settings }) => {
   if (!product) return null;
@@ -8,6 +8,26 @@ const ProductModal = ({ product, show, onHide, settings }) => {
   const whatsappNumber = settings?.whatsappNumber || '201000000000';
   const messageText = `مرحباً، أرغب في الاستفسار وحجز الصنف التالي:\n- الاسم: ${product.name}\n- الكود: ${product.code}\n- السعر: ${product.price} ج.م / ${product.priceUnit || 'م2'}\n- الفئة: ${product.category}${product.subcategory ? ` (${product.subcategory})` : ''}`;
   const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(messageText)}`;
+
+  const handleShare = async () => {
+    const shareUrl = `${window.location.origin}${window.location.pathname}?product=${product.id}`;
+    const shareData = {
+      title: product.name,
+      text: `شاهد سيراميك/بورسلين: ${product.name} (كود: ${product.code}) - في معرض السيد الجزار`,
+      url: shareUrl
+    };
+
+    try {
+      if (navigator.share) {
+        await navigator.share(shareData);
+      } else {
+        await navigator.clipboard.writeText(shareUrl);
+        alert('📋 تم نسخ رابط الصنف بنجاح! يمكنك إرساله ومشاركته الآن.');
+      }
+    } catch (err) {
+      console.error('Error sharing:', err);
+    }
+  };
 
   return (
     <Modal show={show} onHide={onHide} size="lg" centered className="modal-luxury">
