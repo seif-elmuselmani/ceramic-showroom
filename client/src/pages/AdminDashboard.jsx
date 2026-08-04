@@ -358,14 +358,25 @@ const AdminDashboard = ({ settings, onSettingsUpdated }) => {
               </h3>
               <p className="text-muted small mb-0">تعديل الأسعار وإدارة الكتالوج بسهولة من الموبايل أو اللابتوب</p>
             </div>
-            
-            <Button 
-              className="admin-btn w-100 w-md-auto d-flex align-items-center justify-content-center gap-2"
-              onClick={() => handleOpenProductModal()}
-            >
-              <PlusCircle size={20} />
-              إضافة صنف جديد للمعرض
-            </Button>
+            <div className="d-flex flex-wrap gap-2 w-100 w-md-auto">
+              <Button 
+                className="admin-btn d-flex align-items-center justify-content-center gap-2 flex-grow-1"
+                onClick={() => handleOpenProductModal()}
+              >
+                <PlusCircle size={20} />
+                إضافة صنف جديد للمعرض
+              </Button>
+              
+              <Button 
+                variant="outline-warning"
+                className="d-flex align-items-center justify-content-center gap-2 px-4 fw-bold text-dark border-warning flex-grow-1"
+                onClick={() => handleOpenCategoryModal()}
+                style={{ borderWidth: '2px' }}
+              >
+                <PlusCircle size={20} className="text-warning" />
+                إضافة تصنيف جديد
+              </Button>
+            </div>
           </div>
         </Container>
       </div>
