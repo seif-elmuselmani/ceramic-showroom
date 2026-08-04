@@ -113,38 +113,6 @@ app.get(['/api/settings', '/settings'], async (req, res) => {
   }
 });
 
-// Diagnostic Route: Test Cloudinary Upload directly on live Vercel Server
-app.get('/api/test-cloudinary', async (req, res) => {
-  try {
-    const dummyImageBase64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=";
-    const result = await cloudinary.uploader.upload(dummyImageBase64, {
-      folder: 'test_folder',
-    });
-    res.json({
-      success: true,
-      config: {
-        cloud_name: cloudinary.config().cloud_name,
-        api_key: cloudinary.config().api_key,
-        has_secret: !!cloudinary.config().api_secret,
-        secret_length: cloudinary.config().api_secret ? cloudinary.config().api_secret.length : 0
-      },
-      result
-    });
-  } catch (err) {
-    res.status(500).json({
-      success: false,
-      config: {
-        cloud_name: cloudinary.config().cloud_name,
-        api_key: cloudinary.config().api_key,
-        has_secret: !!cloudinary.config().api_secret,
-        secret_length: cloudinary.config().api_secret ? cloudinary.config().api_secret.length : 0
-      },
-      error: err.message,
-      stack: err.stack
-    });
-  }
-});
-
 // Get Categories
 app.get(['/api/categories', '/categories'], async (req, res) => {
   try {
