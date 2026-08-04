@@ -20,6 +20,8 @@ const Home = ({ settings, categoryFilter = 'الكل', setCategoryFilter }) => {
   const [selectedGrade, setSelectedGrade] = useState('الكل');
   const [sortBy, setSortBy] = useState('newest');
   const [inStockOnly, setInStockOnly] = useState(false); // In-stock only filter state
+  const [availableFinishes, setAvailableFinishes] = useState([]); // Dynamic finish options
+  const [availableGrades, setAvailableGrades] = useState([]); // Dynamic grade options
 
   // Modal States
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -27,6 +29,7 @@ const Home = ({ settings, categoryFilter = 'الكل', setCategoryFilter }) => {
 
   useEffect(() => {
     fetchCategories();
+    loadAvailableFilters();
   }, []);
 
   useEffect(() => {
@@ -44,6 +47,19 @@ const Home = ({ settings, categoryFilter = 'الكل', setCategoryFilter }) => {
       setCategories([{ id: 'all', name: 'الكل', subcategories: [] }, ...res.data]);
     } catch (err) {
       console.error('Error fetching categories:', err);
+    }
+  };
+
+  const loadAvailableFilters = async () => {
+    try {
+      const res = await getProducts(); // load all products
+      const allProds = res.data || [];
+      const finishes = [...new Set(allProds.map(p => p.finish?.trim()).filter(Boolean))];
+      setAvailableFinishes(finishes);
+      const grades = [...new Set(allProds.map(p => p.grade?.trim()).filter(Boolean))];
+      setAvailableGrades(grades);
+    } catch (err) {
+      console.error('Error loading available filters:', err);
     }
   };
 
@@ -168,14 +184,14 @@ const Home = ({ settings, categoryFilter = 'الكل', setCategoryFilter }) => {
         <div className="filter-card">
           <Row className="g-3 align-items-center">
             {/* Search Input */}
-            <Col md={5}>
+            <Col md={4}>
               <InputGroup>
                 <InputGroup.Text className="bg-light border-end-0">
                   <Search size={20} className="text-muted" />
                 </InputGroup.Text>
                 <Form.Control
                   type="text"
-                  placeholder="ابحث بالاسم، الكود (مثل ESP-CAL)، المقاس، أو بلد المنشأ..."
+                  placeholder="ابحث بالاسم، الكود، المقاس، أو بلد المنشأ..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="custom-input border-start-0"
@@ -183,22 +199,36 @@ const Home = ({ settings, categoryFilter = 'الكل', setCategoryFilter }) => {
               </InputGroup>
             </Col>
 
-            {/* Finish Filter */}
+            {/* Finish Filter (Dynamic) */}
             <Col sm={6} md={3}>
               <Form.Select 
                 value={selectedFinish}
                 onChange={(e) => setSelectedFinish(e.target.value)}
                 className="custom-input"
               >
-                <option value="الكل">جميع أنواع اللمعة والتشطيب</option>
-                <option value="لامع">لامع / كريستال عاكس</option>
-                <option value="مط">مط / مطب</option>
-                <option value="ملمس">ملمس خشب / حجر بارز</option>
+                <option value="الكل">جميع اللمعات والتشطيبات</option>
+                {availableFinishes.map((f, idx) => (
+                  <option key={idx} value={f}>{f}</option>
+                ))}
+              </Form.Select>
+            </Col>
+
+            {/* Grade Filter (Dynamic) */}
+            <Col sm={6} md={2}>
+              <Form.Select 
+                value={selectedGrade}
+                onChange={(e) => setSelectedGrade(e.target.value)}
+                className="custom-input"
+              >
+                <option value="الكل">جميع درجات الفرز</option>
+                {availableGrades.map((g, idx) => (
+                  <option key={idx} value={g}>{g}</option>
+                ))}
               </Form.Select>
             </Col>
 
             {/* Sort Dropdown */}
-            <Col sm={6} md={4}>
+            <Col sm={6} md={3}>
               <Form.Select 
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
@@ -233,7 +263,7 @@ const Home = ({ settings, categoryFilter = 'الكل', setCategoryFilter }) => {
             </div>
 
             {/* Right side: Reset Filters Button (Appears dynamically if any filter is set) */}
-            {(selectedCategory !== 'الكل' || selectedSubcategory !== 'الكل' || selectedFinish !== 'الكل' || searchTerm !== '' || inStockOnly) && (
+            {(selectedCategory !== 'الكل' || selectedSubcategory !== 'الكل' || selectedFinish !== 'الكل' || selectedGrade !== 'الكل' || searchTerm !== '' || inStockOnly) && (
               <Button 
                 variant="outline-danger" 
                 size="sm" 
@@ -242,6 +272,7 @@ const Home = ({ settings, categoryFilter = 'الكل', setCategoryFilter }) => {
                   setSelectedCategory('الكل');
                   setSelectedSubcategory('الكل');
                   setSelectedFinish('الكل');
+                  setSelectedGrade('الكل');
                   setSearchTerm('');
                   setInStockOnly(false);
                   if (setCategoryFilter) setCategoryFilter('الكل');
@@ -343,6 +374,7 @@ const Home = ({ settings, categoryFilter = 'الكل', setCategoryFilter }) => {
                   setSelectedCategory('الكل');
                   setSelectedSubcategory('الكل');
                   setSelectedFinish('الكل');
+                  setSelectedGrade('الكل');
                   setSearchTerm('');
                   setInStockOnly(false);
                   if (setCategoryFilter) setCategoryFilter('الكل');
