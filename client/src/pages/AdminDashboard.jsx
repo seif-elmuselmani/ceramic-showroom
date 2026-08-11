@@ -50,6 +50,7 @@ const AdminDashboard = ({ settings, onSettingsUpdated }) => {
   // Modal State for Quick Price Edit
   const [showPriceModal, setShowPriceModal] = useState(false);
   const [priceProduct, setPriceProduct] = useState(null);
+  const [newOriginalPrice, setNewOriginalPrice] = useState('');
   const [newPrice, setNewPrice] = useState('');
 
   // Settings State
@@ -99,21 +100,30 @@ const AdminDashboard = ({ settings, onSettingsUpdated }) => {
   };
 
   // Handle Add or Edit Open
+  // Handle Add or Edit Open
   const handleOpenProductModal = (prod = null) => {
     if (prod) {
       setEditingProduct(prod);
+      const orig = prod.originalPrice || '';
+      const prc = prod.price || '';
+      const hasDisc = orig && Number(orig) > Number(prc);
+      const discPct = hasDisc ? Math.round(((Number(orig) - Number(prc)) / Number(orig)) * 100) : '';
       setFormData({
         name: prod.name || '',
         code: prod.code || '',
         category: prod.category || 'بورسلين مستورد',
         subcategory: prod.subcategory || '',
-        price: prod.price || '',
+        originalPrice: orig,
+        discountPercent: discPct,
+        price: prc,
+        offerEndDate: prod.offerEndDate || '',
+        offerNote: prod.offerNote || prod.offerDuration || '',
         priceUnit: prod.priceUnit || 'متر مربع',
         boxCoverage: prod.boxCoverage || '1.44',
         dimensions: prod.dimensions || '',
         finish: prod.finish || 'لامع / كريستال',
-        grade: prod.grade || 'فرز أول ممتاز',
-        origin: prod.origin || 'مصر',
+        grade: prod.grade || '',
+        origin: prod.origin || '',
         usage: prod.usage || '',
         description: prod.description || '',
         image: prod.image || '',
@@ -127,24 +137,58 @@ const AdminDashboard = ({ settings, onSettingsUpdated }) => {
       const defaultSubcategory = defaultCategoryObj?.subcategories?.[0] || '';
       setFormData({
         name: '',
-        code: 'SER-' + Math.floor(1000 + Math.random() * 9000),
+        code: '',
         category: defaultCategory,
         subcategory: defaultSubcategory,
+        originalPrice: '',
+        discountPercent: '',
         price: '',
+        offerEndDate: '',
+        offerNote: '',
         priceUnit: 'متر مربع',
-        boxCoverage: '1.44',
-        dimensions: '60x120 سم',
-        finish: 'لامع / كريستال عاكس',
-        grade: 'فرز أول ممتاز',
-        origin: 'إسبانيا',
-        usage: 'أرضيات ريسبشن وصالونات',
+        boxCoverage: '',
+        dimensions: '',
+        finish: '',
+        grade: '',
+        origin: '',
+        usage: '',
         description: '',
-        image: 'https://images.unsplash.com/photo-1615873968403-89e068629265?auto=format&fit=crop&w=800&q=80',
+        image: '',
         inStock: true,
         featured: false
       });
     }
     setShowProductModal(true);
+  };
+
+  // Dual-Direction Interactive Pricing Auto-Calculator Handler
+  const handlePricingChange = (fieldName, val) => {
+    setFormData(prev => {
+      const updated = { ...prev, [fieldName]: val };
+      const orig = parseFloat(fieldName === 'originalPrice' ? val : updated.originalPrice) || 0;
+      const disc = parseFloat(fieldName === 'discountPercent' ? val : updated.discountPercent) || 0;
+      const finalPrc = parseFloat(fieldName === 'price' ? val : updated.price) || 0;
+
+      if (fieldName === 'originalPrice') {
+        if (disc > 0 && disc < 100) {
+          updated.price = Math.round(orig * (1 - disc / 100));
+        } else if (finalPrc > 0 && finalPrc < orig) {
+          updated.discountPercent = Math.round(((orig - finalPrc) / orig) * 100);
+        }
+      } else if (fieldName === 'discountPercent') {
+        if (orig > 0 && disc >= 0 && disc < 100) {
+          updated.price = Math.round(orig * (1 - disc / 100));
+        }
+      } else if (fieldName === 'price') {
+        if (orig > 0 && finalPrc > 0 && finalPrc < orig) {
+          updated.discountPercent = Math.round(((orig - finalPrc) / orig) * 100);
+        } else if (finalPrc >= orig) {
+          updated.discountPercent = 0;
+        }
+      }
+
+      return updated;
+    });
   };
 
   // Image Upload Handler
@@ -174,7 +218,9 @@ const AdminDashboard = ({ settings, onSettingsUpdated }) => {
     try {
       const payload = {
         ...formData,
+        code: formData.code?.trim() || ('SER-' + Math.floor(1000 + Math.random() * 9000)),
         price: Number(formData.price),
+        originalPrice: Number(formData.originalPrice) || 0,
         boxCoverage: Number(formData.boxCoverage) || 1.44
       };
 
@@ -196,15 +242,20 @@ const AdminDashboard = ({ settings, onSettingsUpdated }) => {
   // Quick Price Update
   const handleOpenPriceModal = (prod) => {
     setPriceProduct(prod);
-    setNewPrice(prod.price);
+    setNewOriginalPrice(prod.originalPrice || '');
+    setNewPrice(prod.price || '');
     setShowPriceModal(true);
   };
 
   const handleSavePrice = async () => {
     if (!priceProduct || !newPrice) return;
     try {
-      await updateProduct(priceProduct.id, { price: Number(newPrice) });
-      showSuccess(`تم تحديث سعر "${priceProduct.name}" إلى ${newPrice} ج.م/م² بنجاح`);
+      await updateProduct(priceProduct.id, { 
+        ...priceProduct,
+        originalPrice: Number(newOriginalPrice) || 0,
+        price: Number(newPrice) 
+      });
+      showSuccess(`تم تحديث سعر "${priceProduct.name}" بنجاح`);
       setShowPriceModal(false);
       fetchDashboardData();
     } catch (err) {
@@ -482,6 +533,8 @@ const AdminDashboard = ({ settings, onSettingsUpdated }) => {
                             <img 
                               src={prod.image} 
                               alt={prod.name} 
+                              loading="lazy"
+                              decoding="async"
                               className="rounded-3 border"
                               style={{ width: '65px', height: '65px', objectFit: 'cover' }} 
                               onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1615873968403-89e068629265?auto=format&fit=crop&w=200&q=80'; }}
@@ -500,7 +553,17 @@ const AdminDashboard = ({ settings, onSettingsUpdated }) => {
                           <div className="d-flex justify-content-between align-items-center bg-light p-2 rounded-3 mb-2 border">
                             <div>
                               <span className="small text-muted">سعر المتر: </span>
-                              <strong className="text-success fs-5">{prod.price} ج.م</strong>
+                              <strong className="text-success fs-5 ms-1">{prod.price} ج.م</strong>
+                              {prod.originalPrice && Number(prod.originalPrice) > Number(prod.price) && (
+                                <del className="small text-muted text-decoration-line-through me-1">
+                                  {prod.originalPrice} ج.م
+                                </del>
+                              )}
+                              {prod.originalPrice && Number(prod.originalPrice) > Number(prod.price) && (
+                                <span className="badge bg-danger ms-1" style={{ fontSize: '0.7rem' }}>
+                                  -{Math.round(((Number(prod.originalPrice) - Number(prod.price)) / Number(prod.originalPrice)) * 100)}%
+                                </span>
+                              )}
                             </div>
                             <Button 
                               size="sm"
@@ -573,6 +636,8 @@ const AdminDashboard = ({ settings, onSettingsUpdated }) => {
                                 <img 
                                   src={prod.image} 
                                   alt={prod.name} 
+                                  loading="lazy"
+                                  decoding="async"
                                   className="rounded-3 border"
                                   style={{ width: '60px', height: '60px', objectFit: 'cover' }} 
                                   onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1615873968403-89e068629265?auto=format&fit=crop&w=200&q=80'; }}
@@ -590,8 +655,20 @@ const AdminDashboard = ({ settings, onSettingsUpdated }) => {
                                 <div className="small text-muted mt-1">🌍 {prod.origin || 'مصر'}</div>
                               </td>
                               <td>
-                                <div className="fw-bold text-success fs-5">{prod.price} ج.م</div>
-                                <div className="small text-muted">لكل {prod.priceUnit || 'م²'}</div>
+                                <div className="d-flex align-items-baseline gap-1">
+                                  <span className="fw-bold text-success fs-5">{prod.price}</span>
+                                  <span className="small text-dark">ج.م/{prod.priceUnit || 'م²'}</span>
+                                </div>
+                                {prod.originalPrice && Number(prod.originalPrice) > Number(prod.price) && (
+                                  <div className="d-flex align-items-center gap-1">
+                                    <del className="small text-muted text-decoration-line-through opacity-75">
+                                      {prod.originalPrice} ج.م
+                                    </del>
+                                    <span className="badge bg-danger" style={{ fontSize: '0.68rem' }}>
+                                      -{Math.round(((Number(prod.originalPrice) - Number(prod.price)) / Number(prod.originalPrice)) * 100)}%
+                                    </span>
+                                  </div>
+                                )}
                               </td>
                               <td>
                                 <span className="badge bg-light text-dark border fw-bold">
@@ -905,10 +982,13 @@ const AdminDashboard = ({ settings, onSettingsUpdated }) => {
             <Row className="g-3">
               <Col md={8}>
                 <Form.Group>
-                  <Form.Label className="fw-bold">اسم الصنف</Form.Label>
+                  <Form.Label className="fw-bold">
+                    اسم الصنف <span className="text-danger">*</span>
+                  </Form.Label>
                   <Form.Control
                     type="text"
                     required
+                    placeholder="مثال: بورسلين إسباني كالاكاتا 60x120"
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     className="custom-input"
@@ -918,10 +998,12 @@ const AdminDashboard = ({ settings, onSettingsUpdated }) => {
 
               <Col md={4}>
                 <Form.Group>
-                  <Form.Label className="fw-bold">كود الصنف</Form.Label>
+                  <Form.Label className="fw-bold">
+                    كود الصنف <span className="text-muted fw-normal small">(اختياري - يولد تلقائياً)</span>
+                  </Form.Label>
                   <Form.Control
                     type="text"
-                    required
+                    placeholder="مثال: ESP-CAL-60120"
                     value={formData.code}
                     onChange={(e) => setFormData({ ...formData, code: e.target.value })}
                     className="custom-input"
@@ -931,7 +1013,9 @@ const AdminDashboard = ({ settings, onSettingsUpdated }) => {
 
               <Col xs={6} md={4}>
                 <Form.Group>
-                  <Form.Label className="fw-bold">الفئة الرئيسية</Form.Label>
+                  <Form.Label className="fw-bold">
+                    الفئة الرئيسية <span className="text-danger">*</span>
+                  </Form.Label>
                   <Form.Select
                     value={formData.category}
                     onChange={(e) => {
@@ -941,6 +1025,7 @@ const AdminDashboard = ({ settings, onSettingsUpdated }) => {
                       setFormData({ ...formData, category: newCat, subcategory: defaultSub });
                     }}
                     className="custom-input"
+                    required
                   >
                     {categories.map(c => <option key={c.id} value={c.name}>{c.name}</option>)}
                   </Form.Select>
@@ -949,13 +1034,15 @@ const AdminDashboard = ({ settings, onSettingsUpdated }) => {
 
               <Col xs={6} md={4}>
                 <Form.Group>
-                  <Form.Label className="fw-bold">الفئة الفرعية</Form.Label>
+                  <Form.Label className="fw-bold">
+                    الفئة الفرعية <span className="text-muted fw-normal small">(اختياري)</span>
+                  </Form.Label>
                   <Form.Select
                     value={formData.subcategory}
                     onChange={(e) => setFormData({ ...formData, subcategory: e.target.value })}
                     className="custom-input"
-                    required
                   >
+                    <option value="">(بدون فئة فرعية)</option>
                     {(categories.find(c => c.name === formData.category)?.subcategories || []).map((sub, sIdx) => (
                       <option key={sIdx} value={sub}>{sub}</option>
                     ))}
@@ -963,27 +1050,104 @@ const AdminDashboard = ({ settings, onSettingsUpdated }) => {
                 </Form.Group>
               </Col>
 
-              <Col xs={6} md={4}>
-                <Form.Group>
-                  <Form.Label className="fw-bold">السعر (ج.م)</Form.Label>
-                  <Form.Control
-                    type="number"
-                    required
-                    step="0.5"
-                    value={formData.price}
-                    onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-                    className="custom-input"
-                  />
-                </Form.Group>
+              {/* Pricing & Discount Card */}
+              <Col xs={12}>
+                <div className="p-3 bg-light rounded-3 border mb-1">
+                  <div className="fw-bold text-dark mb-2 d-flex align-items-center gap-2">
+                    <span>🏷️</span> تسعير الصنف ونسبة الخصم والعروض
+                  </div>
+                  <Row className="g-2 align-items-center">
+                    <Col xs={6} md={3}>
+                      <Form.Group>
+                        <Form.Label className="small fw-bold text-secondary">السعر الأساسي (قبل الخصم)</Form.Label>
+                        <Form.Control
+                          type="number"
+                          step="0.5"
+                          placeholder="مثال: 720"
+                          value={formData.originalPrice || ''}
+                          onChange={(e) => handlePricingChange('originalPrice', e.target.value)}
+                          className="custom-input bg-white"
+                        />
+                      </Form.Group>
+                    </Col>
+
+                    <Col xs={6} md={3}>
+                      <Form.Group>
+                        <Form.Label className="small fw-bold text-danger">نسبة الخصم (%)</Form.Label>
+                        <Form.Control
+                          type="number"
+                          min="0"
+                          max="99"
+                          placeholder="مثال: 15"
+                          value={formData.discountPercent || ''}
+                          onChange={(e) => handlePricingChange('discountPercent', e.target.value)}
+                          className="custom-input bg-white text-danger fw-bold"
+                        />
+                      </Form.Group>
+                    </Col>
+
+                    <Col xs={6} md={3}>
+                      <Form.Group>
+                        <Form.Label className="small fw-bold text-success">
+                          السعر النهائي <span className="text-danger">*</span>
+                        </Form.Label>
+                        <Form.Control
+                          type="number"
+                          required
+                          step="0.5"
+                          placeholder="مثال: 590"
+                          value={formData.price || ''}
+                          onChange={(e) => handlePricingChange('price', e.target.value)}
+                          className="custom-input bg-white text-success fw-bold fs-6"
+                        />
+                      </Form.Group>
+                    </Col>
+
+                    <Col xs={6} md={3}>
+                      <Form.Group>
+                        <Form.Label className="small fw-bold text-primary">تاريخ نهاية العرض (تلقائي)</Form.Label>
+                        <Form.Control
+                          type="date"
+                          value={formData.offerEndDate || ''}
+                          onChange={(e) => setFormData({ ...formData, offerEndDate: e.target.value })}
+                          className="custom-input bg-white"
+                        />
+                      </Form.Group>
+                    </Col>
+
+                    <Col xs={12} md={6} className="mt-2">
+                      <Form.Group>
+                        <Form.Label className="small fw-bold text-dark">ملاحظة/سبب العرض (اختياري)</Form.Label>
+                        <Form.Control
+                          type="text"
+                          placeholder="مثال: تصفيات الموسم الصيفي أو بمناسبة افتتاح الفرع الثاني"
+                          value={formData.offerNote || ''}
+                          onChange={(e) => setFormData({ ...formData, offerNote: e.target.value })}
+                          className="custom-input bg-white"
+                        />
+                      </Form.Group>
+                    </Col>
+                  </Row>
+
+                  {/* Auto Calculated Live Preview */}
+                  {formData.originalPrice && formData.price && Number(formData.originalPrice) > Number(formData.price) && (
+                    <div className="mt-2 p-2 bg-success bg-opacity-10 border border-success border-opacity-25 rounded-3 d-flex align-items-center justify-content-between text-success small fw-bold">
+                      <span>✨ وفرت للعميل: {(Number(formData.originalPrice) - Number(formData.price)).toLocaleString()} ج.م في المتر/الوحدة</span>
+                      <span>نسبة الخصم: {Math.round(((Number(formData.originalPrice) - Number(formData.price)) / Number(formData.originalPrice)) * 100)}%-</span>
+                    </div>
+                  )}
+                </div>
               </Col>
 
               <Col xs={6} md={4}>
                 <Form.Group>
-                  <Form.Label className="fw-bold">تغطية الكرتونة (م²)</Form.Label>
+                  <Form.Label className="fw-bold">
+                    تغطية الكرتونة (م²) <span className="text-muted fw-normal small">(اختياري)</span>
+                  </Form.Label>
                   <Form.Control
                     type="number"
                     step="0.01"
-                    required
+                    placeholder="افتراضي: 1.44"
                     value={formData.boxCoverage}
                     onChange={(e) => setFormData({ ...formData, boxCoverage: e.target.value })}
                     className="custom-input"
@@ -1107,9 +1271,22 @@ const AdminDashboard = ({ settings, onSettingsUpdated }) => {
         <Modal.Body>
           {priceProduct && (
             <div>
-              <p className="small text-muted mb-2">الصنف: <strong>{priceProduct.name}</strong></p>
-              <Form.Group>
-                <Form.Label className="fw-bold">السعر الجديد (ج.م/م²):</Form.Label>
+              <p className="small text-muted mb-3">الصنف: <strong className="text-dark">{priceProduct.name}</strong></p>
+              
+              <Form.Group className="mb-3">
+                <Form.Label className="small fw-bold text-secondary">السعر الأساسي (قبل الخصم):</Form.Label>
+                <Form.Control
+                  type="number"
+                  step="0.5"
+                  placeholder="اتركه فارغاً إن لم يكن هناك خصم"
+                  value={newOriginalPrice}
+                  onChange={(e) => setNewOriginalPrice(e.target.value)}
+                  className="custom-input text-muted"
+                />
+              </Form.Group>
+
+              <Form.Group className="mb-3">
+                <Form.Label className="small fw-bold text-success">السعر النهائي (بعد الخصم):</Form.Label>
                 <Form.Control
                   type="number"
                   step="0.5"
@@ -1119,6 +1296,12 @@ const AdminDashboard = ({ settings, onSettingsUpdated }) => {
                   autoFocus
                 />
               </Form.Group>
+
+              {newOriginalPrice && newPrice && Number(newOriginalPrice) > Number(newPrice) && (
+                <div className="p-2 bg-success bg-opacity-10 border border-success border-opacity-25 rounded-3 text-center text-success small fw-bold">
+                  ✨ خصم {Math.round(((Number(newOriginalPrice) - Number(newPrice)) / Number(newOriginalPrice)) * 100)}%- | وفرت {(Number(newOriginalPrice) - Number(newPrice)).toLocaleString()} ج.م
+                </div>
+              )}
             </div>
           )}
         </Modal.Body>

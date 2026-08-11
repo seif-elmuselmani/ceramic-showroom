@@ -57,7 +57,13 @@ if (!process.env.VERCEL && !fs.existsSync(uploadsDir)) {
     fs.mkdirSync(uploadsDir, { recursive: true });
   } catch (e) {}
 }
-app.use('/uploads', express.static(uploadsDir));
+app.use('/uploads', express.static(uploadsDir, {
+  maxAge: '30d',
+  immutable: true,
+  setHeaders: (res) => {
+    res.setHeader('Cache-Control', 'public, max-age=2592000, immutable');
+  }
+}));
 
 // Multer Storage setup
 const storage = multer.diskStorage({
@@ -128,7 +134,7 @@ app.get(['/api/categories', '/categories'], async (req, res) => {
 app.get(['/api/products', '/products'], async (req, res) => {
   try {
     let products = await db.getProducts();
-    const { category, subcategory, search, finish, grade, featured, inStock } = req.query;
+    const { category, subcategory, search, finish, grade, featured, inStock, onSale } = req.query;
 
     if (category && category !== 'الكل') {
       products = products.filter(p => p.category === category);
@@ -152,6 +158,10 @@ app.get(['/api/products', '/products'], async (req, res) => {
 
     if (inStock === 'true') {
       products = products.filter(p => p.inStock);
+    }
+
+    if (onSale === 'true') {
+      products = products.filter(p => Number(p.originalPrice) > Number(p.price));
     }
 
     if (search) {

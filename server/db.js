@@ -37,6 +37,9 @@ const initialData = {
       category: "بورسلين مستورد",
       subcategory: "إسباني",
       price: 590,
+      originalPrice: 720,
+      offerEndDate: "2026-08-31",
+      offerNote: "تصفيات المستورد",
       priceUnit: "متر مربع",
       boxCoverage: 1.44,
       dimensions: "60x120 سم",
@@ -56,6 +59,9 @@ const initialData = {
       category: "بورسلين مستورد",
       subcategory: "هندي",
       price: 430,
+      originalPrice: 500,
+      offerEndDate: "2026-08-25",
+      offerNote: "عرض الموسم الصيفي",
       priceUnit: "متر مربع",
       boxCoverage: 1.92,
       dimensions: "80x80 سم",
@@ -258,6 +264,9 @@ const ProductSchema = new mongoose.Schema({
   category: { type: String, required: true, index: true },
   subcategory: { type: String, index: true },
   price: { type: Number, required: true },
+  originalPrice: { type: Number, default: 0 },
+  offerEndDate: String,
+  offerNote: String,
   priceUnit: { type: String, default: "متر مربع" },
   boxCoverage: { type: Number, default: 1.44 },
   dimensions: String,
@@ -366,12 +375,24 @@ class JsonDatabase {
             }
           });
           
-          // 2. Migrate Products (assign default subcategories to initial products if missing)
+          // 2. Migrate Products (assign default subcategories and discounts to initial products if missing)
           initialData.products.forEach(initProd => {
             const cachedProd = memoryCache.products.find(p => p.id === initProd.id);
             if (cachedProd) {
               if (!cachedProd.subcategory) {
                 cachedProd.subcategory = initProd.subcategory;
+                migrated = true;
+              }
+              if (initProd.originalPrice && !cachedProd.originalPrice) {
+                cachedProd.originalPrice = initProd.originalPrice;
+                migrated = true;
+              }
+              if (initProd.offerEndDate && !cachedProd.offerEndDate) {
+                cachedProd.offerEndDate = initProd.offerEndDate;
+                migrated = true;
+              }
+              if (initProd.offerNote && !cachedProd.offerNote) {
+                cachedProd.offerNote = initProd.offerNote;
                 migrated = true;
               }
             }

@@ -20,6 +20,7 @@ const Home = ({ settings, categoryFilter = 'الكل', setCategoryFilter }) => {
   const [selectedGrade, setSelectedGrade] = useState('الكل');
   const [sortBy, setSortBy] = useState('newest');
   const [inStockOnly, setInStockOnly] = useState(false); // In-stock only filter state
+  const [onSaleOnly, setOnSaleOnly] = useState(false); // On-sale only filter state
   const [availableFinishes, setAvailableFinishes] = useState([]); // Dynamic finish options
   const [availableGrades, setAvailableGrades] = useState([]); // Dynamic grade options
 
@@ -39,7 +40,7 @@ const Home = ({ settings, categoryFilter = 'الكل', setCategoryFilter }) => {
 
   useEffect(() => {
     fetchProducts();
-  }, [selectedCategory, selectedSubcategory, selectedFinish, selectedGrade, inStockOnly]);
+  }, [selectedCategory, selectedSubcategory, selectedFinish, selectedGrade, inStockOnly, onSaleOnly]);
 
   // Deep Link Parser: Automatically open modal if ?product=ID is present in URL
   useEffect(() => {
@@ -93,6 +94,7 @@ const Home = ({ settings, categoryFilter = 'الكل', setCategoryFilter }) => {
       if (selectedFinish !== 'الكل') params.finish = selectedFinish;
       if (selectedGrade !== 'الكل') params.grade = selectedGrade;
       if (inStockOnly) params.inStock = 'true';
+      if (onSaleOnly) params.onSale = 'true';
       
       const res = await getProducts(params);
       setProducts(res.data);
@@ -271,23 +273,33 @@ const Home = ({ settings, categoryFilter = 'الكل', setCategoryFilter }) => {
                 <span>تم العثور على {filteredProducts.length} صنف</span>
               </Badge>
 
-              {/* In-Stock Toggle Switch */}
+              {/* In-Stock Only Toggle Switch */}
               <Form.Check 
                 type="switch"
-                id="in-stock-only-switch"
-                label="المتوفر في المخازن فقط للتسليم الفوري"
+                id="instock-toggle"
+                label="الأصناف المتوفرة بالمخزن فقط"
                 checked={inStockOnly}
                 onChange={(e) => setInStockOnly(e.target.checked)}
-                className="fw-bold text-dark custom-switch flex-shrink-0"
+                className="fw-bold text-dark cursor-pointer mb-0 me-2"
+              />
+
+              {/* On-Sale Only Toggle Switch */}
+              <Form.Check 
+                type="switch"
+                id="onsale-toggle"
+                label="🔥 عروض وخصومات حصرياً"
+                checked={onSaleOnly}
+                onChange={(e) => setOnSaleOnly(e.target.checked)}
+                className="fw-bold text-danger cursor-pointer mb-0"
               />
             </div>
 
             {/* Right side: Reset Filters Button (Appears dynamically if any filter is set) */}
-            {(selectedCategory !== 'الكل' || selectedSubcategory !== 'الكل' || selectedFinish !== 'الكل' || selectedGrade !== 'الكل' || searchTerm !== '' || inStockOnly) && (
+            {(selectedCategory !== 'الكل' || selectedSubcategory !== 'الكل' || selectedFinish !== 'الكل' || selectedGrade !== 'الكل' || searchTerm !== '' || inStockOnly || onSaleOnly) && (
               <Button 
                 variant="outline-danger" 
                 size="sm" 
-                className="d-flex align-items-center gap-1 fw-bold px-3 py-1.5 rounded-pill"
+                className="d-flex align-items-center gap-1 fw-bold px-3 py-1.5 rounded-pill shadow-sm"
                 onClick={() => {
                   setSelectedCategory('الكل');
                   setSelectedSubcategory('الكل');
@@ -295,11 +307,15 @@ const Home = ({ settings, categoryFilter = 'الكل', setCategoryFilter }) => {
                   setSelectedGrade('الكل');
                   setSearchTerm('');
                   setInStockOnly(false);
+                  setOnSaleOnly(false);
                   if (setCategoryFilter) setCategoryFilter('الكل');
                 }}
               >
-                <span>🔄</span>
-                <span>إعادة ضبط الفلاتر</span>
+                <XCircle size={16} />
+                <span>إعادة تعيين الفلاتر</span>
+                <span className="badge bg-danger text-white rounded-circle ms-1">
+                  {[selectedCategory !== 'الكل', selectedSubcategory !== 'الكل', selectedFinish !== 'الكل', selectedGrade !== 'الكل', searchTerm !== '', inStockOnly, onSaleOnly].filter(Boolean).length}
+                </span>
               </Button>
             )}
           </div>
@@ -397,6 +413,7 @@ const Home = ({ settings, categoryFilter = 'الكل', setCategoryFilter }) => {
                   setSelectedGrade('الكل');
                   setSearchTerm('');
                   setInStockOnly(false);
+                  setOnSaleOnly(false);
                   if (setCategoryFilter) setCategoryFilter('الكل');
                 }}
               >
@@ -426,6 +443,7 @@ const Home = ({ settings, categoryFilter = 'الكل', setCategoryFilter }) => {
         show={!!selectedProduct}
         onHide={() => setSelectedProduct(null)}
         settings={settings}
+        onOpenCalculator={(p) => setCalculatorProduct(p)}
       />
 
       {/* Tile & Cartons Calculator Modal */}

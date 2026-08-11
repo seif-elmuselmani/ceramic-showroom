@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Modal, Form, Row, Col, Button, Card, Badge } from 'react-bootstrap';
 import { Calculator, MessageCircle, Sparkles, Box, Check, HelpCircle } from 'lucide-react';
+import { getProductDiscount } from '../utils/discount';
 
 const TileCalculatorModal = ({ product, show, onHide, settings }) => {
   const [length, setLength] = useState('4');
@@ -24,15 +25,13 @@ const TileCalculatorModal = ({ product, show, onHide, settings }) => {
 
   // Cost Calculation
   const totalPrice = actualPurchasedMeters * product.price;
+  const { hasDiscount } = getProductDiscount(product);
+  const totalOriginalPrice = hasDiscount ? actualPurchasedMeters * Number(product.originalPrice) : 0;
+  const totalSavings = hasDiscount ? totalOriginalPrice - totalPrice : 0;
 
   const whatsappNumber = settings?.whatsappNumber || '201000000000';
-  const calculationMessage = `مرحباً، قمت بحساب كمية السيراميك المطلوبة عبر الموقع لصنف: ${product.name} (كود: ${product.code}):
-- أبعاد الغرفة: ${length} × ${width} متر
-- المساحة الصافية: ${netArea.toFixed(2)} م²
-- المساحة مع الهالك (${wastePercent}%): ${totalAreaWithWaste.toFixed(2)} م²
-- عدد الكراتين المطلوبة: ${cartonsNeeded} كرتونة (${actualPurchasedMeters.toFixed(2)} م²)
-- إجمالي التكلفة التقديرية: ${totalPrice.toFixed(2)} ج.م
-أرجو التواصل لمعاينة العينات وحجز الكمية.`;
+  const productLink = `${window.location.origin}${window.location.pathname}?product=${product.id || product._id}`;
+  const calculationMessage = `مرحباً، قمت بحساب كمية السيراميك المطلوبة عبر حاسبة المعرض لصنف:\n- الصنف: ${product.name} (كود: ${product.code})\n- أبعاد الغرفة: ${length} × ${width} متر\n- المساحة الصافية: ${netArea.toFixed(2)} م²\n- المساحة مع الهالك (${wastePercent}%): ${totalAreaWithWaste.toFixed(2)} م²\n- عدد الكراتين المطلوبة: ${cartonsNeeded} كرتونة (${actualPurchasedMeters.toFixed(2)} م²)\n- إجمالي التكلفة التقديرية: ${totalPrice.toFixed(2)} ج.م${hasDiscount ? ` (🎉 وفرت ${totalSavings.toFixed(2)} ج.م بفضل الخصم!)` : ''}\n- رابط الصنف المباشر: ${productLink}\n\nأرجو التواصل لمعاينة العينات وحجز الكمية.`;
 
   const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(calculationMessage)}`;
 
@@ -131,6 +130,11 @@ const TileCalculatorModal = ({ product, show, onHide, settings }) => {
             <Col sm={6} md={3}>
               <div className="text-muted small">التكلفة التقديرية الإجمالية</div>
               <div className="fs-3 fw-bold text-success">{totalPrice.toFixed(2)} <span className="fs-6">ج.م</span></div>
+              {hasDiscount && (
+                <div className="badge bg-success bg-opacity-25 text-warning border border-warning border-opacity-50 mt-1 px-2 py-1" style={{ fontSize: '0.7rem' }}>
+                  🎉 وفرت {totalSavings.toFixed(0)} ج.م!
+                </div>
+              )}
             </Col>
           </Row>
         </Card>

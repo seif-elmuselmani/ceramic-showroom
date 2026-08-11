@@ -1,16 +1,20 @@
 import React from 'react';
 import { Button } from 'react-bootstrap';
-import { MessageCircle, Eye, Calculator, Share2 } from 'lucide-react';
+import { MessageCircle, Eye } from 'lucide-react';
+import { getProductDiscount } from '../utils/discount';
 
 const ProductCard = ({ product, onSelectProduct, onOpenCalculator, settings }) => {
   const whatsappNumber = settings?.whatsappNumber || '201012345678';
   
-  const messageText = `مرحباً، أستفسر عن صنف السيراميك/البورسلين: ${product.name} (كود: ${product.code}) - السعر: ${product.price} ج.م. هل هو متوفر المعرض حالياً؟`;
+  const productLink = `${window.location.origin}${window.location.pathname}?product=${product.id || product._id}`;
+  const messageText = `مرحباً، أستفسر عن صنف السيراميك/البورسلين:\n- الاسم: ${product.name}\n- الكود: ${product.code}\n- السعر: ${product.price} ج.م / ${product.priceUnit || 'م2'}\n- رابط الصنف: ${productLink}\n\nهل الصنف متوفر في المعرض حالياً؟`;
   const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(messageText)}`;
+
+  const [copiedToast, setCopiedToast] = React.useState(false);
 
   const handleShare = async (e) => {
     e.preventDefault();
-    const shareUrl = `${window.location.origin}${window.location.pathname}?product=${product.id}`;
+    const shareUrl = `${window.location.origin}${window.location.pathname}?product=${product.id || product._id}`;
     const shareData = {
       title: product.name,
       text: `شاهد سيراميك/بورسلين: ${product.name} (كود: ${product.code}) - في معرض السيد الجزار`,
@@ -22,93 +26,131 @@ const ProductCard = ({ product, onSelectProduct, onOpenCalculator, settings }) =
         await navigator.share(shareData);
       } else {
         await navigator.clipboard.writeText(shareUrl);
-        alert('📋 تم نسخ رابط الصنف بنجاح! يمكنك إرساله ومشاركته الآن.');
+        setCopiedToast(true);
+        setTimeout(() => setCopiedToast(false), 3200);
       }
     } catch (err) {
       console.error('Error sharing:', err);
     }
   };
 
+  const { hasDiscount, discountPercent, savingsAmount, durationText } = getProductDiscount(product);
+
+  // Clean origin & finish for card snippet safely
+  const cleanOrigin = product.origin ? product.origin.split(' ')[0].replace(/[\(\)]/g, '') : '';
+  const cleanFinish = product.finish ? product.finish.split('/')[0].trim() : '';
+
+  const specsList = [];
+  if (product.dimensions) specsList.push(`📐 ${product.dimensions}`);
+  if (cleanOrigin) specsList.push(`🌍 ${cleanOrigin}`);
+  if (cleanFinish) specsList.push(`✨ ${cleanFinish}`);
+
   return (
-    <div className="ceramic-card">
-      <div className="card-img-wrapper">
+    <div className={`ceramic-card position-relative ${hasDiscount ? 'on-sale-card' : ''}`}>
+      {copiedToast && (
+        <div 
+          className="position-absolute top-0 start-50 translate-middle-x mt-2 px-3 py-1.5 rounded-pill shadow-lg text-white small fw-bold d-flex align-items-center gap-1 border border-warning"
+          style={{ zIndex: 10, background: '#0f172a', fontSize: '0.8rem' }}
+        >
+          <span>📋</span> تم نسخ رابط الصنف بنجاح!
+        </div>
+      )}
+
+      <div className="card-img-wrapper position-relative">
         <img 
-          src={product.image || 'https://images.unsplash.com/photo-1615873968403-89e068629265?auto=format&fit=crop&w=600&q=80'} 
+          src={
+            product.image 
+              ? (product.image.includes('images.unsplash.com') && !product.image.includes('w=') 
+                  ? `${product.image}&auto=format&fit=crop&w=500&q=75` 
+                  : product.image)
+              : 'https://images.unsplash.com/photo-1615873968403-89e068629265?auto=format&fit=crop&w=500&q=75'
+          } 
           alt={product.name} 
-          onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1615873968403-89e068629265?auto=format&fit=crop&w=600&q=80'; }}
+          loading="lazy"
+          decoding="async"
+          onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1615873968403-89e068629265?auto=format&fit=crop&w=500&q=75'; }}
         />
+        
+        {/* Category Badge Top-Right */}
         <div className="card-badge">{product.category}</div>
         
-        {product.inStock ? (
-          <span className="stock-badge bg-success text-white">متوفر بالمخزن</span>
-        ) : (
-          <span className="stock-badge bg-danger text-white">غير متوفر حالياً</span>
-        )}
-
-        {product.featured && (
-          <span style={{ position: 'absolute', bottom: '8px', right: '8px', background: '#d97706', color: '#fff', fontSize: '0.7rem', padding: '2px 8px', borderRadius: '8px', fontWeight: 'bold' }}>
-            🔥 صنف مميز
-          </span>
+        {/* Glowing Discount Badge Ribbon Top-Left */}
+        {hasDiscount && (
+          <div className="discount-ribbon-tag shadow-sm">
+            <span className="ribbon-fire">🔥</span>
+            <span>خصم {discountPercent}%</span>
+          </div>
         )}
       </div>
 
-      <div className="card-body-luxury">
-        <h5 className="card-title-luxury">{product.name}</h5>
-        <div className="card-code-luxury">كود الصنف: <span>{product.code}</span></div>
-        
-        <div className="card-specs-row mb-3">
-          {product.dimensions && <span className="spec-pill">📐 {product.dimensions} سم</span>}
-          {product.origin && <span className="spec-pill">🌍 {product.origin}</span>}
-          {product.finish && <span className="spec-pill">✨ {product.finish}</span>}
+      <div className="card-body-luxury d-flex flex-column justify-content-between p-3">
+        <div>
+          <h5 className="card-title-luxury text-truncate mb-2" title={product.name}>{product.name}</h5>
+          
+          {/* Dynamic Minimalist Specs Line */}
+          {specsList.length > 0 && (
+            <div className="minimal-specs-line text-muted small mb-3 text-truncate">
+              {specsList.join('  •  ')}
+            </div>
+          )}
         </div>
 
-        <div className="card-footer-luxury">
-          <div className="price-tag-luxury">
-            <span className="price-num">{product.price}</span>
-            <span className="price-currency">ج.م / {product.priceUnit || 'م2'}</span>
+        <div className="card-footer-luxury mt-auto pt-2 border-top">
+          {/* Price & Offer Block matching Client Screenshot */}
+          <div className="price-tag-luxury mb-2">
+            <div className="d-flex align-items-center gap-2 flex-wrap mb-1">
+              <span className="fs-3 fw-black text-dark">{product.price.toLocaleString()}</span>
+              <span className="small fw-bold text-muted">ج.م / {product.priceUnit || 'م2'}</span>
+              
+              {hasDiscount && (
+                <del className="text-muted small text-decoration-line-through me-1">
+                  {product.originalPrice.toLocaleString()} ج.م
+                </del>
+              )}
+
+              {hasDiscount && (
+                <span className="badge-pink-discount">-{discountPercent}%</span>
+              )}
+            </div>
+
+            {hasDiscount && (
+              <div className="d-flex align-items-center gap-2 mt-1.5 flex-wrap">
+                <span className="pill-savings-green">
+                  وفرت {savingsAmount.toLocaleString()} جنيه
+                </span>
+                {durationText && (
+                  <span className="pill-duration-yellow">
+                    ⏰ {durationText}
+                  </span>
+                )}
+              </div>
+            )}
           </div>
 
-          <div className="d-flex gap-2 mb-2">
+          {/* Minimal 2 Action Buttons */}
+          <div className="d-flex gap-2 align-items-center">
             <Button 
-              className="btn-details flex-grow-1 d-flex align-items-center justify-content-center gap-1"
+              variant="outline-dark"
+              className="btn-details-minimal flex-grow-1 flex-shrink-0 text-nowrap d-flex align-items-center justify-content-center gap-1.5 rounded-3 px-2.5 fw-bold"
               onClick={() => onSelectProduct(product)}
+              title="عرض التفاصيل والحساب"
+              style={{ minHeight: '44px' }}
             >
-              <Eye size={15} />
-              التفاصيل
+              <Eye size={16} className="flex-shrink-0" />
+              <span>التفاصيل</span>
             </Button>
 
-            <Button 
-              variant="outline-warning"
-              className="btn-details flex-grow-1 d-flex align-items-center justify-content-center gap-1 fw-bold text-dark border-warning"
-              onClick={() => onOpenCalculator(product)}
-              title="احسب الأمتار والكراتين"
-            >
-              <Calculator size={15} />
-              احسب الأمتار
-            </Button>
-          </div>
-
-          <div className="d-flex gap-2">
             <a 
               href={whatsappUrl} 
               target="_blank" 
               rel="noopener noreferrer"
-              className="btn-whatsapp flex-grow-1"
+              className="btn-whatsapp flex-grow-1 text-nowrap d-flex align-items-center justify-content-center gap-1.5 rounded-3 text-white fw-bold text-decoration-none px-2"
               title="تواصل مباشر عبر الواتساب"
+              style={{ minHeight: '44px' }}
             >
-              <MessageCircle size={18} />
-              تواصل عبر الواتساب
+              <MessageCircle size={18} className="flex-shrink-0" />
+              <span className="btn-wa-text">تواصل واتساب</span>
             </a>
-            
-            <Button
-              variant="outline-secondary"
-              onClick={handleShare}
-              className="d-flex align-items-center justify-content-center px-3"
-              style={{ minHeight: '44px', border: '1px solid #cbd5e1' }}
-              title="مشاركة الصنف"
-            >
-              <Share2 size={18} className="text-secondary" />
-            </Button>
           </div>
         </div>
       </div>

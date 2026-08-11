@@ -101,9 +101,61 @@
       "subcategories": [
         "اسباني"
       ]
+    },
+    {
+      "id": "cat-1785956153839",
+      "name": "Test",
+      "icon": "Layers",
+      "subcategories": []
     }
   ],
   "products": [
+    {
+      "id": "prod-1785959989425",
+      "inStock": true,
+      "featured": false,
+      "priceUnit": "متر مربع",
+      "boxCoverage": 1.44,
+      "name": "TEST2",
+      "code": "",
+      "category": "سيراميك أرضيات",
+      "subcategory": "باركيه خشب",
+      "originalPrice": 0,
+      "discountPercent": 0,
+      "price": 700,
+      "offerEndDate": "",
+      "offerNote": "",
+      "dimensions": "",
+      "finish": "",
+      "grade": "",
+      "origin": "",
+      "usage": "",
+      "description": "",
+      "image": ""
+    },
+    {
+      "id": "prod-1785959695213",
+      "inStock": true,
+      "featured": false,
+      "priceUnit": "متر مربع",
+      "boxCoverage": 1.44,
+      "name": "Test",
+      "code": "SER-8141",
+      "category": "بورسلين محلي",
+      "subcategory": "كليوباترا",
+      "originalPrice": 0,
+      "discountPercent": 0,
+      "price": 500,
+      "offerEndDate": "",
+      "offerNote": "",
+      "dimensions": "60x120 سم",
+      "finish": "لامع / كريستال عاكس",
+      "grade": "فرز أول ممتاز",
+      "origin": "إسبانيا",
+      "usage": "أرضيات ريسبشن وصالونات",
+      "description": "",
+      "image": "https://images.unsplash.com/photo-1615873968403-89e068629265?auto=format&fit=crop&w=800&q=80"
+    },
     {
       "id": "prod-201",
       "name": "بورسلين إسباني كالاكاتا جولدن 60x120 سوبر جلوس",
@@ -121,7 +173,11 @@
       "featured": true,
       "description": "بورسلين إسباني ناصع مع عروق ذهبية ورمادية دقيقة بتقنية 3D Digital HD. مقاوم للبقع والأحماض وقطع ليزر بدون فواصل تقريباً.",
       "image": "https://images.unsplash.com/photo-1615873968403-89e068629265?auto=format&fit=crop&w=1000&q=80",
-      "subcategory": "إسباني"
+      "subcategory": "إسباني",
+      "originalPrice": 720,
+      "offerDuration": "عرض خاص حتى نهاية الشهر",
+      "offerEndDate": "2026-08-31",
+      "offerNote": "تصفيات المستورد"
     },
     {
       "id": "prod-202",
@@ -140,7 +196,11 @@
       "featured": true,
       "description": "تصميم خرساني عصري يمنح المكان اتساعاً ولمسة مودرن فاخرة. مخصص للأماكن عالية الحركة.",
       "image": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1000&q=80",
-      "subcategory": "هندي"
+      "subcategory": "هندي",
+      "originalPrice": 500,
+      "offerDuration": "خصم 14% بمناسبة الموسم",
+      "offerEndDate": "2026-08-25",
+      "offerNote": "عرض الموسم الصيفي"
     },
     {
       "id": "prod-203",
