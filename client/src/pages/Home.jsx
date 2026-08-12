@@ -6,7 +6,7 @@ import ProductModal from '../components/ProductModal';
 import TileCalculatorModal from '../components/TileCalculatorModal';
 import { getProducts, getCategories, getBrands } from '../services/api';
 
-const Home = ({ settings, categoryFilter = 'الكل', setCategoryFilter }) => {
+const Home = ({ settings, categoryFilter = 'الكل', setCategoryFilter, mode = 'catalog' }) => {
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
