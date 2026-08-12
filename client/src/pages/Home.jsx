@@ -104,11 +104,6 @@ const Home = ({ settings, categoryFilter = 'الكل', setCategoryFilter, mode =
     .filter(p => {
       try {
         if (!p || typeof p !== 'object') return false;
-        
-        // Mode Featured Filter (If mode === 'featured', show featured items or all latest items)
-        if (mode === 'featured' && !p.featured && !p.onSale) {
-          // If in featured mode, prioritize featured/new items
-        }
 
         // 1. Category Filter
         if (selectedCategory !== 'الكل' && safeStr(p.category) !== selectedCategory) {
@@ -184,10 +179,15 @@ const Home = ({ settings, categoryFilter = 'الكل', setCategoryFilter, mode =
       }
     })
     .sort((a, b) => {
-      const priceA = Number(a?.price) || 0;
-      const priceB = Number(b?.price) || 0;
-      if (sortBy === 'priceAsc') return priceA - priceB;
-      if (sortBy === 'priceDesc') return priceB - priceA;
+      if (sortBy === 'priceAsc') return (Number(a?.price) || 0) - (Number(b?.price) || 0);
+      if (sortBy === 'priceDesc') return (Number(b?.price) || 0) - (Number(a?.price) || 0);
+      
+      if (mode === 'featured') {
+        // Dynamic Multi-Factor Ranking Engine for scalable MongoDB/Database products
+        const scoreA = (a?.featured ? 100000 : 0) + (Number(a?.originalPrice) > Number(a?.price) ? 50000 : 0) + (a?.createdAt ? new Date(a.createdAt).getTime() : 0);
+        const scoreB = (b?.featured ? 100000 : 0) + (Number(b?.originalPrice) > Number(b?.price) ? 50000 : 0) + (b?.createdAt ? new Date(b.createdAt).getTime() : 0);
+        if (scoreA !== scoreB) return scoreB - scoreA;
+      }
       return 0;
     });
 
@@ -249,24 +249,28 @@ const Home = ({ settings, categoryFilter = 'الكل', setCategoryFilter, mode =
               <Row className="g-3">
                 <Col xs={6} sm={6}>
                   <div className="stat-badge">
+                    <Sparkles size={24} className="text-warning mb-1 opacity-90" />
                     <div className="stat-number">+1000</div>
                     <div className="stat-label">تصميم صنف فريد بالمعرض</div>
                   </div>
                 </Col>
                 <Col xs={6} sm={6}>
                   <div className="stat-badge">
+                    <CheckCircle2 size={24} className="text-warning mb-1 opacity-90" />
                     <div className="stat-number">100%</div>
                     <div className="stat-label">فرز أول ممتاز مضمون</div>
                   </div>
                 </Col>
                 <Col xs={6} sm={6}>
                   <div className="stat-badge">
+                    <Award size={24} className="text-warning mb-1 opacity-90" />
                     <div className="stat-number">60x120</div>
                     <div className="stat-label">أحجام بورسلين عملاقة</div>
                   </div>
                 </Col>
                 <Col xs={6} sm={6}>
                   <div className="stat-badge">
+                    <Calculator size={24} className="text-warning mb-1 opacity-90" />
                     <div className="stat-number">حاسبة</div>
                     <div className="stat-label">حساب الكراتين تلقائياً</div>
                   </div>
@@ -279,49 +283,50 @@ const Home = ({ settings, categoryFilter = 'الكل', setCategoryFilter, mode =
 
       {/* Filter and Search Container */}
       <Container className="mb-5" id="catalog-grid">
-        {/* Brand Chips Filter Bar */}
-        {availableBrands.length > 0 && (
-          <div className="bg-white p-3 rounded-4 border shadow-sm mb-3">
-            <div className="d-flex align-items-center justify-content-between mb-2 flex-wrap gap-2">
-              <span className="fw-bold text-dark small d-flex align-items-center gap-1">
-                <Award size={18} className="text-warning" /> 🏛️ التصفح حسب الماركة والعلامة التجارية:
-              </span>
-              {selectedBrand !== 'الكل' && (
-                <Button 
-                  size="sm" 
-                  variant="outline-danger" 
-                  className="rounded-pill px-3 py-1 text-nowrap small"
+        <div className="filter-card">
+          {/* Brand Filter Bar Header */}
+          {availableBrands.length > 0 && (
+            <div className="mb-4 pb-3 border-bottom">
+              <div className="d-flex justify-content-between align-items-center mb-2.5 flex-wrap gap-2">
+                <span className="fw-bold text-dark small d-flex align-items-center gap-1.5">
+                  <Award size={18} className="text-warning" />
+                  <span>🏛️ التصفح حسب الماركة والعلامة التجارية:</span>
+                </span>
+                {selectedBrand !== 'الكل' && (
+                  <Button 
+                    size="sm" 
+                    variant="outline-danger" 
+                    className="rounded-pill px-3 py-1 text-nowrap small fw-bold"
+                    onClick={() => setSelectedBrand('الكل')}
+                  >
+                    إلغاء فلتر الماركة (عرض الجميع)
+                  </Button>
+                )}
+              </div>
+              
+              <div className="d-flex gap-2 flex-wrap align-items-center">
+                <button 
+                  type="button"
+                  className={`brand-chip-pill ${selectedBrand === 'الكل' ? 'active' : ''}`}
                   onClick={() => setSelectedBrand('الكل')}
                 >
-                  إلغاء فلتر الماركة (عرض الجميع)
-                </Button>
-              )}
-            </div>
-            
-            <div className="d-flex gap-2 flex-wrap align-items-center">
-              <button 
-                type="button"
-                className={`brand-chip-pill ${selectedBrand === 'الكل' ? 'active' : ''}`}
-                onClick={() => setSelectedBrand('الكل')}
-              >
-                جميع الماركات
-              </button>
-
-              {availableBrands.map((b, idx) => (
-                <button
-                  type="button"
-                  key={idx}
-                  className={`brand-chip-pill ${selectedBrand === b ? 'active' : ''}`}
-                  onClick={() => setSelectedBrand(b)}
-                >
-                  🏷️ {b}
+                  جميع الماركات
                 </button>
-              ))}
-            </div>
-          </div>
-        )}
 
-        <div className="filter-card">
+                {availableBrands.map((b, idx) => (
+                  <button
+                    type="button"
+                    key={idx}
+                    className={`brand-chip-pill ${selectedBrand === b ? 'active' : ''}`}
+                    onClick={() => setSelectedBrand(b)}
+                  >
+                    🏷️ {b}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
           <Row className="g-3 align-items-center">
             {/* Search Input */}
             <Col md={4}>
