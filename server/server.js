@@ -476,24 +476,28 @@ app.get(['/api/owner/download-images-zip', '/owner/download-images-zip'], async 
     const zip = new JSZip();
     const folder = zip.folder("ceramic_product_images");
 
-    console.log(`📦 Packaging ${productsWithImages.length} images into ZIP archive...`);
+    let manifestText = `أرشيف صور أصناف معرض السيراميك والبورسلين\nتاريخ التصدير: ${new Date().toLocaleString('ar-EG')}\n\n`;
 
     const fetchPromises = productsWithImages.map(async (p, idx) => {
       try {
         let buffer = null;
         if (p.image.startsWith('http://') || p.image.startsWith('https://')) {
           buffer = await fetchImageBuffer(p.image);
-        } else if (p.image.startsWith('/uploads/')) {
-          const localPath = path.join(__dirname, 'public', p.image);
+        } else if (p.image.startsWith('/uploads/') || p.image.startsWith('uploads/')) {
+          const cleanRel = p.image.replace(/^\/+/, '');
+          const localPath = path.join(__dirname, 'public', cleanRel);
           if (fs.existsSync(localPath)) {
             buffer = fs.readFileSync(localPath);
           }
         }
 
-        if (buffer) {
-          const cleanCode = (p.code || p.id).replace(/[^a-zA-Z0-9_-]/g, '_');
-          const ext = p.image.endsWith('.png') ? 'png' : 'jpg';
-          const filename = `${cleanCode}_${idx + 1}.${ext}`;
+        const cleanCode = (p.code || p.id).replace(/[^a-zA-Z0-9_-]/g, '_');
+        const ext = p.image.endsWith('.png') ? 'png' : 'jpg';
+        const filename = `${cleanCode}_${idx + 1}.${ext}`;
+
+        manifestText += `الصنف: ${p.name}\nالكود: ${p.code || p.id}\nالفئة: ${p.category}\nرابط الصورة: ${p.image}\nاسم الملف: ${filename}\n----------------------------------------\n`;
+
+        if (buffer && buffer.length > 0) {
           folder.file(filename, buffer);
         }
       } catch (err) {
@@ -502,13 +506,14 @@ app.get(['/api/owner/download-images-zip', '/owner/download-images-zip'], async 
     });
 
     await Promise.all(fetchPromises);
+    folder.file("inventory_images_manifest.txt", "\uFEFF" + manifestText);
 
     const zipBuffer = await zip.generateAsync({ type: 'nodebuffer', compression: 'DEFLATE' });
     const dateStr = new Date().toISOString().split('T')[0];
 
     res.setHeader('Content-Type', 'application/zip');
     res.setHeader('Content-Disposition', `attachment; filename=ceramic_all_product_images_${dateStr}.zip`);
-    res.send(zipBuffer);
+    return res.send(zipBuffer);
   } catch (err) {
     console.error("Owner ZIP Download Error:", err);
     res.status(500).json({ message: 'خطأ في تجميع ملف الصور المضغوط' });
