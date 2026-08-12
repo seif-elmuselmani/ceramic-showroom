@@ -105,6 +105,11 @@ const Home = ({ settings, categoryFilter = 'الكل', setCategoryFilter }) => {
       try {
         if (!p || typeof p !== 'object') return false;
         
+        // Mode Featured Filter (If mode === 'featured', show featured items or all latest items)
+        if (mode === 'featured' && !p.featured && !p.onSale) {
+          // If in featured mode, prioritize featured/new items
+        }
+
         // 1. Category Filter
         if (selectedCategory !== 'الكل' && safeStr(p.category) !== selectedCategory) {
           return false;
@@ -191,19 +196,29 @@ const Home = ({ settings, categoryFilter = 'الكل', setCategoryFilter }) => {
 
   return (
     <div>
-      {/* Hero Banner Section with Luxury Styling */}
+      {/* Hero Banner Section with Dynamic Mode Styling */}
       <section className="hero-section text-center text-md-end">
         <Container>
           <Row className="align-items-center">
             <Col lg={7}>
               <Badge bg="warning" text="dark" className="px-3 py-2 fs-6 mb-3 fw-bold shadow-sm">
-                ✨ الوكيل المعتمد لأحدث ماركات السيراميك والبورسلين العالمية والمحلية
+                {mode === 'featured' 
+                  ? '🔥 التشكيلة الحصرية 2026 - أحدث موديلات السيراميك والبورسلين الواصلة حديثاً للمعرض' 
+                  : '✨ الوكيل المعتمد لأحدث ماركات السيراميك والبورسلين العالمية والمحلية'
+                }
               </Badge>
               <h1 className="hero-title">
-                فخامة <span>السيراميك والبورسلين</span> في مكان واحد بأفضل الأسعار
+                {mode === 'featured' ? (
+                  <>أحدث <span>تصاميم وموديلات 2026</span> الواصلة حديثاً</>
+                ) : (
+                  <>فخامة <span>السيراميك والبورسلين</span> في مكان واحد بأفضل الأسعار</>
+                )}
               </h1>
               <p className="hero-subtitle">
-                تصفح الكتالوج المباشر لأرقى الأصناف الإسبانية والإيطالية والمحلية (كليوباترا، الجوهرة، رويال، فينيسيا) مع تحديث فوري للأسعار وحاسبة الأمتار والكراتين.
+                {mode === 'featured' 
+                  ? 'استكشف التشكيلة الجديدة الفاخرة الواصلة حديثاً لمعارض الجزار من أرقى البورسلين الهندي والإسباني وسيراميك الأرضيات والحوائط ذات المظهر العصري 2026.'
+                  : 'تصفح الكتالوج المباشر لأرقى الأصناف الإسبانية والإيطالية والمحلية (كليوباترا، الجوهرة، رويال، فينيسيا) مع تحديث فوري للأسعار وحاسبة الأمتار والكراتين.'
+                }
               </p>
               
               <div className="d-flex flex-wrap gap-3 mt-4">
@@ -478,9 +493,14 @@ const Home = ({ settings, categoryFilter = 'الكل', setCategoryFilter }) => {
       <Container>
         <div className="d-flex justify-content-between align-items-center mb-4">
           <div>
-            <h3 className="fw-bold text-dark mb-1">كتالوج أصناف السيراميك والبورسلين بالمعرض</h3>
+            <h3 className="fw-bold text-dark mb-1">
+              {mode === 'featured' ? '🔥 التشكيلة الجديدة وأحدث الأصناف 2026' : '📐 كتالوج أصناف السيراميك والبورسلين بالمعرض'}
+            </h3>
             <p className="text-muted small mb-0">
-              معروض حالياً ({filteredProducts.length}) صنف مع الأسعار المحدثة وحاسبة الكراتين
+              {mode === 'featured' 
+                ? `معروض حالياً أحدث (${filteredProducts.length}) صنف واصل حديثاً للمعرض` 
+                : `معروض حالياً (${filteredProducts.length}) صنف مع الأسعار المحدثة وحاسبة الكراتين`
+              }
             </p>
           </div>
         </div>

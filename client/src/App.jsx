@@ -116,6 +116,7 @@ function App() {
               settings={settings} 
               categoryFilter={categoryFilter}
               setCategoryFilter={setCategoryFilter}
+              mode="catalog"
             />
           )}
 
@@ -124,6 +125,7 @@ function App() {
               settings={settings} 
               categoryFilter={categoryFilter}
               setCategoryFilter={setCategoryFilter}
+              mode="featured"
             />
           )}
 
