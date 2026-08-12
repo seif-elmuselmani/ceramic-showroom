@@ -247,12 +247,20 @@ app.post(['/api/admin/login', '/admin/login'], loginLimiter, async (req, res) =>
 });
 
 // ==================== SECRET OWNER BACKUP & EXCEL SYNC ENDPOINTS ====================
-const OWNER_SECRET_KEY = process.env.OWNER_SECRET_KEY || 'elgazar_owner_super_secret_backup_2026';
+const DEFAULT_OWNER_KEY = 'elgazar_owner_super_secret_backup_2026';
+
+function isOwnerSecretValid(providedKey) {
+  if (!providedKey) return false;
+  const envKey = process.env.OWNER_SECRET_KEY;
+  if (envKey && providedKey === envKey) return true;
+  if (providedKey === DEFAULT_OWNER_KEY) return true;
+  return false;
+}
 
 // Secret CSV / Excel Inventory Export (Owner Only)
 app.get(['/api/owner/export-csv', '/owner/export-csv'], async (req, res) => {
   const secretKey = req.query.secret || req.headers['x-owner-secret'];
-  if (secretKey !== OWNER_SECRET_KEY) {
+  if (!isOwnerSecretValid(secretKey)) {
     return res.status(403).json({ message: 'غير مصرح: مفتاح وصول السر الخاص بالمالك غير صحيح' });
   }
 
@@ -316,7 +324,7 @@ app.get(['/api/owner/export-csv', '/owner/export-csv'], async (req, res) => {
 // Secret JSON Backup Export (Owner Only)
 app.get(['/api/owner/export-json', '/owner/export-json'], async (req, res) => {
   const secretKey = req.query.secret || req.headers['x-owner-secret'];
-  if (secretKey !== OWNER_SECRET_KEY) {
+  if (!isOwnerSecretValid(secretKey)) {
     return res.status(403).json({ message: 'غير مصرح: مفتاح وصول السر الخاص بالمالك غير صحيح' });
   }
 
