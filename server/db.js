@@ -261,6 +261,7 @@ const ProductSchema = new mongoose.Schema({
   id: { type: String, required: true, unique: true, index: true },
   name: { type: String, required: true },
   code: { type: String, required: true, index: true },
+  brand: { type: String, index: true },
   category: { type: String, required: true, index: true },
   subcategory: { type: String, index: true },
   price: { type: Number, required: true },
@@ -398,8 +399,28 @@ class JsonDatabase {
             }
           });
 
-          // Ensure any products without a subcategory have a default value
+          // Ensure any products without code, brand or subcategory get safe values
           memoryCache.products.forEach(prod => {
+            if (!prod.brand) {
+              const origin = prod.origin || '';
+              const name = prod.name || '';
+              if (origin.includes('كليوباترا') || name.includes('كليوباترا')) prod.brand = 'كليوباترا';
+              else if (origin.includes('الجوهرة') || name.includes('الجوهرة')) prod.brand = 'الجوهرة';
+              else if (origin.includes('رويال') || name.includes('رويال')) prod.brand = 'رويال';
+              else if (origin.includes('Porcelanosa') || name.includes('Porcelanosa')) prod.brand = 'Porcelanosa';
+              else if (origin.includes('Marazzi') || name.includes('Marazzi')) prod.brand = 'Marazzi';
+              else if (origin.includes('Graniser') || name.includes('Graniser')) prod.brand = 'Graniser';
+              else if (origin.includes('الأردن') || name.includes('بيراميدز') || name.includes('Pyramids')) prod.brand = 'Pyramids';
+              else if (name.includes('بوتشينو') || origin.includes('Botticino')) prod.brand = 'Botticino';
+              else if (name.includes('SANIPURE') || origin.includes('SANIPURE')) prod.brand = 'SANIPURE';
+              else if (name.includes('Duravit') || origin.includes('Duravit')) prod.brand = 'Duravit';
+              else prod.brand = 'ماركة فاخرة';
+              migrated = true;
+            }
+            if (!prod.code || !prod.code.trim()) {
+              prod.code = 'SER-' + Math.floor(1000 + Math.random() * 9000);
+              migrated = true;
+            }
             if (!prod.subcategory) {
               const matchedCat = initialData.categories.find(c => c.name === prod.category);
               prod.subcategory = (matchedCat && matchedCat.subcategories && matchedCat.subcategories[0]) || '';
@@ -480,6 +501,17 @@ class JsonDatabase {
       }
     }
     return memoryCache.categories;
+  }
+
+  async getBrands() {
+    const products = await this.getProducts();
+    const brandsSet = new Set();
+    products.forEach(p => {
+      if (p.brand && p.brand.trim()) {
+        brandsSet.add(p.brand.trim());
+      }
+    });
+    return Array.from(brandsSet);
   }
 
   async getProducts() {

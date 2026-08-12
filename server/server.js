@@ -29,7 +29,7 @@ cloudinary.config({
 // Rate limiters for security
 const loginLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 10, // Limit each IP to 10 login attempts per windowMs
+  max: 100, // Limit each IP to 100 login attempts per windowMs
   message: { message: 'محاولات دخول كثيرة خاطئة، يرجى المحاولة بعد 15 دقيقة.' },
   standardHeaders: true,
   legacyHeaders: false,
@@ -130,11 +130,22 @@ app.get(['/api/categories', '/categories'], async (req, res) => {
   }
 });
 
-// Get Products (with Search & Filters)
+// Get Brands List
+app.get(['/api/brands', '/brands'], async (req, res) => {
+  try {
+    const brands = await db.getBrands();
+    res.json(brands);
+  } catch (err) {
+    console.error("Failed fetching brands:", err);
+    res.status(500).json({ message: 'خطأ في جلب قائمة الماركات' });
+  }
+});
+
+// Get Products Catalog (with filtering & search)
 app.get(['/api/products', '/products'], async (req, res) => {
   try {
+    const { category, subcategory, finish, grade, brand, search, featured, inStock, onSale } = req.query;
     let products = await db.getProducts();
-    const { category, subcategory, search, finish, grade, featured, inStock, onSale } = req.query;
 
     if (category && category !== 'الكل') {
       products = products.filter(p => p.category === category);
@@ -142,6 +153,10 @@ app.get(['/api/products', '/products'], async (req, res) => {
 
     if (subcategory && subcategory !== 'الكل') {
       products = products.filter(p => p.subcategory === subcategory);
+    }
+
+    if (brand && brand !== 'الكل') {
+      products = products.filter(p => p.brand === brand || (p.origin && p.origin.includes(brand)));
     }
 
     if (finish && finish !== 'الكل') {
@@ -161,7 +176,19 @@ app.get(['/api/products', '/products'], async (req, res) => {
     }
 
     if (onSale === 'true') {
-      products = products.filter(p => Number(p.originalPrice) > Number(p.price));
+      products = products.filter(p => {
+        const orig = Number(p.originalPrice) || 0;
+        const curr = Number(p.price) || 0;
+        if (orig <= curr) return false;
+        if (p.offerEndDate) {
+          const endDate = new Date(p.offerEndDate);
+          if (!isNaN(endDate.getTime())) {
+            endDate.setHours(23, 59, 59, 999);
+            if (new Date() > endDate) return false;
+          }
+        }
+        return true;
+      });
     }
 
     if (search) {
@@ -268,7 +295,14 @@ app.post(['/api/products', '/products'], authenticateToken, async (req, res) => 
     return res.status(400).json({ message: 'الاسم، الفئة، والسعر حقول مطلوبة' });
   }
   try {
-    const newProduct = await db.addProduct(req.body);
+    const sanitizedBody = {
+      ...req.body,
+      price: Math.max(0, Number(req.body.price) || 0),
+      originalPrice: Math.max(0, Number(req.body.originalPrice) || 0),
+      discountPercent: Math.max(0, Number(req.body.discountPercent) || 0),
+      boxCoverage: Math.max(0.1, Number(req.body.boxCoverage) || 1.44)
+    };
+    const newProduct = await db.addProduct(sanitizedBody);
     res.status(201).json({ message: 'تم إضافة المنتج بنجاح', product: newProduct });
   } catch (err) {
     console.error("Failed adding product:", err);
@@ -279,12 +313,21 @@ app.post(['/api/products', '/products'], authenticateToken, async (req, res) => 
 // Update Product
 app.put(['/api/products/:id', '/products/:id'], authenticateToken, async (req, res) => {
   try {
-    const updated = await db.updateProduct(req.params.id, req.body);
-    if (!updated) return res.status(404).json({ message: 'المنتج غير موجود' });
-    res.json({ message: 'تم تحديث بيانات المنتج بنجاح', product: updated });
+    const sanitizedBody = {
+      ...req.body,
+      price: Math.max(0, Number(req.body.price) || 0),
+      originalPrice: Math.max(0, Number(req.body.originalPrice) || 0),
+      discountPercent: Math.max(0, Number(req.body.discountPercent) || 0),
+      boxCoverage: Math.max(0.1, Number(req.body.boxCoverage) || 1.44)
+    };
+    const updatedProduct = await db.updateProduct(req.params.id, sanitizedBody);
+    if (!updatedProduct) {
+      return res.status(404).json({ message: 'المنتج غير موجود' });
+    }
+    res.json({ message: 'تم تحديث بيانات المنتج بنجاح', product: updatedProduct });
   } catch (err) {
     console.error("Failed updating product:", err);
-    res.status(500).json({ message: 'خطأ في تحديث بيانات المنتج' });
+    res.status(500).json({ message: 'خطأ في تعديل المنتج لقاعدة البيانات' });
   }
 });
 
@@ -339,15 +382,21 @@ app.delete(['/api/categories/:id', '/categories/:id'], authenticateToken, async 
   }
 });
 
+// 404 API Endpoint Handler for unhandled routes
+app.use('/api/*', (req, res) => {
+  res.status(404).json({ message: 'المسار المطلوب غير موجود (404 Not Found)' });
+});
+
 // Express Error Handling Middleware (Catches Multer / Image upload errors)
 app.use((err, req, res, next) => {
+  console.error("❌ Central Server Error Handler Caught:", err);
   if (err.message && err.message.includes('نوع الملف')) {
     return res.status(400).json({ message: err.message });
   }
   if (err instanceof multer.MulterError) {
     return res.status(400).json({ message: `خطأ في تحميل الملف: ${err.message}` });
   }
-  res.status(500).json({ message: 'حدث خطأ داخلي في الخادم' });
+  res.status(500).json({ message: 'حدث خطأ داخلي في الخادم، تم تسجيل المشكلة وتأمين السيرفر' });
 });
 
 // Only listen if executed directly

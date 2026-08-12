@@ -1,6 +1,6 @@
 import React from 'react';
 import { Navbar, Container, Nav, Button } from 'react-bootstrap';
-import { Layers, LogOut, LayoutDashboard, UserCheck, Megaphone } from 'lucide-react';
+import { Layers, LogOut, LayoutDashboard, UserCheck, Megaphone, Menu } from 'lucide-react';
 
 const Header = ({ settings, isAdmin, onNavigate, activeTab, onLogout }) => {
   return (
@@ -16,7 +16,7 @@ const Header = ({ settings, isAdmin, onNavigate, activeTab, onLogout }) => {
       )}
 
       {/* Main Navbar */}
-      <Navbar bg="dark" variant="dark" expand="lg" className="luxury-navbar">
+      <Navbar bg="white" variant="light" expand="lg" className="luxury-navbar">
         <Container>
           <Navbar.Brand 
             href="#" 
@@ -30,13 +30,19 @@ const Header = ({ settings, isAdmin, onNavigate, activeTab, onLogout }) => {
             />
             <div>
               <div className="fw-black">{settings?.showroomName || 'معرض السيراميك والبورسلين'}</div>
-              <div style={{ fontSize: '0.7rem', fontWeight: '400', color: '#c5a059' }}>
+              <div style={{ fontSize: '0.72rem', fontWeight: '600', color: '#b45309' }}>
                 كتالوج أصناف وأسعار المعرض
               </div>
             </div>
           </Navbar.Brand>
 
-          <Navbar.Toggle aria-controls="luxury-nav" className="border-warning p-2" />
+          <Navbar.Toggle 
+            aria-controls="luxury-nav" 
+            className="border-0 p-2 shadow-none rounded-3"
+            style={{ background: '#f1f5f9', border: '1.5px solid #cbd5e1' }}
+          >
+            <Menu size={26} className="text-dark fw-bold" />
+          </Navbar.Toggle>
           
           <Navbar.Collapse id="luxury-nav" className="navbar-collapse-custom">
             <Nav className="mx-auto my-2 my-lg-0">
@@ -64,12 +70,12 @@ const Header = ({ settings, isAdmin, onNavigate, activeTab, onLogout }) => {
               {isAdmin && (
                 <>
                   <Button 
-                    variant="outline-warning" 
-                    className="d-flex align-items-center justify-content-center gap-2 rounded-pill px-3 py-2 w-100 w-lg-auto"
+                    variant="warning" 
+                    className="d-flex align-items-center justify-content-center gap-2 rounded-pill px-3 py-2 fw-bold text-dark shadow-sm w-100 w-lg-auto"
                     onClick={() => onNavigate('admin')}
                   >
                     <LayoutDashboard size={18} />
-                    لوحة التحكم
+                    <span>لوحة التحكم</span>
                   </Button>
                   <Button 
                     variant="outline-danger" 

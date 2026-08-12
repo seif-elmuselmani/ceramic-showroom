@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Form, InputGroup, Badge, Spinner, Alert, Card, Button } from 'react-bootstrap';
-import { Search, Filter, Sparkles, Layers, SlidersHorizontal, Calculator, CheckCircle2, ShieldCheck, Award, PhoneCall } from 'lucide-react';
+import { Search, Filter, Sparkles, Layers, SlidersHorizontal, Calculator, CheckCircle2, ShieldCheck, Award, PhoneCall, XCircle } from 'lucide-react';
 import ProductCard from '../components/ProductCard';
 import ProductModal from '../components/ProductModal';
 import TileCalculatorModal from '../components/TileCalculatorModal';
-import { getProducts, getCategories } from '../services/api';
+import { getProducts, getCategories, getBrands } from '../services/api';
 
 const Home = ({ settings, categoryFilter = 'الكل', setCategoryFilter }) => {
   const [products, setProducts] = useState([]);
@@ -15,6 +15,8 @@ const Home = ({ settings, categoryFilter = 'الكل', setCategoryFilter }) => {
   // Filters state
   const [selectedCategory, setSelectedCategory] = useState(categoryFilter);
   const [selectedSubcategory, setSelectedSubcategory] = useState('الكل');
+  const [selectedBrand, setSelectedBrand] = useState('الكل');
+  const [availableBrands, setAvailableBrands] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedFinish, setSelectedFinish] = useState('الكل');
   const [selectedGrade, setSelectedGrade] = useState('الكل');
@@ -30,17 +32,13 @@ const Home = ({ settings, categoryFilter = 'الكل', setCategoryFilter }) => {
 
   useEffect(() => {
     fetchCategories();
-    loadAvailableFilters();
+    fetchProducts();
   }, []);
 
   useEffect(() => {
     setSelectedCategory(categoryFilter);
     setSelectedSubcategory('الكل');
   }, [categoryFilter]);
-
-  useEffect(() => {
-    fetchProducts();
-  }, [selectedCategory, selectedSubcategory, selectedFinish, selectedGrade, inStockOnly, onSaleOnly]);
 
   // Deep Link Parser: Automatically open modal if ?product=ID is present in URL
   useEffect(() => {
@@ -71,57 +69,120 @@ const Home = ({ settings, categoryFilter = 'الكل', setCategoryFilter }) => {
     }
   };
 
-  const loadAvailableFilters = async () => {
-    try {
-      const res = await getProducts(); // load all products
-      const allProds = res.data || [];
-      const finishes = [...new Set(allProds.map(p => p.finish?.trim()).filter(Boolean))];
-      setAvailableFinishes(finishes);
-      const grades = [...new Set(allProds.map(p => p.grade?.trim()).filter(Boolean))];
-      setAvailableGrades(grades);
-    } catch (err) {
-      console.error('Error loading available filters:', err);
-    }
-  };
-
   const fetchProducts = async () => {
     try {
       setLoading(true);
       setError(null);
-      const params = {};
-      if (selectedCategory !== 'الكل') params.category = selectedCategory;
-      if (selectedSubcategory !== 'الكل') params.subcategory = selectedSubcategory;
-      if (selectedFinish !== 'الكل') params.finish = selectedFinish;
-      if (selectedGrade !== 'الكل') params.grade = selectedGrade;
-      if (inStockOnly) params.inStock = 'true';
-      if (onSaleOnly) params.onSale = 'true';
-      
-      const res = await getProducts(params);
-      setProducts(res.data);
+      const res = await getProducts(); // Load full master catalog
+      if (Array.isArray(res.data)) {
+        setProducts(res.data);
+        
+        // Extract dynamic filter options from master catalog
+        const finishes = [...new Set(res.data.map(p => p.finish?.trim()).filter(Boolean))];
+        setAvailableFinishes(finishes);
+        const grades = [...new Set(res.data.map(p => p.grade?.trim()).filter(Boolean))];
+        setAvailableGrades(grades);
+        const brands = [...new Set(res.data.map(p => p.brand?.trim()).filter(Boolean))];
+        setAvailableBrands(brands);
+      } else {
+        console.warn('API did not return an array:', res.data);
+        setProducts([]);
+      }
     } catch (err) {
       console.error('Error fetching products:', err);
       setError('فشل في تحميل الأصناف، يرجى التأكد من تشغيل خادم البيانات Backend.');
+      setProducts([]);
     } finally {
       setLoading(false);
     }
   };
 
-  // Filter & Sort locally by search query
-  const filteredProducts = products
+  // Instant Unified Multi-Filter & Search Engine
+  const safeStr = (v) => (v === null || v === undefined ? '' : String(v));
+
+  const filteredProducts = (Array.isArray(products) ? products : [])
     .filter(p => {
-      if (!searchTerm) return true;
-      const q = searchTerm.toLowerCase();
-      return (
-        p.name.toLowerCase().includes(q) ||
-        p.code.toLowerCase().includes(q) ||
-        (p.dimensions && p.dimensions.includes(q)) ||
-        (p.origin && p.origin.toLowerCase().includes(q)) ||
-        (p.description && p.description.toLowerCase().includes(q))
-      );
+      try {
+        if (!p || typeof p !== 'object') return false;
+        
+        // 1. Category Filter
+        if (selectedCategory !== 'الكل' && safeStr(p.category) !== selectedCategory) {
+          return false;
+        }
+
+        // 2. Subcategory Filter
+        if (selectedSubcategory !== 'الكل' && safeStr(p.subcategory) !== selectedSubcategory) {
+          return false;
+        }
+
+        // 3. Brand Filter
+        if (selectedBrand !== 'الكل') {
+          const brandStr = safeStr(p.brand);
+          const originStr = safeStr(p.origin);
+          const matchesBrand = (brandStr && brandStr === selectedBrand) || (originStr && originStr.includes(selectedBrand));
+          if (!matchesBrand) return false;
+        }
+
+        // 4. Finish Filter
+        if (selectedFinish !== 'الكل') {
+          const finishStr = safeStr(p.finish);
+          if (!finishStr || !finishStr.includes(selectedFinish)) {
+            return false;
+          }
+        }
+
+        // 5. Grade Filter
+        if (selectedGrade !== 'الكل' && safeStr(p.grade) !== selectedGrade) {
+          return false;
+        }
+
+        // 6. In-Stock Filter
+        if (inStockOnly && !p.inStock) {
+          return false;
+        }
+
+        // 7. On-Sale Filter
+        if (onSaleOnly) {
+          const orig = Number(p.originalPrice) || 0;
+          const curr = Number(p.price) || 0;
+          if (orig <= curr) return false;
+          if (p.offerEndDate) {
+            const endDate = new Date(p.offerEndDate);
+            if (!isNaN(endDate.getTime())) {
+              endDate.setHours(23, 59, 59, 999);
+              if (new Date() > endDate) return false;
+            }
+          }
+        }
+
+        // 8. Instant Search Term Filter (Matches name, code, category, subcategory, brand, finish, grade, dimensions, origin, description)
+        if (searchTerm) {
+          const q = searchTerm.trim().toLowerCase();
+          const nameMatch = safeStr(p.name).toLowerCase().includes(q);
+          const codeMatch = safeStr(p.code).toLowerCase().includes(q);
+          const catMatch = safeStr(p.category).toLowerCase().includes(q);
+          const subMatch = safeStr(p.subcategory).toLowerCase().includes(q);
+          const brandMatch = safeStr(p.brand).toLowerCase().includes(q);
+          const dimMatch = safeStr(p.dimensions).toLowerCase().includes(q);
+          const originMatch = safeStr(p.origin).toLowerCase().includes(q);
+          const descMatch = safeStr(p.description).toLowerCase().includes(q);
+
+          if (!nameMatch && !codeMatch && !catMatch && !subMatch && !brandMatch && !dimMatch && !originMatch && !descMatch) {
+            return false;
+          }
+        }
+
+        return true;
+      } catch (err) {
+        console.error("Safely skipped corrupted product item during filter:", err, p);
+        return false;
+      }
     })
     .sort((a, b) => {
-      if (sortBy === 'priceAsc') return a.price - b.price;
-      if (sortBy === 'priceDesc') return b.price - a.price;
+      const priceA = Number(a?.price) || 0;
+      const priceB = Number(b?.price) || 0;
+      if (sortBy === 'priceAsc') return priceA - priceB;
+      if (sortBy === 'priceDesc') return priceB - priceA;
       return 0;
     });
 
@@ -203,6 +264,48 @@ const Home = ({ settings, categoryFilter = 'الكل', setCategoryFilter }) => {
 
       {/* Filter and Search Container */}
       <Container className="mb-5" id="catalog-grid">
+        {/* Brand Chips Filter Bar */}
+        {availableBrands.length > 0 && (
+          <div className="bg-white p-3 rounded-4 border shadow-sm mb-3">
+            <div className="d-flex align-items-center justify-content-between mb-2 flex-wrap gap-2">
+              <span className="fw-bold text-dark small d-flex align-items-center gap-1">
+                <Award size={18} className="text-warning" /> 🏛️ التصفح حسب الماركة والعلامة التجارية:
+              </span>
+              {selectedBrand !== 'الكل' && (
+                <Button 
+                  size="sm" 
+                  variant="outline-danger" 
+                  className="rounded-pill px-3 py-1 text-nowrap small"
+                  onClick={() => setSelectedBrand('الكل')}
+                >
+                  إلغاء فلتر الماركة (عرض الجميع)
+                </Button>
+              )}
+            </div>
+            
+            <div className="d-flex gap-2 flex-wrap align-items-center">
+              <button 
+                type="button"
+                className={`brand-chip-pill ${selectedBrand === 'الكل' ? 'active' : ''}`}
+                onClick={() => setSelectedBrand('الكل')}
+              >
+                جميع الماركات
+              </button>
+
+              {availableBrands.map((b, idx) => (
+                <button
+                  type="button"
+                  key={idx}
+                  className={`brand-chip-pill ${selectedBrand === b ? 'active' : ''}`}
+                  onClick={() => setSelectedBrand(b)}
+                >
+                  🏷️ {b}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
         <div className="filter-card">
           <Row className="g-3 align-items-center">
             {/* Search Input */}
@@ -295,7 +398,7 @@ const Home = ({ settings, categoryFilter = 'الكل', setCategoryFilter }) => {
             </div>
 
             {/* Right side: Reset Filters Button (Appears dynamically if any filter is set) */}
-            {(selectedCategory !== 'الكل' || selectedSubcategory !== 'الكل' || selectedFinish !== 'الكل' || selectedGrade !== 'الكل' || searchTerm !== '' || inStockOnly || onSaleOnly) && (
+            {(selectedCategory !== 'الكل' || selectedSubcategory !== 'الكل' || selectedBrand !== 'الكل' || selectedFinish !== 'الكل' || selectedGrade !== 'الكل' || searchTerm !== '' || inStockOnly || onSaleOnly) && (
               <Button 
                 variant="outline-danger" 
                 size="sm" 
@@ -303,6 +406,7 @@ const Home = ({ settings, categoryFilter = 'الكل', setCategoryFilter }) => {
                 onClick={() => {
                   setSelectedCategory('الكل');
                   setSelectedSubcategory('الكل');
+                  setSelectedBrand('الكل');
                   setSelectedFinish('الكل');
                   setSelectedGrade('الكل');
                   setSearchTerm('');
@@ -312,9 +416,9 @@ const Home = ({ settings, categoryFilter = 'الكل', setCategoryFilter }) => {
                 }}
               >
                 <XCircle size={16} />
-                <span>إعادة تعيين الفلاتر</span>
+                <span>إعادة تعيين جميع الفلاتر</span>
                 <span className="badge bg-danger text-white rounded-circle ms-1">
-                  {[selectedCategory !== 'الكل', selectedSubcategory !== 'الكل', selectedFinish !== 'الكل', selectedGrade !== 'الكل', searchTerm !== '', inStockOnly, onSaleOnly].filter(Boolean).length}
+                  {[selectedCategory !== 'الكل', selectedSubcategory !== 'الكل', selectedBrand !== 'الكل', selectedFinish !== 'الكل', selectedGrade !== 'الكل', searchTerm !== '', inStockOnly, onSaleOnly].filter(Boolean).length}
                 </span>
               </Button>
             )}
@@ -444,6 +548,13 @@ const Home = ({ settings, categoryFilter = 'الكل', setCategoryFilter }) => {
         onHide={() => setSelectedProduct(null)}
         settings={settings}
         onOpenCalculator={(p) => setCalculatorProduct(p)}
+        onSelectBrand={(brandName) => {
+          setSelectedBrand(brandName);
+          setTimeout(() => {
+            const el = document.getElementById('catalog-grid');
+            if (el) el.scrollIntoView({ behavior: 'smooth' });
+          }, 200);
+        }}
       />
 
       {/* Tile & Cartons Calculator Modal */}

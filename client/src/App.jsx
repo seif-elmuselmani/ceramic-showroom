@@ -9,6 +9,9 @@ import Home from './pages/Home';
 import AdminLogin from './pages/AdminLogin';
 import AdminDashboard from './pages/AdminDashboard';
 import Contact from './pages/Contact';
+import NotFound from './pages/NotFound';
+import ErrorBoundary from './components/ErrorBoundary';
+import ToastNotification from './components/ToastNotification';
 
 import { getSettings, getCategories } from './services/api';
 
@@ -35,9 +38,11 @@ function App() {
       setIsAdmin(true);
     }
 
-    // Check if the URL has ?manage=true or hash is #admin-login to trigger secret login page
+    // Check URL parameters for 404 page or secret login
     const queryParams = new URLSearchParams(window.location.search);
-    if (queryParams.get('manage') === 'true' || window.location.hash === '#admin-login') {
+    if (queryParams.get('page') === '404' || window.location.hash === '#404') {
+      setActiveTab('404');
+    } else if (queryParams.get('manage') === 'true' || window.location.hash === '#admin-login') {
       setActiveTab('login');
       // Clean up URL parameters/hash to keep it hidden
       window.history.replaceState({}, document.title, window.location.pathname);
@@ -93,71 +98,79 @@ function App() {
   };
 
   return (
-    <div className="d-flex flex-column min-vh-100 position-relative">
-      <Navbar 
-        settings={settings}
-        isAdmin={isAdmin}
-        activeTab={activeTab}
-        onNavigate={handleNavigate}
-        onLogout={handleLogout}
-      />
+    <ErrorBoundary>
+      <div className="d-flex flex-column min-vh-100 position-relative">
+        <ToastNotification />
+        
+        <Navbar 
+          settings={settings}
+          isAdmin={isAdmin}
+          activeTab={activeTab}
+          onNavigate={handleNavigate}
+          onLogout={handleLogout}
+        />
 
-      <main className="flex-grow-1">
-        {activeTab === 'catalog' && (
-          <Home 
-            settings={settings} 
-            categoryFilter={categoryFilter}
-            setCategoryFilter={setCategoryFilter}
-          />
-        )}
-
-        {activeTab === 'featured' && (
-          <Home 
-            settings={settings} 
-            categoryFilter={categoryFilter}
-            setCategoryFilter={setCategoryFilter}
-          />
-        )}
-
-        {activeTab === 'contact' && (
-          <Contact settings={settings} />
-        )}
-
-        {activeTab === 'login' && (
-          <AdminLogin 
-            onLoginSuccess={handleLoginSuccess}
-            onCancel={() => setActiveTab('catalog')}
-          />
-        )}
-
-        {activeTab === 'admin' && (
-          isAdmin ? (
-            <AdminDashboard 
-              settings={settings}
-              onSettingsUpdated={(newSettings) => setSettings(newSettings)}
+        <main className="flex-grow-1">
+          {activeTab === 'catalog' && (
+            <Home 
+              settings={settings} 
+              categoryFilter={categoryFilter}
+              setCategoryFilter={setCategoryFilter}
             />
-          ) : (
+          )}
+
+          {activeTab === 'featured' && (
+            <Home 
+              settings={settings} 
+              categoryFilter={categoryFilter}
+              setCategoryFilter={setCategoryFilter}
+            />
+          )}
+
+          {activeTab === 'contact' && (
+            <Contact settings={settings} />
+          )}
+
+          {activeTab === '404' && (
+            <NotFound onNavigate={handleNavigate} settings={settings} />
+          )}
+
+          {activeTab === 'login' && (
             <AdminLogin 
               onLoginSuccess={handleLoginSuccess}
               onCancel={() => setActiveTab('catalog')}
             />
-          )
-        )}
-      </main>
+          )}
 
-      {/* Floating WhatsApp Action Button for Mobile Users */}
-      <a 
-        href={`https://wa.me/${settings?.whatsappNumber || '201223817860'}?text=${encodeURIComponent('مرحباً، أستفسر عن أصناف السيراميك والبورسلين بالمعرض')}`}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="floating-whatsapp-btn"
-        title="تواصل مباشر عبر الواتساب"
-      >
-        <MessageCircle size={30} />
-      </a>
+          {activeTab === 'admin' && (
+            isAdmin ? (
+              <AdminDashboard 
+                settings={settings}
+                onSettingsUpdated={(newSettings) => setSettings(newSettings)}
+              />
+            ) : (
+              <AdminLogin 
+                onLoginSuccess={handleLoginSuccess}
+                onCancel={() => setActiveTab('catalog')}
+              />
+            )
+          )}
+        </main>
 
-      <Footer settings={settings} onNavigate={handleNavigate} categories={categories} />
-    </div>
+        {/* Floating WhatsApp Action Button for Mobile Users */}
+        <a 
+          href={`https://wa.me/${settings?.whatsappNumber || '201223817860'}?text=${encodeURIComponent('مرحباً، أستفسر عن أصناف السيراميك والبورسلين بالمعرض')}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="floating-whatsapp-btn"
+          title="تواصل مباشر عبر الواتساب"
+        >
+          <MessageCircle size={30} />
+        </a>
+
+        <Footer settings={settings} onNavigate={handleNavigate} categories={categories} />
+      </div>
+    </ErrorBoundary>
   );
 }
 

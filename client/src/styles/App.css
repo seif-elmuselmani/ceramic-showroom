@@ -263,10 +263,11 @@ p, h1, h2, h3, h4, h5, h6, span, div, a {
 }
 
 .category-chip.active {
-  background: var(--bg-dark);
-  color: var(--primary-gold);
-  border-color: var(--primary-gold);
-  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.2);
+  background: #0f172a !important;
+  color: #fbbf24 !important;
+  border-color: #f59e0b !important;
+  font-weight: 800 !important;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.25);
 }
 
 /* Ceramic Product Card */
@@ -514,38 +515,60 @@ p, h1, h2, h3, h4, h5, h6, span, div, a {
   padding: 14px 18px;
 }
 
-/* Admin Dashboard Styling */
+/* Admin Dashboard Styling Upgrade for High Contrast & Mobile Clarity */
 .admin-card {
   background: #ffffff;
-  border-radius: 16px;
-  padding: 16px;
-  border: 1px solid #e2e8f0;
-  box-shadow: var(--shadow-lux);
+  border-radius: 20px;
+  padding: 20px;
+  border: 1px solid #cbd5e1;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
 }
 
 .admin-header {
-  background: #ffffff;
-  color: #1e293b;
-  padding: 18px 0;
-  margin-bottom: 20px;
-  border-bottom: 3px solid var(--primary-gold);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  color: #ffffff;
+  padding: 24px 0;
+  margin-bottom: 24px;
+  border-bottom: 4px solid var(--primary-gold);
+  box-shadow: 0 8px 25px rgba(15, 23, 42, 0.15);
+}
+
+.admin-header h3 {
+  color: #ffffff !important;
+  font-weight: 800;
+  letter-spacing: -0.3px;
+}
+
+.admin-header p {
+  color: #94a3b8 !important;
 }
 
 .table-custom {
   vertical-align: middle;
+  border-collapse: separate;
+  border-spacing: 0 4px;
 }
 
 .table-custom th {
-  background: #f8fafc;
-  color: #334155;
-  font-weight: 800;
-  padding: 12px 10px;
+  background: #f1f5f9 !important;
+  color: #0f172a !important;
+  font-weight: 800 !important;
+  font-size: 0.88rem !important;
+  padding: 14px 12px !important;
+  border-bottom: 2px solid #cbd5e1 !important;
   white-space: nowrap;
 }
 
 .table-custom td {
-  padding: 12px 10px;
+  padding: 14px 12px !important;
+  background: #ffffff;
+  border-top: 1px solid #e2e8f0 !important;
+  border-bottom: 1px solid #e2e8f0 !important;
+  font-size: 0.9rem;
+}
+
+.table-custom tbody tr:hover td {
+  background: #f8fafc !important;
 }
 
 /* Specific column constraints to prevent vertical squishing on RTL */
@@ -582,23 +605,75 @@ p, h1, h2, h3, h4, h5, h6, span, div, a {
   min-width: 200px;
 }
 
-/* Admin Mobile Card View */
+/* Admin Mobile Card View Upgrade for Smartphones */
 .admin-product-mobile-card {
   background: #ffffff;
-  border-radius: 14px;
-  border: 1px solid #e2e8f0;
-  padding: 14px;
-  margin-bottom: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+  border-radius: 16px;
+  border: 1.5px solid #e2e8f0;
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-/* Quick Stat Boxes */
+.admin-product-mobile-card:active {
+  transform: scale(0.99);
+}
+
+/* Quick Stat Boxes Upgrade */
 .stat-box {
   background: #ffffff;
-  border-radius: 16px;
-  padding: 16px;
-  border-right: 5px solid var(--primary-gold);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+  border-radius: 18px;
+  padding: 18px;
+  border-right: 6px solid var(--primary-gold);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.04);
+  border: 1px solid #e2e8f0;
+  border-right-width: 6px;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.stat-box:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+}
+
+/* Brand Filter Chips Bar & Link Styling */
+.brand-chip-pill {
+  background: #f1f5f9;
+  color: #334155;
+  border: 1.5px solid #e2e8f0;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  white-space: nowrap;
+}
+
+.brand-chip-pill:hover {
+  background: #e2e8f0;
+  border-color: #cbd5e1;
+  color: #0f172a;
+}
+
+.brand-chip-pill.active {
+  background: #0f172a !important;
+  color: #fbbf24 !important;
+  border-color: #f59e0b !important;
+  font-weight: 800 !important;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.25);
+}
+
+.brand-chip-link {
+  transition: all 0.2s ease;
+}
+
+.brand-chip-link:hover {
+  background: #fef3c7 !important;
+  border-color: #f59e0b !important;
+  color: #b45309 !important;
+  transform: translateY(-1px);
 }
 
 /* Footer Redesign */

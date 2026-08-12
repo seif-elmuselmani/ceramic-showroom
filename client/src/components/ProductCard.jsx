@@ -4,6 +4,8 @@ import { MessageCircle, Eye } from 'lucide-react';
 import { getProductDiscount } from '../utils/discount';
 
 const ProductCard = ({ product, onSelectProduct, onOpenCalculator, settings }) => {
+  if (!product) return null;
+
   const whatsappNumber = settings?.whatsappNumber || '201012345678';
   
   const productLink = `${window.location.origin}${window.location.pathname}?product=${product.id || product._id}`;
@@ -37,8 +39,8 @@ const ProductCard = ({ product, onSelectProduct, onOpenCalculator, settings }) =
   const { hasDiscount, discountPercent, savingsAmount, durationText } = getProductDiscount(product);
 
   // Clean origin & finish for card snippet safely
-  const cleanOrigin = product.origin ? product.origin.split(' ')[0].replace(/[\(\)]/g, '') : '';
-  const cleanFinish = product.finish ? product.finish.split('/')[0].trim() : '';
+  const cleanOrigin = typeof product.origin === 'string' ? product.origin.split(' ')[0].replace(/[\(\)]/g, '') : String(product.origin || '');
+  const cleanFinish = typeof product.finish === 'string' ? product.finish.split('/')[0].trim() : String(product.finish || '');
 
   const specsList = [];
   if (product.dimensions) specsList.push(`📐 ${product.dimensions}`);

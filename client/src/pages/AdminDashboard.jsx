@@ -113,6 +113,7 @@ const AdminDashboard = ({ settings, onSettingsUpdated }) => {
         code: prod.code || '',
         category: prod.category || 'بورسلين مستورد',
         subcategory: prod.subcategory || '',
+        brand: prod.brand || '',
         originalPrice: orig,
         discountPercent: discPct,
         price: prc,
@@ -121,7 +122,7 @@ const AdminDashboard = ({ settings, onSettingsUpdated }) => {
         priceUnit: prod.priceUnit || 'متر مربع',
         boxCoverage: prod.boxCoverage || '1.44',
         dimensions: prod.dimensions || '',
-        finish: prod.finish || 'لامع / كريستال',
+        finish: prod.finish || '',
         grade: prod.grade || '',
         origin: prod.origin || '',
         usage: prod.usage || '',
@@ -138,6 +139,7 @@ const AdminDashboard = ({ settings, onSettingsUpdated }) => {
       setFormData({
         name: '',
         code: '',
+        brand: '',
         category: defaultCategory,
         subcategory: defaultSubcategory,
         originalPrice: '',
@@ -384,17 +386,23 @@ const AdminDashboard = ({ settings, onSettingsUpdated }) => {
     }
   };
 
-  // Filter products for table
-  const filteredProducts = products.filter(p => {
-    const matchesCategory = filterCategory === 'الكل' || p.category === filterCategory;
-    const matchesSearch = !searchTerm || 
-      p.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-      p.code.toLowerCase().includes(searchTerm.toLowerCase());
+  const safeStr = (v) => (v === null || v === undefined ? '' : String(v));
+
+  // Filter products for table safely
+  const filteredProducts = (Array.isArray(products) ? products : []).filter(p => {
+    if (!p) return false;
+    const matchesCategory = filterCategory === 'الكل' || safeStr(p.category) === filterCategory;
+    const q = safeStr(searchTerm).trim().toLowerCase();
+    const matchesSearch = !q || 
+      safeStr(p.name).toLowerCase().includes(q) || 
+      safeStr(p.code).toLowerCase().includes(q) ||
+      safeStr(p.brand).toLowerCase().includes(q);
     return matchesCategory && matchesSearch;
   });
 
-  const totalInStock = products.filter(p => p.inStock).length;
-  const totalOutOfStock = products.length - totalInStock;
+  const prodsList = Array.isArray(products) ? products : [];
+  const totalInStock = prodsList.filter(p => p && p.inStock).length;
+  const totalOutOfStock = prodsList.length - totalInStock;
 
   return (
     <div className="pb-5">
@@ -403,29 +411,29 @@ const AdminDashboard = ({ settings, onSettingsUpdated }) => {
         <Container>
           <div className="d-flex flex-wrap justify-content-between align-items-center gap-3">
             <div>
-              <h3 className="fw-bold mb-1 d-flex align-items-center gap-2 text-dark">
+              <h3 className="fw-bold mb-1 d-flex align-items-center gap-2 text-white">
                 <Layers className="text-warning" size={26} />
                 لوحة تحكم إدارة السيراميك والبورسلين
               </h3>
-              <p className="text-muted small mb-0">تعديل الأسعار وإدارة الكتالوج بسهولة من الموبايل أو اللابتوب</p>
+              <p className="text-light opacity-75 small mb-0">تعديل الأسعار وإدارة الكتالوج بسهولة من الموبايل أو اللابتوب</p>
             </div>
             <div className="d-flex flex-wrap gap-2 w-100 w-md-auto">
               <Button 
-                className="admin-btn d-flex align-items-center justify-content-center gap-2 flex-grow-1"
+                variant="light"
+                className="d-flex align-items-center justify-content-center gap-2 px-4 py-2.5 fw-bold text-dark rounded-pill shadow-sm flex-grow-1"
                 onClick={() => handleOpenProductModal()}
               >
-                <PlusCircle size={20} />
-                إضافة صنف جديد للمعرض
+                <PlusCircle size={20} className="text-primary" />
+                <span>إضافة صنف جديد للمعرض</span>
               </Button>
               
               <Button 
-                variant="outline-warning"
-                className="d-flex align-items-center justify-content-center gap-2 px-4 fw-bold text-dark border-warning flex-grow-1"
+                variant="warning"
+                className="d-flex align-items-center justify-content-center gap-2 px-4 py-2.5 fw-bold text-dark rounded-pill shadow-sm flex-grow-1"
                 onClick={() => handleOpenCategoryModal()}
-                style={{ borderWidth: '2px' }}
               >
-                <PlusCircle size={20} className="text-warning" />
-                إضافة تصنيف جديد
+                <PlusCircle size={20} className="text-dark" />
+                <span>إضافة تصنيف جديد</span>
               </Button>
             </div>
           </div>
@@ -1047,6 +1055,21 @@ const AdminDashboard = ({ settings, onSettingsUpdated }) => {
                       <option key={sIdx} value={sub}>{sub}</option>
                     ))}
                   </Form.Select>
+                </Form.Group>
+              </Col>
+
+              <Col xs={12} md={4}>
+                <Form.Group>
+                  <Form.Label className="fw-bold">
+                    الماركة / الشركة <span className="text-muted fw-normal small">(اختياري)</span>
+                  </Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="مثال: Pyramids / كليوباترا / الجوهرة"
+                    value={formData.brand || ''}
+                    onChange={(e) => setFormData({ ...formData, brand: e.target.value })}
+                    className="custom-input"
+                  />
                 </Form.Group>
               </Col>
 

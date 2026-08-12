@@ -107,6 +107,12 @@
       "name": "Test",
       "icon": "Layers",
       "subcategories": []
+    },
+    {
+      "id": "cat-1786568693713",
+      "name": "TEST3",
+      "icon": "Layers",
+      "subcategories": []
     }
   ],
   "products": [
@@ -117,7 +123,7 @@
       "priceUnit": "متر مربع",
       "boxCoverage": 1.44,
       "name": "TEST2",
-      "code": "",
+      "code": "SER-TEST2-700",
       "category": "سيراميك أرضيات",
       "subcategory": "باركيه خشب",
       "originalPrice": 0,
@@ -131,7 +137,8 @@
       "origin": "",
       "usage": "",
       "description": "",
-      "image": ""
+      "image": "",
+      "brand": "ماركة فاخرة"
     },
     {
       "id": "prod-1785959695213",
@@ -154,7 +161,8 @@
       "origin": "إسبانيا",
       "usage": "أرضيات ريسبشن وصالونات",
       "description": "",
-      "image": "https://images.unsplash.com/photo-1615873968403-89e068629265?auto=format&fit=crop&w=800&q=80"
+      "image": "https://images.unsplash.com/photo-1615873968403-89e068629265?auto=format&fit=crop&w=800&q=80",
+      "brand": "ماركة فاخرة"
     },
     {
       "id": "prod-201",
@@ -177,7 +185,8 @@
       "originalPrice": 720,
       "offerDuration": "عرض خاص حتى نهاية الشهر",
       "offerEndDate": "2026-08-31",
-      "offerNote": "تصفيات المستورد"
+      "offerNote": "تصفيات المستورد",
+      "brand": "Porcelanosa"
     },
     {
       "id": "prod-202",
@@ -200,7 +209,8 @@
       "originalPrice": 500,
       "offerDuration": "خصم 14% بمناسبة الموسم",
       "offerEndDate": "2026-08-25",
-      "offerNote": "عرض الموسم الصيفي"
+      "offerNote": "عرض الموسم الصيفي",
+      "brand": "Graniser"
     },
     {
       "id": "prod-203",
@@ -219,7 +229,8 @@
       "featured": true,
       "description": "سيراميك بديل الخشب الطبيعي بعروق بارزة تمنع الانزلاق وتمنح دفئاً راقياً للديكور.",
       "image": "https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=1000&q=80",
-      "subcategory": "باركيه خشب"
+      "subcategory": "باركيه خشب",
+      "brand": "الجوهرة"
     },
     {
       "id": "prod-204",
@@ -238,7 +249,8 @@
       "featured": false,
       "description": "بلاطات حوائط بمقاس كبير وعروق رمادية متناسقة تُعطي إحساس الرخام الطبيعي المتصل.",
       "image": "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=1000&q=80",
-      "subcategory": "بلاطات كبيرة"
+      "subcategory": "بلاطات كبيرة",
+      "brand": "كليوباترا"
     },
     {
       "id": "prod-205",
@@ -257,7 +269,8 @@
       "featured": true,
       "description": "موزاييك مطعم بجزئيات زجاجية وكريستال ذهبي يمنح لمسة فنية ساحرة للمكان.",
       "image": "https://images.unsplash.com/photo-1565538810643-b5bdb714032a?auto=format&fit=crop&w=1000&q=80",
-      "subcategory": "موزاييك زجاجي"
+      "subcategory": "موزاييك زجاجي",
+      "brand": "ماركة فاخرة"
     },
     {
       "id": "prod-206",
@@ -276,7 +289,8 @@
       "featured": true,
       "description": "رخام طبيعي إيطالي مستورد بلون كريمي دافئ وعروق طبيعية لا تتكرر.",
       "image": "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1000&q=80",
-      "subcategory": "إيطالي"
+      "subcategory": "إيطالي",
+      "brand": "Botticino"
     },
     {
       "id": "prod-207",
@@ -295,7 +309,8 @@
       "featured": true,
       "description": "بورسلين أسود ملكي بعروق بيضاء كالثلج، يعطي طابع الفخامة والرقي المطلق.",
       "image": "https://images.unsplash.com/photo-1507089947368-19c1da9775ae?auto=format&fit=crop&w=1000&q=80",
-      "subcategory": "إيطالي"
+      "subcategory": "إيطالي",
+      "brand": "Marazzi"
     },
     {
       "id": "prod-208",
@@ -314,7 +329,8 @@
       "featured": false,
       "description": "بلاط مسدس الشكل بزخارف هندسية أندلسية كلاسيكية يناسب الديكور الكلاسيكي والمودرن.",
       "image": "https://images.unsplash.com/photo-1527352726752-1903158a3745?auto=format&fit=crop&w=1000&q=80",
-      "subcategory": "موزاييك وديكور"
+      "subcategory": "موزاييك وديكور",
+      "brand": "رويال"
     },
     {
       "id": "prod-209",
@@ -333,7 +349,8 @@
       "featured": true,
       "description": "بورسلين أردني فائق الجودة ذو لون بيج صخري طبيعي دافئ. متين ومقاوم للرطوبة والأحماض ودرجات الحرارة، مناسب جداً للأماكن المفتوحة والداخلية.",
       "image": "https://images.unsplash.com/photo-1595428774223-ef52624120d2?auto=format&fit=crop&w=1000&q=80",
-      "subcategory": "أردني"
+      "subcategory": "أردني",
+      "brand": "Pyramids"
     },
     {
       "id": "prod-210",
@@ -352,7 +369,8 @@
       "featured": true,
       "description": "وحدة حمام راقية مصنوعة من خشب MDF المعالج ضد الرطوبة والمياه. تشتمل على حوض بورسلين تركي أبيض وخلاط مياه إيطالي مطلي كروم فضي مضاد للصدأ.",
       "image": "https://images.unsplash.com/photo-1620626011761-996317b69798?auto=format&fit=crop&w=1000&q=80",
-      "subcategory": "وحدات وأحواض"
+      "subcategory": "وحدات وأحواض",
+      "brand": "ماركة فاخرة"
     }
   ]
 }

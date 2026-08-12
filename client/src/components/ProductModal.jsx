@@ -1,6 +1,6 @@
 import React from 'react';
 import { Modal, Button, Badge, Row, Col } from 'react-bootstrap';
-import { MessageCircle, CheckCircle2, ShieldAlert, Share2, Calculator } from 'lucide-react';
+import { MessageCircle, CheckCircle2, ShieldAlert, Share2, Calculator, Sparkles } from 'lucide-react';
 import { getProductDiscount } from '../utils/discount';
 
 const ProductModal = ({ product, show, onHide, settings, onOpenCalculator }) => {
@@ -59,7 +59,7 @@ const ProductModal = ({ product, show, onHide, settings, onOpenCalculator }) => 
 
           <Col md={6} className="d-flex flex-column justify-content-between">
             <div>
-              <div className="d-flex align-items-center gap-2 mb-2">
+              <div className="d-flex align-items-center gap-2 mb-2 flex-wrap">
                 <Badge bg="warning" text="dark" className="px-3 py-2 fs-6">{product.category}</Badge>
                 {product.subcategory && <Badge bg="info" className="text-dark bg-opacity-25 px-3 py-2 fs-6">{product.subcategory}</Badge>}
                 {product.inStock ? (
@@ -74,7 +74,23 @@ const ProductModal = ({ product, show, onHide, settings, onOpenCalculator }) => 
               </div>
 
               <h4 className="fw-bold text-dark mt-2 mb-2">{product.name}</h4>
-              <p className="text-muted mb-3">كود الصنف الخاص: <span className="badge bg-secondary">{product.code}</span></p>
+              
+              <div className="d-flex align-items-center gap-2 flex-wrap mb-3">
+                <span className="text-muted small">كود الصنف: <span className="badge bg-secondary">{product.code}</span></span>
+                {product.brand && (
+                  <span 
+                    className="badge bg-light text-dark border px-2.5 py-1.5 brand-chip-link cursor-pointer shadow-sm"
+                    onClick={() => {
+                      if (onSelectBrand) onSelectBrand(product.brand);
+                      onHide();
+                    }}
+                    title="انقر لعرض جميع أصناف هذه الماركة"
+                    style={{ cursor: 'pointer' }}
+                  >
+                    🏷️ الماركة: <strong className="text-primary">{product.brand}</strong> ↗
+                  </span>
+                )}
+              </div>
 
               {/* Price & Offer Card matching Client Screenshot */}
               <div className="p-3 bg-white rounded-4 border mb-3 shadow-sm">

@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { showToastNotification } from '../components/ToastNotification';
 
 // Automatically detects local dev environment vs Vercel live server
 const API_BASE_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
@@ -18,12 +19,18 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// Handle 401 or 403 token expiration/invalidity safely without infinite reload loops
+// Handle 401 or 403 token expiration and network/500 errors gracefully with toasts
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response && (error.response.status === 401 || error.response.status === 403)) {
-      localStorage.removeItem('ceramic_admin_token');
+    if (error.response) {
+      if (error.response.status === 401 || error.response.status === 403) {
+        localStorage.removeItem('ceramic_admin_token');
+      } else if (error.response.status >= 500) {
+        showToastNotification('تعذر الاتصال بالخادم الرئيسي، جاري استعادة البيانات تلقائياً', 'warning', 4500);
+      }
+    } else if (error.code === 'ERR_NETWORK' || !error.response) {
+      showToastNotification('تنبيه: انقطاع مؤقت في الاتصال بالشبكة، يرجى الفحص', 'danger', 5000);
     }
     return Promise.reject(error);
   }
@@ -31,6 +38,7 @@ api.interceptors.response.use(
 
 export const getSettings = () => api.get('/settings');
 export const getCategories = () => api.get('/categories');
+export const getBrands = () => api.get('/brands');
 export const getProducts = (params) => api.get('/products', { params });
 export const getProductById = (id) => api.get(`/products/${id}`);
 
