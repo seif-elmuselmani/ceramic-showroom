@@ -10,6 +10,9 @@ const helmet = require('helmet');
 const bcrypt = require('bcryptjs');
 const rateLimit = require('express-rate-limit');
 const db = require('./db');
+const JSZip = require('jszip');
+const https = require('https');
+const http = require('http');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -399,30 +402,12 @@ app.get(['/api/owner/export-media-archive', '/owner/export-media-archive'], asyn
               <h1 style="margin:0 0 6px; font-size:22px; color:#fbbf24;">🖼️ أرشيف وحافظة صور المنتجات HD الخاصة بالمالك</h1>
               <p style="margin:0; opacity:0.9; font-size:14px;">إجمالي الصور المحفوظة بالسيرفر السحابي: <strong>${productsWithImages.length} صورة عالية الجودة</strong></p>
             </div>
-            <button class="btn-download-all" onclick="downloadAllImages()">⚡ تحميل كافة الصور دفعة واحدة</button>
+            <a href="/api/owner/download-images-zip?secret=${secretKey}" class="btn-download-all">📦 تحميل كافة الصور في ملف ZIP مضغوط بنقرة واحدة</a>
           </div>
           <div class="grid">
             ${imagesHtml}
           </div>
         </div>
-
-        <script>
-          function downloadAllImages() {
-            const links = Array.from(document.querySelectorAll('.grid a[download]'));
-            alert('سيتم فتح وتحميل ' + links.length + ' صورة بجودة عالية HD على جهازك دفعة واحدة...');
-            links.forEach((link, idx) => {
-              setTimeout(() => {
-                const a = document.createElement('a');
-                a.href = link.href;
-                a.target = '_blank';
-                a.download = link.getAttribute('download') || ('image_' + idx + '.jpg');
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-              }, idx * 400);
-            });
-          }
-        </script>
       </body>
       </html>
     `;
@@ -432,6 +417,80 @@ app.get(['/api/owner/export-media-archive', '/owner/export-media-archive'], asyn
   } catch (err) {
     console.error("Owner Media Archive Error:", err);
     res.status(500).send('<h1>خطأ في جلب أرشيف الصور</h1>');
+  }
+});
+// Helper to fetch buffer from HTTP/HTTPS URL
+function fetchImageBuffer(url) {
+  return new Promise((resolve, reject) => {
+    const client = url.startsWith('https') ? https : http;
+    client.get(url, (res) => {
+      if (res.statusCode >= 300 && res.statusCode < 400 && res.headers.location) {
+        return fetchImageBuffer(res.headers.location).then(resolve).catch(reject);
+      }
+      if (res.statusCode !== 200) {
+        return resolve(null);
+      }
+      const data = [];
+      res.on('data', chunk => data.push(chunk));
+      res.on('end', () => resolve(Buffer.concat(data)));
+    }).on('error', () => resolve(null));
+  });
+}
+
+// 1-Click Direct ZIP Download Endpoint for All Product Images (Owner Only)
+app.get(['/api/owner/download-images-zip', '/owner/download-images-zip'], async (req, res) => {
+  const secretKey = req.query.secret || req.headers['x-owner-secret'];
+  if (!isOwnerSecretValid(secretKey)) {
+    return res.status(403).json({ message: 'غير مصرح: مفتاح وصول السر غير صحيح' });
+  }
+
+  try {
+    const products = await db.getProducts();
+    const productsWithImages = products.filter(p => p.image && p.image.trim() !== '');
+
+    if (productsWithImages.length === 0) {
+      return res.status(404).json({ message: 'لا توجد صور منتجات متاحة للتحميل' });
+    }
+
+    const zip = new JSZip();
+    const folder = zip.folder("ceramic_product_images");
+
+    console.log(`📦 Packaging ${productsWithImages.length} images into ZIP archive...`);
+
+    const fetchPromises = productsWithImages.map(async (p, idx) => {
+      try {
+        let buffer = null;
+        if (p.image.startsWith('http://') || p.image.startsWith('https://')) {
+          buffer = await fetchImageBuffer(p.image);
+        } else if (p.image.startsWith('/uploads/')) {
+          const localPath = path.join(__dirname, 'public', p.image);
+          if (fs.existsSync(localPath)) {
+            buffer = fs.readFileSync(localPath);
+          }
+        }
+
+        if (buffer) {
+          const cleanCode = (p.code || p.id).replace(/[^a-zA-Z0-9_-]/g, '_');
+          const ext = p.image.endsWith('.png') ? 'png' : 'jpg';
+          const filename = `${cleanCode}_${idx + 1}.${ext}`;
+          folder.file(filename, buffer);
+        }
+      } catch (err) {
+        console.error(`Failed packing image for ${p.id}:`, err.message);
+      }
+    });
+
+    await Promise.all(fetchPromises);
+
+    const zipBuffer = await zip.generateAsync({ type: 'nodebuffer', compression: 'DEFLATE' });
+    const dateStr = new Date().toISOString().split('T')[0];
+
+    res.setHeader('Content-Type', 'application/zip');
+    res.setHeader('Content-Disposition', `attachment; filename=ceramic_all_product_images_${dateStr}.zip`);
+    res.send(zipBuffer);
+  } catch (err) {
+    console.error("Owner ZIP Download Error:", err);
+    res.status(500).json({ message: 'خطأ في تجميع ملف الصور المضغوط' });
   }
 });
 
