@@ -419,13 +419,13 @@ app.get(['/api/owner/export-media-archive', '/owner/export-media-archive'], asyn
     res.status(500).send('<h1>خطأ في جلب أرشيف الصور</h1>');
   }
 });
-// Helper to fetch buffer from HTTP/HTTPS URL
-function fetchImageBuffer(url) {
-  return new Promise((resolve, reject) => {
+function fetchImageBuffer(url, redirectCount = 0) {
+  return new Promise((resolve) => {
+    if (!url || redirectCount > 3) return resolve(null);
     const client = url.startsWith('https') ? https : http;
-    client.get(url, (res) => {
+    const req = client.get(url, { timeout: 2500 }, (res) => {
       if (res.statusCode >= 300 && res.statusCode < 400 && res.headers.location) {
-        return fetchImageBuffer(res.headers.location).then(resolve).catch(reject);
+        return fetchImageBuffer(res.headers.location, redirectCount + 1).then(resolve);
       }
       if (res.statusCode !== 200) {
         return resolve(null);
@@ -433,7 +433,13 @@ function fetchImageBuffer(url) {
       const data = [];
       res.on('data', chunk => data.push(chunk));
       res.on('end', () => resolve(Buffer.concat(data)));
-    }).on('error', () => resolve(null));
+    });
+
+    req.on('error', () => resolve(null));
+    req.on('timeout', () => {
+      req.destroy();
+      resolve(null);
+    });
   });
 }
 
