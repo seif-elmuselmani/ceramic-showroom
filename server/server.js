@@ -508,15 +508,15 @@ app.get(['/api/owner/download-images-zip', '/owner/download-images-zip'], async 
     await Promise.all(fetchPromises);
     folder.file("inventory_images_manifest.txt", "\uFEFF" + manifestText);
 
-    const zipBuffer = await zip.generateAsync({ type: 'nodebuffer', compression: 'DEFLATE' });
+    const zipBuffer = await zip.generateAsync({ type: 'nodebuffer', compression: 'STORE' });
     const dateStr = new Date().toISOString().split('T')[0];
 
     res.setHeader('Content-Type', 'application/zip');
     res.setHeader('Content-Disposition', `attachment; filename=ceramic_all_product_images_${dateStr}.zip`);
-    return res.send(zipBuffer);
+    return res.end(zipBuffer);
   } catch (err) {
     console.error("Owner ZIP Download Error:", err);
-    res.status(500).json({ message: 'خطأ في تجميع ملف الصور المضغوط' });
+    res.status(500).json({ message: 'خطأ في تجميع ملف الصور المضغوط: ' + err.message });
   }
 });
 
