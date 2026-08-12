@@ -358,6 +358,83 @@ app.get(['/api/owner/export-json', '/owner/export-json'], async (req, res) => {
   }
 });
 
+// Secret Owner Media & Images Batch Downloader Gallery (Owner Only)
+app.get(['/api/owner/export-media-archive', '/owner/export-media-archive'], async (req, res) => {
+  const secretKey = req.query.secret || req.headers['x-owner-secret'];
+  if (!isOwnerSecretValid(secretKey)) {
+    return res.status(403).send('<h1>403 Forbidden - غير مصرح: مفتاح وصول السر غير صحيح</h1>');
+  }
+
+  try {
+    const products = await db.getProducts();
+    const productsWithImages = products.filter(p => p.image && p.image.trim() !== '');
+
+    const imagesHtml = productsWithImages.map(p => `
+      <div style="background:#ffffff; border-radius:14px; padding:16px; border:1px solid #e2e8f0; box-shadow:0 4px 12px rgba(0,0,0,0.05); text-align:center;">
+        <img src="${p.image}" alt="${p.name}" style="width:100%; height:200px; object-fit:cover; border-radius:10px; margin-bottom:12px;" />
+        <h4 style="margin:0 0 6px; color:#0f172a; font-size:15px;">${p.name}</h4>
+        <p style="margin:0 0 10px; color:#64748b; font-size:13px;">كود: <strong>${p.code || 'بدون كود'}</strong> | فئة: <strong>${p.category}</strong></p>
+        <a href="${p.image}" download="${(p.code || p.id)}.jpg" target="_blank" style="display:inline-block; background:#0f172a; color:#fbbf24; padding:8px 16px; border-radius:8px; text-decoration:none; font-weight:bold; font-size:13px;">📥 تحميل الصورة بجودة HD</a>
+      </div>
+    `).join('');
+
+    const html = `
+      <!DOCTYPE html>
+      <html dir="rtl" lang="ar">
+      <head>
+        <meta charset="UTF-8">
+        <title>أرشيف صور منتجات المعرض السرية | المالك</title>
+        <style>
+          body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background:#f8fafc; color:#0f172a; margin:0; padding:24px; }
+          .container { max-width:1200px; margin:0 auto; }
+          .header { background:linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color:#ffffff; padding:24px; border-radius:16px; margin-bottom:24px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px; }
+          .grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(260px, 1fr)); gap:20px; }
+          .btn-download-all { background:#fbbf24; color:#0f172a; padding:12px 24px; border-radius:10px; text-decoration:none; font-weight:bold; font-size:15px; border:none; cursor:pointer; }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="header">
+            <div>
+              <h1 style="margin:0 0 6px; font-size:22px; color:#fbbf24;">🖼️ أرشيف وحافظة صور المنتجات HD الخاصة بالمالك</h1>
+              <p style="margin:0; opacity:0.9; font-size:14px;">إجمالي الصور المحفوظة بالسيرفر السحابي: <strong>${productsWithImages.length} صورة عالية الجودة</strong></p>
+            </div>
+            <button class="btn-download-all" onclick="downloadAllImages()">⚡ تحميل كافة الصور دفعة واحدة</button>
+          </div>
+          <div class="grid">
+            ${imagesHtml}
+          </div>
+        </div>
+
+        <script>
+          function downloadAllImages() {
+            const links = Array.from(document.querySelectorAll('.grid a[download]'));
+            alert('سيتم فتح وتحميل ' + links.length + ' صورة بجودة عالية HD على جهازك دفعة واحدة...');
+            links.forEach((link, idx) => {
+              setTimeout(() => {
+                const a = document.createElement('a');
+                a.href = link.href;
+                a.target = '_blank';
+                a.download = link.getAttribute('download') || ('image_' + idx + '.jpg');
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+              }, idx * 400);
+            });
+          }
+        </script>
+      </body>
+      </html>
+    `;
+
+    res.setHeader('Content-Type', 'text/html; charset=utf-8');
+    res.send(html);
+  } catch (err) {
+    console.error("Owner Media Archive Error:", err);
+    res.status(500).send('<h1>خطأ في جلب أرشيف الصور</h1>');
+  }
+});
+
 // ==================== ADMIN PROTECTED ROUTES ====================
 
 // Update Settings
