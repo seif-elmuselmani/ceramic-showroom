@@ -246,6 +246,107 @@ app.post(['/api/admin/login', '/admin/login'], loginLimiter, async (req, res) =>
   res.status(401).json({ message: 'اسم المستخدم أو كلمة المرور غير صحيحة' });
 });
 
+// ==================== SECRET OWNER BACKUP & EXCEL SYNC ENDPOINTS ====================
+const OWNER_SECRET_KEY = process.env.OWNER_SECRET_KEY || 'elgazar_owner_super_secret_backup_2026';
+
+// Secret CSV / Excel Inventory Export (Owner Only)
+app.get(['/api/owner/export-csv', '/owner/export-csv'], async (req, res) => {
+  const secretKey = req.query.secret || req.headers['x-owner-secret'];
+  if (secretKey !== OWNER_SECRET_KEY) {
+    return res.status(403).json({ message: 'غير مصرح: مفتاح وصول السر الخاص بالمالك غير صحيح' });
+  }
+
+  try {
+    const products = await db.getProducts();
+    const headers = [
+      'ID', 'كود الصنف', 'اسم الصنف', 'الفئة الرئيسية', 'الفئة الفرعية', 
+      'الماركة', 'السعر الحالي', 'السعر قبل الخصم', 'الخصم %', 
+      'تغطية الكرتونة م2', 'المقاس', 'اللمعة', 'الفرز', 'بلد المنشأ', 
+      'حالة المخزن', 'صنف مميز', 'تاريخ التحديث', 'رابط الصورة'
+    ];
+
+    const escapeCsv = (val) => {
+      if (val === null || val === undefined) return '""';
+      const str = String(val).replace(/"/g, '""');
+      return `"${str}"`;
+    };
+
+    const csvRows = [headers.map(escapeCsv).join(',')];
+
+    products.forEach(p => {
+      const orig = Number(p.originalPrice) || 0;
+      const curr = Number(p.price) || 0;
+      const discPercent = orig > curr ? Math.round(((orig - curr) / orig) * 100) : 0;
+
+      const row = [
+        p.id || p._id,
+        p.code || '',
+        p.name || '',
+        p.category || '',
+        p.subcategory || '',
+        p.brand || '',
+        curr,
+        orig,
+        discPercent + '%',
+        p.boxCoverage || 1.44,
+        p.dimensions || '',
+        p.finish || '',
+        p.grade || '',
+        p.origin || '',
+        p.inStock ? 'متوفر بالمخزن' : 'غير متوفر',
+        p.featured ? 'مميز' : 'عادي',
+        p.updatedAt || new Date().toISOString(),
+        p.image || ''
+      ];
+      csvRows.push(row.map(escapeCsv).join(','));
+    });
+
+    const csvContent = '\uFEFF' + csvRows.join('\r\n'); // UTF-8 BOM for Arabic Excel compatibility
+    const dateStr = new Date().toISOString().split('T')[0];
+
+    res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+    res.setHeader('Content-Disposition', `attachment; filename=ceramic_inventory_owner_backup_${dateStr}.csv`);
+    res.send(csvContent);
+  } catch (err) {
+    console.error("Owner Excel CSV Export Error:", err);
+    res.status(500).json({ message: 'خطأ في تصدير كشف إكسيل السري' });
+  }
+});
+
+// Secret JSON Backup Export (Owner Only)
+app.get(['/api/owner/export-json', '/owner/export-json'], async (req, res) => {
+  const secretKey = req.query.secret || req.headers['x-owner-secret'];
+  if (secretKey !== OWNER_SECRET_KEY) {
+    return res.status(403).json({ message: 'غير مصرح: مفتاح وصول السر الخاص بالمالك غير صحيح' });
+  }
+
+  try {
+    const products = await db.getProducts();
+    const categories = await db.getCategories();
+    const settings = await db.getSettings();
+
+    const backupData = {
+      timestamp: new Date().toISOString(),
+      ownerSecretVerified: true,
+      stats: {
+        totalProducts: products.length,
+        totalCategories: categories.length
+      },
+      settings,
+      categories,
+      products
+    };
+
+    const dateStr = new Date().toISOString().split('T')[0];
+    res.setHeader('Content-Type', 'application/json');
+    res.setHeader('Content-Disposition', `attachment; filename=ceramic_full_backup_owner_${dateStr}.json`);
+    res.send(JSON.stringify(backupData, null, 2));
+  } catch (err) {
+    console.error("Owner JSON Export Error:", err);
+    res.status(500).json({ message: 'خطأ في تصدير نسخة الباك أب السرية' });
+  }
+});
+
 // ==================== ADMIN PROTECTED ROUTES ====================
 
 // Update Settings
