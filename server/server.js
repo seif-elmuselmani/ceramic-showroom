@@ -422,24 +422,39 @@ app.get(['/api/owner/export-media-archive', '/owner/export-media-archive'], asyn
 function fetchImageBuffer(url, redirectCount = 0) {
   return new Promise((resolve) => {
     if (!url || redirectCount > 3) return resolve(null);
-    const client = url.startsWith('https') ? https : http;
-    const req = client.get(url, { timeout: 2500 }, (res) => {
-      if (res.statusCode >= 300 && res.statusCode < 400 && res.headers.location) {
-        return fetchImageBuffer(res.headers.location, redirectCount + 1).then(resolve);
-      }
-      if (res.statusCode !== 200) {
-        return resolve(null);
-      }
-      const data = [];
-      res.on('data', chunk => data.push(chunk));
-      res.on('end', () => resolve(Buffer.concat(data)));
-    });
+    try {
+      const parsedUrl = new URL(url);
+      const client = parsedUrl.protocol === 'https:' ? https : http;
+      const options = {
+        hostname: parsedUrl.hostname,
+        path: parsedUrl.pathname + parsedUrl.search,
+        method: 'GET',
+        headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' },
+        timeout: 3000
+      };
 
-    req.on('error', () => resolve(null));
-    req.on('timeout', () => {
-      req.destroy();
+      const req = client.request(options, (res) => {
+        if (res.statusCode >= 300 && res.statusCode < 400 && res.headers.location) {
+          const nextUrl = res.headers.location.startsWith('http') ? res.headers.location : (parsedUrl.origin + res.headers.location);
+          return fetchImageBuffer(nextUrl, redirectCount + 1).then(resolve);
+        }
+        if (res.statusCode !== 200) {
+          return resolve(null);
+        }
+        const data = [];
+        res.on('data', chunk => data.push(chunk));
+        res.on('end', () => resolve(Buffer.concat(data)));
+      });
+
+      req.on('error', () => resolve(null));
+      req.on('timeout', () => {
+        req.destroy();
+        resolve(null);
+      });
+      req.end();
+    } catch (e) {
       resolve(null);
-    });
+    }
   });
 }
 
