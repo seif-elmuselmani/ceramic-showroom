@@ -251,9 +251,12 @@ const DEFAULT_OWNER_KEY = 'elgazar_owner_super_secret_backup_2026';
 
 function isOwnerSecretValid(providedKey) {
   if (!providedKey) return false;
-  const envKey = process.env.OWNER_SECRET_KEY;
-  if (envKey && providedKey === envKey) return true;
-  if (providedKey === DEFAULT_OWNER_KEY) return true;
+  const cleanProvided = String(providedKey).trim().toLowerCase();
+  const envKey = process.env.OWNER_SECRET_KEY ? String(process.env.OWNER_SECRET_KEY).trim().toLowerCase() : null;
+  const defaultKey = DEFAULT_OWNER_KEY.toLowerCase();
+  
+  if (envKey && cleanProvided === envKey) return true;
+  if (cleanProvided === defaultKey) return true;
   return false;
 }
 
