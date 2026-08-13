@@ -1085,25 +1085,25 @@ const AdminDashboard = ({ settings, onSettingsUpdated }) => {
                           <div className="d-flex align-items-center justify-content-between p-2 rounded-3 bg-light">
                             <span className="small fw-bold">💬 الشارة العائمة الملكية (استفسار عام):</span>
                             <Badge bg="warning" className="text-dark fs-6">
-                              {analyticsData.whatsappClickDetails?.floating_badge || 14} نقرة
+                              {analyticsData.whatsappClickDetails?.floating_badge || 0} نقرة
                             </Badge>
                           </div>
                           <div className="d-flex align-items-center justify-content-between p-2 rounded-3 bg-light">
                             <span className="small fw-bold">📦 كروت المنتجات مباشرة:</span>
                             <Badge bg="success" className="fs-6">
-                              {analyticsData.whatsappClickDetails?.product_card || 11} نقرة
+                              {analyticsData.whatsappClickDetails?.product_card || 0} نقرة
                             </Badge>
                           </div>
                           <div className="d-flex align-items-center justify-content-between p-2 rounded-3 bg-light">
                             <span className="small fw-bold">👁️ نافذة التفاصيل والمواصفات:</span>
                             <Badge bg="info" className="text-dark fs-6">
-                              {analyticsData.whatsappClickDetails?.product_modal || 6} نقرة
+                              {analyticsData.whatsappClickDetails?.product_modal || 0} نقرة
                             </Badge>
                           </div>
                           <div className="d-flex align-items-center justify-content-between p-2 rounded-3 bg-light">
                             <span className="small fw-bold">🧮 حاسبة الكراتين والكميات الذكية:</span>
                             <Badge bg="primary" className="fs-6">
-                              {analyticsData.whatsappClickDetails?.tile_calculator || 3} مقايسة
+                              {analyticsData.whatsappClickDetails?.tile_calculator || 0} مقايسة
                             </Badge>
                           </div>
                         </div>
