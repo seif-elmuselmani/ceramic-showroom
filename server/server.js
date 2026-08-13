@@ -361,6 +361,239 @@ app.get(['/api/owner/export-json', '/owner/export-json'], async (req, res) => {
   }
 });
 
+// Secret Owner Seed Test Data Endpoint (Owner Only)
+app.get(['/api/owner/seed-test-data', '/owner/seed-test-data'], async (req, res) => {
+  const secretKey = req.query.secret || req.headers['x-owner-secret'];
+  if (!isOwnerSecretValid(secretKey)) {
+    return res.status(403).json({ message: 'غير مصرح: مفتاح وصول السر غير صحيح' });
+  }
+
+  const testItems = [
+    {
+      id: "prod-t-001",
+      name: "T - بورسلين إسباني كالاكاتا بيج 60x120 رويال",
+      code: "T-ESP-ROYAL-60120",
+      category: "بورسلين مستورد",
+      subcategory: "إسباني",
+      brand: "Porcelanosa",
+      price: 610,
+      originalPrice: 750,
+      priceUnit: "متر مربع",
+      boxCoverage: 1.44,
+      dimensions: "60x120 سم",
+      finish: "لامع كريستال",
+      grade: "فرز أول ممتاز",
+      origin: "إسبانيا",
+      usage: "أرضيات ريسبشن فاخرة وصالونات",
+      inStock: true,
+      featured: true,
+      description: "عينة اختبار جديدة T: بورسلين إسباني كالاكاتا بيج عروق ذهبية كريستال.",
+      image: "https://images.unsplash.com/photo-1615873968403-89e068629265?auto=format&fit=crop&w=1000&q=80"
+    },
+    {
+      id: "prod-t-002",
+      name: "T - بورسلين هندي أونيكس جولدن 80x160 عملاق",
+      code: "T-IND-ONYX-80160",
+      category: "بورسلين مستورد",
+      subcategory: "هندي",
+      brand: "Graniser",
+      price: 720,
+      originalPrice: 890,
+      priceUnit: "متر مربع",
+      boxCoverage: 2.56,
+      dimensions: "80x160 سم",
+      finish: "سوبر جلوس 3D",
+      grade: "فرز أول",
+      origin: "الهند",
+      usage: "تجليد حوائط ريسبشن وقصور",
+      inStock: true,
+      featured: true,
+      description: "عينة اختبار جديدة T: بورسلين هندي مقاس عملاق 80x160 بعروق أونيكس ساحرة.",
+      image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1000&q=80"
+    },
+    {
+      id: "prod-t-003",
+      name: "T - سيراميك أرضيات باركيه بلوط ألماني 20x120",
+      code: "T-GER-OAK-20120",
+      category: "سيراميك أرضيات",
+      subcategory: "باركيه خشب",
+      brand: "ماركة فاخرة",
+      price: 290,
+      originalPrice: 340,
+      priceUnit: "متر مربع",
+      boxCoverage: 1.20,
+      dimensions: "20x120 سم",
+      finish: "ملمس باركيه طبيعي",
+      grade: "فرز أول",
+      origin: "ألمانيا",
+      usage: "غرف النوم، المكاتب، الممرات",
+      inStock: true,
+      featured: false,
+      description: "عينة اختبار جديدة T: سيراميك باركيه خشب ألماني دافئ.",
+      image: "https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=1000&q=80"
+    },
+    {
+      id: "prod-t-004",
+      name: "T - سيراميك حوائط حمامات رخام كليوباترا 30x90",
+      code: "T-CLEO-WALL-3090",
+      category: "سيراميك حوائط حمامات ومطابخ",
+      subcategory: "بلاطات كبيرة",
+      brand: "كليوباترا",
+      price: 275,
+      originalPrice: 320,
+      priceUnit: "متر مربع",
+      boxCoverage: 1.35,
+      dimensions: "30x90 سم",
+      finish: "لامع عاكس",
+      grade: "فرز أول",
+      origin: "مصر",
+      usage: "حوائط حمامات وفنادق",
+      inStock: true,
+      featured: true,
+      description: "عينة اختبار جديدة T: سيراميك حوائط كليوباترا بمقاس كبير.",
+      image: "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=1000&q=80"
+    },
+    {
+      id: "prod-t-005",
+      name: "T - بورسلين محلي رويال جراي 60x60 مط",
+      code: "T-ROY-GRAY-6060",
+      category: "بورسلين محلي",
+      subcategory: "رويال",
+      brand: "رويال",
+      price: 340,
+      originalPrice: 410,
+      priceUnit: "متر مربع",
+      boxCoverage: 1.44,
+      dimensions: "60x60 سم",
+      finish: "مط / حريري",
+      grade: "فرز أول",
+      origin: "مصر",
+      usage: "أرضيات مطابخ وحمامات وعيادات",
+      inStock: true,
+      featured: false,
+      description: "عينة اختبار جديدة T: بورسلين رويال محلي مط مقاوم للانزلاق.",
+      image: "https://images.unsplash.com/photo-1595428774223-ef52624120d2?auto=format&fit=crop&w=1000&q=80"
+    },
+    {
+      id: "prod-t-006",
+      name: "T - جرانيت طبيعي أسود أسباني 60x120",
+      code: "T-GRAN-BLACK-60120",
+      category: "رخام وجرانيت طبيعي",
+      subcategory: "جرانيت مستورد",
+      brand: "Botticino",
+      price: 950,
+      originalPrice: 1150,
+      priceUnit: "متر مربع",
+      boxCoverage: 1.44,
+      dimensions: "60x120 سم",
+      finish: "تلميع كريستال مائي",
+      grade: "فرز أول ممتاز",
+      origin: "إسبانيا",
+      usage: "أرضيات قصور، صالونات، حوائط ماستر",
+      inStock: true,
+      featured: true,
+      description: "عينة اختبار جديدة T: جرانيت طبيعي مستورد لون أسود ملكي.",
+      image: "https://images.unsplash.com/photo-1507089947368-19c1da9775ae?auto=format&fit=crop&w=1000&q=80"
+    },
+    {
+      id: "prod-t-007",
+      name: "T - ديكور موزاييك ستيل ذهبي فنتج 30x30",
+      code: "T-STEEL-MOS-3030",
+      category: "ديكورات وموزاييك وفن",
+      subcategory: "ستيل وإكسسوار",
+      brand: "Pyramids",
+      price: 380,
+      originalPrice: 450,
+      priceUnit: "متر مربع",
+      boxCoverage: 1.00,
+      dimensions: "30x30 سم",
+      finish: "بريق 3D ذهبي",
+      grade: "فرز أول ممتاز",
+      origin: "إيطاليا",
+      usage: "خلفيات المطابخ والمداخل",
+      inStock: true,
+      featured: true,
+      description: "عينة اختبار جديدة T: ديكور ستيل ذهبي لمسة فنية ساحرة.",
+      image: "https://images.unsplash.com/photo-1565538810643-b5bdb714032a?auto=format&fit=crop&w=1000&q=80"
+    },
+    {
+      id: "prod-t-008",
+      name: "T - طقم خلاط حمام إيطالي جولد 4 قطع",
+      code: "T-MIXER-GOLD-4P",
+      category: "أطقم حمامات وخلاطات",
+      subcategory: "خلاطات وحنفيات",
+      brand: "Marazzi",
+      price: 3200,
+      originalPrice: 3900,
+      priceUnit: "طقم كامل",
+      boxCoverage: 1.00,
+      dimensions: "قياسي",
+      finish: "طلاء ذهبي حراري",
+      grade: "فرز أول ممتاز",
+      origin: "إيطاليا",
+      usage: "حمامات ماستر وضيوف",
+      inStock: true,
+      featured: true,
+      description: "عينة اختبار جديدة T: طقم خلاطات إيطالي ذهبي مقاوم للصدأ والترسبات.",
+      image: "https://images.unsplash.com/photo-1620626011761-996317b69798?auto=format&fit=crop&w=1000&q=80"
+    },
+    {
+      id: "prod-t-009",
+      name: "T - بورسلين محلي الجوهرة كريستال 60x120",
+      code: "T-JEW-CRYSTAL-60120",
+      category: "بورسلين محلي",
+      subcategory: "الجوهرة",
+      brand: "الجوهرة",
+      price: 480,
+      originalPrice: 550,
+      priceUnit: "متر مربع",
+      boxCoverage: 1.44,
+      dimensions: "60x120 سم",
+      finish: "لامع كريستال",
+      grade: "فرز أول",
+      origin: "مصر",
+      usage: "أرضيات ريسبشن ومطابخ",
+      inStock: true,
+      featured: true,
+      description: "عينة اختبار جديدة T: بورسلين الجوهرة كريستال ناصع الجودة.",
+      image: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1000&q=80"
+    },
+    {
+      id: "prod-t-010",
+      name: "T - سيراميك مطابخ فنتج أزرق أندلسي 20x20",
+      code: "T-AND-BLUE-2020",
+      category: "سيراميك حوائط حمامات ومطابخ",
+      subcategory: "موزاييك وديكور",
+      brand: "Pyramids",
+      price: 210,
+      originalPrice: 260,
+      priceUnit: "متر مربع",
+      boxCoverage: 1.00,
+      dimensions: "20x20 سم",
+      finish: "مط زخرفي",
+      grade: "فرز أول",
+      origin: "إسبانيا",
+      usage: "حوائط مطابخ وأرضيات ديكور",
+      inStock: true,
+      featured: false,
+      description: "عينة اختبار جديدة T: سيراميك مطابخ كلاسيك أندلسي أزرق.",
+      image: "https://images.unsplash.com/photo-1527352726752-1903158a3745?auto=format&fit=crop&w=1000&q=80"
+    }
+  ];
+
+  try {
+    const results = [];
+    for (const item of testItems) {
+      const added = await db.addProduct(item);
+      results.push(added);
+    }
+    res.json({ message: 'تم إضافة الأصناف التجريبية T بنجاح للقواعد المباشرة السحابية', count: results.length, items: results });
+  } catch (err) {
+    console.error("Owner Seed Error:", err);
+    res.status(500).json({ message: 'خطأ في إضافة الأصناف التجريبية' });
+  }
+});
+
 // Secret Owner Media & Images Batch Downloader Gallery (Owner Only)
 app.get(['/api/owner/export-media-archive', '/owner/export-media-archive'], async (req, res) => {
   const secretKey = req.query.secret || req.headers['x-owner-secret'];
