@@ -934,6 +934,7 @@ class JsonDatabase {
         desktopCount: 0,
         lastActivity: new Date().toISOString()
       };
+      this.writeLocal(memoryCache);
     }
     return memoryCache.analytics;
   }

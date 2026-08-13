@@ -3,7 +3,7 @@ import { Container, Row, Col, Card, Button, Badge, Spinner, Alert, ProgressBar }
 import { BarChart3, Clock, Users, MousePointerClick, Smartphone, RefreshCw, ShieldCheck, Lock, Download, Zap, Eye, PieChart, Sparkles, Activity } from 'lucide-react';
 import axios from 'axios';
 
-const OwnerAnalytics = () => {
+const OwnerAnalytics = ({ onNavigate }) => {
   const [analyticsData, setAnalyticsData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -122,6 +122,17 @@ const OwnerAnalytics = () => {
 
             {/* Quick Actions Control Toolbar */}
             <div className="d-flex align-items-center gap-2 flex-wrap">
+              {onNavigate && (
+                <Button 
+                  variant="dark" 
+                  size="sm" 
+                  onClick={() => onNavigate('catalog')}
+                  className="rounded-pill fw-bold px-3 py-2 text-warning"
+                >
+                  🏛️ العودة للكتالوج
+                </Button>
+              )}
+
               <Button 
                 variant={autoRefresh ? "warning" : "outline-secondary"} 
                 size="sm" 

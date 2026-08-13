@@ -108,6 +108,14 @@ function App() {
     setActiveTab('catalog');
   };
 
+  if (activeTab === 'owner-stats') {
+    return (
+      <ErrorBoundary>
+        <OwnerAnalytics onNavigate={handleNavigate} />
+      </ErrorBoundary>
+    );
+  }
+
   return (
     <ErrorBoundary>
       <div className="d-flex flex-column min-vh-100 position-relative">
