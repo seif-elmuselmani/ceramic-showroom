@@ -918,6 +918,17 @@ app.get(['/api/analytics/stats', '/analytics/stats'], async (req, res) => {
   }
 });
 
+// Real-Time Analytics Reset API (Admin Only)
+app.post(['/api/analytics/reset', '/analytics/reset'], async (req, res) => {
+  try {
+    const analytics = await db.resetAnalytics();
+    res.json({ message: 'تم تصفير جميع إحصائيات الزوار والواتساب بنجاح', analytics });
+  } catch (err) {
+    console.error("Failed resetting analytics stats:", err);
+    res.status(500).json({ message: 'خطأ في تصفير إحصائيات المعرض' });
+  }
+});
+
 // 404 API Endpoint Handler for unhandled routes
 app.use('/api/*', (req, res) => {
   res.status(404).json({ message: 'المسار المطلوب غير موجود (404 Not Found)' });

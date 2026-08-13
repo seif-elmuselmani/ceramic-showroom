@@ -410,6 +410,19 @@ const AdminDashboard = ({ settings, onSettingsUpdated }) => {
   const totalInStock = prodsList.filter(p => p && p.inStock).length;
   const totalOutOfStock = prodsList.length - totalInStock;
 
+  const handleResetAnalytics = async () => {
+    if (window.confirm('هل أنت متأكد من تصفير جميع إحصائيات الزوار والواتساب والبدء من الصفر (0)؟')) {
+      try {
+        const res = await axios.post('/api/analytics/reset');
+        setAnalyticsData(res.data.analytics);
+        showSuccess('تم تصفير جميع الإحصائيات والبدء من الصفر (0) بنجاح!');
+      } catch (err) {
+        console.error('Reset analytics error:', err);
+        alert('حدث خطأ أثناء تصفير الإحصائيات');
+      }
+    }
+  };
+
   return (
     <div className="pb-5">
       {/* Dashboard Top Header */}
@@ -992,9 +1005,14 @@ const AdminDashboard = ({ settings, onSettingsUpdated }) => {
                   </h4>
                   <p className="text-muted small mb-0">متابعة تفاعلية لحظية لعدد الزوار، دقائق التصفح، ونقرات رسائل الواتساب</p>
                 </div>
-                <Button variant="outline-warning" size="sm" onClick={fetchDashboardData} className="rounded-pill fw-bold text-dark">
-                  <RefreshCw size={14} className="me-1" /> تحديث الإحصائيات
-                </Button>
+                <div className="d-flex align-items-center gap-2">
+                  <Button variant="outline-warning" size="sm" onClick={fetchDashboardData} className="rounded-pill fw-bold text-dark">
+                    <RefreshCw size={14} className="me-1" /> تحديث
+                  </Button>
+                  <Button variant="outline-danger" size="sm" onClick={handleResetAnalytics} className="rounded-pill fw-bold">
+                    🔄 تصفير الإحصائيات (0)
+                  </Button>
+                </div>
               </div>
 
               {analyticsData ? (
@@ -1007,8 +1025,8 @@ const AdminDashboard = ({ settings, onSettingsUpdated }) => {
                           <span className="text-muted small fw-bold">إجمالي زوار المعرض</span>
                           <Users size={22} className="text-warning" />
                         </div>
-                        <div className="fs-2 fw-black text-dark">{(analyticsData.totalVisitors || 158).toLocaleString()}</div>
-                        <div className="small text-muted mt-1">({(analyticsData.totalPageViews || 412).toLocaleString()} مشاهدة صفحة)</div>
+                        <div className="fs-2 fw-black text-dark">{(analyticsData.totalVisitors || 0).toLocaleString()}</div>
+                        <div className="small text-muted mt-1">({(analyticsData.totalPageViews || 0).toLocaleString()} مشاهدة صفحة)</div>
                       </div>
                     </Col>
 
@@ -1019,9 +1037,9 @@ const AdminDashboard = ({ settings, onSettingsUpdated }) => {
                           <Clock size={22} className="text-success" />
                         </div>
                         <div className="fs-2 fw-black text-success">
-                          {Math.round((analyticsData.totalTimeSpentSeconds || 18450) / 60).toLocaleString()} <span className="fs-6 font-semibold">دقيقة</span>
+                          {Math.round((analyticsData.totalTimeSpentSeconds || 0) / 60).toLocaleString()} <span className="fs-6 font-semibold">دقيقة</span>
                         </div>
-                        <div className="small text-muted mt-1">(~{(Math.round((analyticsData.totalTimeSpentSeconds || 18450) / 3600 * 10) / 10)} ساعة تصفح إجمالية)</div>
+                        <div className="small text-muted mt-1">(~{(Math.round((analyticsData.totalTimeSpentSeconds || 0) / 3600 * 10) / 10)} ساعة تصفح إجمالية)</div>
                       </div>
                     </Col>
 
@@ -1031,7 +1049,7 @@ const AdminDashboard = ({ settings, onSettingsUpdated }) => {
                           <span className="text-muted small fw-bold">نقرات الواتساب الحية</span>
                           <MousePointerClick size={22} className="text-primary" />
                         </div>
-                        <div className="fs-2 fw-black text-primary">{(analyticsData.whatsappClicks || 34).toLocaleString()} <span className="fs-6 font-semibold">استفسار</span></div>
+                        <div className="fs-2 fw-black text-primary">{(analyticsData.whatsappClicks || 0).toLocaleString()} <span className="fs-6 font-semibold">استفسار</span></div>
                         <div className="small text-muted mt-1">(عملاء تواصلوا مباشرة عبر الواتس)</div>
                       </div>
                     </Col>
@@ -1045,11 +1063,11 @@ const AdminDashboard = ({ settings, onSettingsUpdated }) => {
                         <div className="d-flex align-items-center gap-3 mt-1">
                           <div>
                             <span className="small text-muted d-block">📱 موبايل:</span>
-                            <strong className="fs-5 text-dark">{(analyticsData.mobileCount || 112)}</strong>
+                            <strong className="fs-5 text-dark">{(analyticsData.mobileCount || 0)}</strong>
                           </div>
                           <div className="border-start ps-3">
                             <span className="small text-muted d-block">💻 كمبيوتر:</span>
-                            <strong className="fs-5 text-dark">{(analyticsData.desktopCount || 46)}</strong>
+                            <strong className="fs-5 text-dark">{(analyticsData.desktopCount || 0)}</strong>
                           </div>
                         </div>
                       </div>

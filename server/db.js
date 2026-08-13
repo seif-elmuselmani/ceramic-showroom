@@ -913,6 +913,94 @@ class JsonDatabase {
     this.writeLocal(memoryCache);
     return true;
   }
+
+  // Real-Time Analytics Telemetry Storage & Tracking (Starting strictly from 0)
+  async getAnalytics() {
+    if (!memoryCache.analytics) {
+      memoryCache.analytics = {
+        totalVisitors: 0,
+        totalPageViews: 0,
+        totalTimeSpentSeconds: 0,
+        whatsappClicks: 0,
+        whatsappClickDetails: {
+          floating_badge: 0,
+          product_card: 0,
+          product_modal: 0,
+          tile_calculator: 0
+        },
+        productViews: {},
+        searchQueries: {},
+        mobileCount: 0,
+        desktopCount: 0,
+        lastActivity: new Date().toISOString()
+      };
+    }
+    return memoryCache.analytics;
+  }
+
+  async resetAnalytics() {
+    memoryCache.analytics = {
+      totalVisitors: 0,
+      totalPageViews: 0,
+      totalTimeSpentSeconds: 0,
+      whatsappClicks: 0,
+      whatsappClickDetails: {
+        floating_badge: 0,
+        product_card: 0,
+        product_modal: 0,
+        tile_calculator: 0
+      },
+      productViews: {},
+      searchQueries: {},
+      mobileCount: 0,
+      desktopCount: 0,
+      lastActivity: new Date().toISOString()
+    };
+    this.writeLocal(memoryCache);
+    return memoryCache.analytics;
+  }
+
+  async trackAnalytics(eventData) {
+    const analytics = await this.getAnalytics();
+    const { type, payload } = eventData || {};
+
+    if (type === 'pageview') {
+      analytics.totalPageViews = (analytics.totalPageViews || 0) + 1;
+      if (payload?.isNewVisitor) {
+        analytics.totalVisitors = (analytics.totalVisitors || 0) + 1;
+      }
+      if (payload?.device === 'mobile') {
+        analytics.mobileCount = (analytics.mobileCount || 0) + 1;
+      } else {
+        analytics.desktopCount = (analytics.desktopCount || 0) + 1;
+      }
+    } else if (type === 'heartbeat') {
+      const seconds = Number(payload?.seconds) || 30;
+      analytics.totalTimeSpentSeconds = (analytics.totalTimeSpentSeconds || 0) + seconds;
+    } else if (type === 'whatsapp_click') {
+      analytics.whatsappClicks = (analytics.whatsappClicks || 0) + 1;
+      const source = payload?.source || 'general';
+      if (!analytics.whatsappClickDetails) analytics.whatsappClickDetails = {};
+      analytics.whatsappClickDetails[source] = (analytics.whatsappClickDetails[source] || 0) + 1;
+    } else if (type === 'product_view') {
+      const prodId = payload?.productId || payload?.id;
+      if (prodId) {
+        if (!analytics.productViews) analytics.productViews = {};
+        analytics.productViews[prodId] = (analytics.productViews[prodId] || 0) + 1;
+      }
+    } else if (type === 'search') {
+      const q = (payload?.query || '').trim().toLowerCase();
+      if (q && q.length >= 2) {
+        if (!analytics.searchQueries) analytics.searchQueries = {};
+        analytics.searchQueries[q] = (analytics.searchQueries[q] || 0) + 1;
+      }
+    }
+
+    analytics.lastActivity = new Date().toISOString();
+    memoryCache.analytics = analytics;
+    this.writeLocal(memoryCache);
+    return analytics;
+  }
 }
 
 module.exports = new JsonDatabase();
