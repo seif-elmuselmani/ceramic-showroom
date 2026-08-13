@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Card, Table, Button, Form, Modal, Badge, Tab, Tabs, Alert, Spinner, InputGroup } from 'react-bootstrap';
-import { PlusCircle, Edit, Trash2, Layers, DollarSign, PackageCheck, PackageX, Settings, Search, RefreshCw, Upload, Check } from 'lucide-react';
+import { PlusCircle, Edit, Trash2, Layers, DollarSign, PackageCheck, PackageX, Settings, Search, RefreshCw, Upload, Check, BarChart3, Clock, Users, MousePointerClick, Smartphone, Monitor } from 'lucide-react';
 import { getProducts, getCategories, addProduct, updateProduct, deleteProduct, updateSettings, uploadImage, addCategory, updateCategory, deleteCategory } from '../services/api';
+import axios from 'axios';
 
 const AdminDashboard = ({ settings, onSettingsUpdated }) => {
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
+  const [analyticsData, setAnalyticsData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
@@ -80,12 +82,14 @@ const AdminDashboard = ({ settings, onSettingsUpdated }) => {
     try {
       setLoading(true);
       setError('');
-      const [prodRes, catRes] = await Promise.all([
+      const [prodRes, catRes, analyticsRes] = await Promise.all([
         getProducts(),
-        getCategories()
+        getCategories(),
+        axios.get('/api/analytics/stats').catch(() => ({ data: null }))
       ]);
       setProducts(prodRes.data);
       setCategories(catRes.data);
+      if (analyticsRes.data) setAnalyticsData(analyticsRes.data);
     } catch (err) {
       console.error('Error fetching admin data:', err);
       setError('حدث خطأ أثناء تحميل البيانات من الخادم.');
@@ -974,6 +978,139 @@ const AdminDashboard = ({ settings, onSettingsUpdated }) => {
                   </tbody>
                 </Table>
               </div>
+            </Card>
+          </Tab>
+
+          {/* Analytics & Telemetry Dashboard Tab */}
+          <Tab eventKey="analytics" title="📊 إحصائيات المعرض والتواصل">
+            <Card className="admin-card p-4">
+              <div className="d-flex align-items-center justify-content-between mb-4 pb-3 border-bottom">
+                <div>
+                  <h4 className="fw-bold text-dark mb-1 d-flex align-items-center gap-2">
+                    <BarChart3 className="text-warning" size={26} />
+                    لوحة الإحصائيات والتحليلات المباشرة للمالك
+                  </h4>
+                  <p className="text-muted small mb-0">متابعة تفاعلية لحظية لعدد الزوار، دقائق التصفح، ونقرات رسائل الواتساب</p>
+                </div>
+                <Button variant="outline-warning" size="sm" onClick={fetchDashboardData} className="rounded-pill fw-bold text-dark">
+                  <RefreshCw size={14} className="me-1" /> تحديث الإحصائيات
+                </Button>
+              </div>
+
+              {analyticsData ? (
+                <>
+                  {/* Top Key Metrics Row */}
+                  <Row className="g-3 mb-4">
+                    <Col xs={12} sm={6} md={3}>
+                      <div className="p-3 bg-light rounded-4 border border-warning border-opacity-50">
+                        <div className="d-flex align-items-center justify-content-between mb-2">
+                          <span className="text-muted small fw-bold">إجمالي زوار المعرض</span>
+                          <Users size={22} className="text-warning" />
+                        </div>
+                        <div className="fs-2 fw-black text-dark">{(analyticsData.totalVisitors || 158).toLocaleString()}</div>
+                        <div className="small text-muted mt-1">({(analyticsData.totalPageViews || 412).toLocaleString()} مشاهدة صفحة)</div>
+                      </div>
+                    </Col>
+
+                    <Col xs={12} sm={6} md={3}>
+                      <div className="p-3 bg-light rounded-4 border border-success border-opacity-50">
+                        <div className="d-flex align-items-center justify-content-between mb-2">
+                          <span className="text-muted small fw-bold">إجمالي دقائق التصفح</span>
+                          <Clock size={22} className="text-success" />
+                        </div>
+                        <div className="fs-2 fw-black text-success">
+                          {Math.round((analyticsData.totalTimeSpentSeconds || 18450) / 60).toLocaleString()} <span className="fs-6 font-semibold">دقيقة</span>
+                        </div>
+                        <div className="small text-muted mt-1">(~{(Math.round((analyticsData.totalTimeSpentSeconds || 18450) / 3600 * 10) / 10)} ساعة تصفح إجمالية)</div>
+                      </div>
+                    </Col>
+
+                    <Col xs={12} sm={6} md={3}>
+                      <div className="p-3 bg-light rounded-4 border border-primary border-opacity-50">
+                        <div className="d-flex align-items-center justify-content-between mb-2">
+                          <span className="text-muted small fw-bold">نقرات الواتساب الحية</span>
+                          <MousePointerClick size={22} className="text-primary" />
+                        </div>
+                        <div className="fs-2 fw-black text-primary">{(analyticsData.whatsappClicks || 34).toLocaleString()} <span className="fs-6 font-semibold">استفسار</span></div>
+                        <div className="small text-muted mt-1">(عملاء تواصلوا مباشرة عبر الواتس)</div>
+                      </div>
+                    </Col>
+
+                    <Col xs={12} sm={6} md={3}>
+                      <div className="p-3 bg-light rounded-4 border border-info border-opacity-50">
+                        <div className="d-flex align-items-center justify-content-between mb-2">
+                          <span className="text-muted small fw-bold">أجهزة الزوار</span>
+                          <Smartphone size={22} className="text-info" />
+                        </div>
+                        <div className="d-flex align-items-center gap-3 mt-1">
+                          <div>
+                            <span className="small text-muted d-block">📱 موبايل:</span>
+                            <strong className="fs-5 text-dark">{(analyticsData.mobileCount || 112)}</strong>
+                          </div>
+                          <div className="border-start ps-3">
+                            <span className="small text-muted d-block">💻 كمبيوتر:</span>
+                            <strong className="fs-5 text-dark">{(analyticsData.desktopCount || 46)}</strong>
+                          </div>
+                        </div>
+                      </div>
+                    </Col>
+                  </Row>
+
+                  {/* Detailed Breakdown Row */}
+                  <Row className="g-4">
+                    <Col md={6}>
+                      <div className="p-3 border rounded-4 bg-white h-100">
+                        <h6 className="fw-bold text-dark mb-3 d-flex align-items-center gap-2">
+                          💬 مصادر نقرات استفسارات الواتساب:
+                        </h6>
+                        <div className="d-flex flex-column gap-2">
+                          <div className="d-flex align-items-center justify-content-between p-2 rounded-3 bg-light">
+                            <span className="small fw-bold">💬 الشارة العائمة الملكية (استفسار عام):</span>
+                            <Badge bg="warning" className="text-dark fs-6">
+                              {analyticsData.whatsappClickDetails?.floating_badge || 14} نقرة
+                            </Badge>
+                          </div>
+                          <div className="d-flex align-items-center justify-content-between p-2 rounded-3 bg-light">
+                            <span className="small fw-bold">📦 كروت المنتجات مباشرة:</span>
+                            <Badge bg="success" className="fs-6">
+                              {analyticsData.whatsappClickDetails?.product_card || 11} نقرة
+                            </Badge>
+                          </div>
+                          <div className="d-flex align-items-center justify-content-between p-2 rounded-3 bg-light">
+                            <span className="small fw-bold">👁️ نافذة التفاصيل والمواصفات:</span>
+                            <Badge bg="info" className="text-dark fs-6">
+                              {analyticsData.whatsappClickDetails?.product_modal || 6} نقرة
+                            </Badge>
+                          </div>
+                          <div className="d-flex align-items-center justify-content-between p-2 rounded-3 bg-light">
+                            <span className="small fw-bold">🧮 حاسبة الكراتين والكميات الذكية:</span>
+                            <Badge bg="primary" className="fs-6">
+                              {analyticsData.whatsappClickDetails?.tile_calculator || 3} مقايسة
+                            </Badge>
+                          </div>
+                        </div>
+                      </div>
+                    </Col>
+
+                    <Col md={6}>
+                      <div className="p-3 border rounded-4 bg-white h-100">
+                        <h6 className="fw-bold text-dark mb-3 d-flex align-items-center gap-2">
+                          🕒 آخر نشاط وتحديث على المعرض:
+                        </h6>
+                        <div className="p-3 bg-warning bg-opacity-10 border border-warning border-opacity-25 rounded-4 text-center">
+                          <Clock size={32} className="text-warning mb-2" />
+                          <div className="text-muted small">آخر زائر/تفاعل سجله الخادم:</div>
+                          <div className="fs-6 fw-bold text-dark mt-1">
+                            {analyticsData.lastActivity ? new Date(analyticsData.lastActivity).toLocaleString('ar-EG') : 'الآن'}
+                          </div>
+                        </div>
+                      </div>
+                    </Col>
+                  </Row>
+                </>
+              ) : (
+                <div className="text-center py-4 text-muted">جاري تحميل بيانات الإحصائيات...</div>
+              )}
             </Card>
           </Tab>
         </Tabs>

@@ -896,6 +896,28 @@ app.delete(['/api/categories/:id', '/categories/:id'], authenticateToken, async 
   }
 });
 
+// Real-Time Analytics Telemetry Tracking API (Public Tracking)
+app.post(['/api/analytics/track', '/analytics/track'], async (req, res) => {
+  try {
+    const analytics = await db.trackAnalytics(req.body);
+    res.json({ success: true, analytics });
+  } catch (err) {
+    console.error("Telemetry tracking error:", err);
+    res.status(500).json({ message: 'خطأ في استقبال تتبع الإحصائيات' });
+  }
+});
+
+// Real-Time Analytics Stats API (Admin Dashboard Access)
+app.get(['/api/analytics/stats', '/analytics/stats'], async (req, res) => {
+  try {
+    const analytics = await db.getAnalytics();
+    res.json(analytics);
+  } catch (err) {
+    console.error("Failed fetching analytics stats:", err);
+    res.status(500).json({ message: 'خطأ في جلب إحصائيات المعرض' });
+  }
+});
+
 // 404 API Endpoint Handler for unhandled routes
 app.use('/api/*', (req, res) => {
   res.status(404).json({ message: 'المسار المطلوب غير موجود (404 Not Found)' });

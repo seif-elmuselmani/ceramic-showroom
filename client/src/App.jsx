@@ -14,6 +14,7 @@ import ErrorBoundary from './components/ErrorBoundary';
 import ToastNotification from './components/ToastNotification';
 
 import { getSettings, getCategories } from './services/api';
+import { initAnalyticsTracker, trackWhatsAppClick } from './services/analytics';
 
 function App() {
   const [activeTab, setActiveTab] = useState('catalog');
@@ -32,6 +33,9 @@ function App() {
   });
 
   useEffect(() => {
+    // Initialize Telemetry Analytics Tracker
+    const cleanupAnalytics = initAnalyticsTracker();
+
     // Check local authentication status
     const token = localStorage.getItem('ceramic_admin_token');
     if (token) {
@@ -50,6 +54,10 @@ function App() {
 
     fetchSettings();
     fetchCategories();
+
+    return () => {
+      if (cleanupAnalytics) cleanupAnalytics();
+    };
   }, []);
 
   const fetchSettings = async () => {
@@ -164,6 +172,7 @@ function App() {
           href={`https://wa.me/${settings?.whatsappNumber || '201001366499'}?text=${encodeURIComponent('السلام عليكم ورحمة الله وبركاته 💐\nمرحباً معرض السيد الجزار للسيراميك والبورسلين 🏛️\n\nأود الاستفسار عن كشف الأسعار والعروض المتاحة حالياً، ومواعيد إمكانية زيارة المعرض لمعاينة العينات. 🙏✨')}`}
           target="_blank"
           rel="noopener noreferrer"
+          onClick={() => trackWhatsAppClick('floating_badge')}
           className="floating-whatsapp-luxury"
           title="تواصل مباشر واستفسار عام مع المعرض عبر الواتساب"
         >
