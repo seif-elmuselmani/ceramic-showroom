@@ -491,7 +491,26 @@ const ProductSchema = new mongoose.Schema({
   image: String
 });
 
-let Settings, Category, Product;
+const AnalyticsSchema = new mongoose.Schema({
+  id: { type: String, default: "main-analytics", unique: true },
+  totalVisitors: { type: Number, default: 0 },
+  totalPageViews: { type: Number, default: 0 },
+  totalTimeSpentSeconds: { type: Number, default: 0 },
+  whatsappClicks: { type: Number, default: 0 },
+  whatsappClickDetails: {
+    floating_badge: { type: Number, default: 0 },
+    product_card: { type: Number, default: 0 },
+    product_modal: { type: Number, default: 0 },
+    tile_calculator: { type: Number, default: 0 }
+  },
+  productViews: { type: Object, default: {} },
+  searchQueries: { type: Object, default: {} },
+  mobileCount: { type: Number, default: 0 },
+  desktopCount: { type: Number, default: 0 },
+  lastActivity: { type: String, default: () => new Date().toISOString() }
+}, { minimize: false });
+
+let Settings, Category, Product, Analytics;
 let isConnected = false;
 
 // Seed data if database collections are empty
@@ -542,6 +561,7 @@ async function connectToMongo() {
     Settings = mongoose.models.Settings || mongoose.model('Settings', SettingsSchema);
     Category = mongoose.models.Category || mongoose.model('Category', CategorySchema);
     Product = mongoose.models.Product || mongoose.model('Product', ProductSchema);
+    Analytics = mongoose.models.Analytics || mongoose.model('Analytics', AnalyticsSchema);
     
     console.log("🔌 Connected to MongoDB Atlas successfully");
     
@@ -914,20 +934,41 @@ class JsonDatabase {
     return true;
   }
 
-  // Real-Time Analytics Telemetry Storage & Tracking (Starting strictly from 0)
+  // Real-Time Analytics Telemetry Storage & Tracking (MongoDB Persistent + Local Cache)
   async getAnalytics() {
+    if (process.env.MONGODB_URI) {
+      const connected = await connectToMongo();
+      if (connected) {
+        let analyticsDoc = await Analytics.findOne({ id: 'main-analytics' }).lean();
+        if (!analyticsDoc) {
+          const fresh = {
+            id: 'main-analytics',
+            totalVisitors: 0,
+            totalPageViews: 0,
+            totalTimeSpentSeconds: 0,
+            whatsappClicks: 0,
+            whatsappClickDetails: { floating_badge: 0, product_card: 0, product_modal: 0, tile_calculator: 0 },
+            productViews: {},
+            searchQueries: {},
+            mobileCount: 0,
+            desktopCount: 0,
+            lastActivity: new Date().toISOString()
+          };
+          analyticsDoc = await Analytics.create(fresh);
+          analyticsDoc = analyticsDoc.toObject();
+        }
+        memoryCache.analytics = analyticsDoc;
+        return analyticsDoc;
+      }
+    }
+
     if (!memoryCache.analytics) {
       memoryCache.analytics = {
         totalVisitors: 0,
         totalPageViews: 0,
         totalTimeSpentSeconds: 0,
         whatsappClicks: 0,
-        whatsappClickDetails: {
-          floating_badge: 0,
-          product_card: 0,
-          product_modal: 0,
-          tile_calculator: 0
-        },
+        whatsappClickDetails: { floating_badge: 0, product_card: 0, product_modal: 0, tile_calculator: 0 },
         productViews: {},
         searchQueries: {},
         mobileCount: 0,
@@ -940,23 +981,27 @@ class JsonDatabase {
   }
 
   async resetAnalytics() {
-    memoryCache.analytics = {
+    const zeroData = {
       totalVisitors: 0,
       totalPageViews: 0,
       totalTimeSpentSeconds: 0,
       whatsappClicks: 0,
-      whatsappClickDetails: {
-        floating_badge: 0,
-        product_card: 0,
-        product_modal: 0,
-        tile_calculator: 0
-      },
+      whatsappClickDetails: { floating_badge: 0, product_card: 0, product_modal: 0, tile_calculator: 0 },
       productViews: {},
       searchQueries: {},
       mobileCount: 0,
       desktopCount: 0,
       lastActivity: new Date().toISOString()
     };
+
+    if (process.env.MONGODB_URI) {
+      const connected = await connectToMongo();
+      if (connected) {
+        await Analytics.findOneAndUpdate({ id: 'main-analytics' }, { $set: zeroData }, { upsert: true });
+      }
+    }
+
+    memoryCache.analytics = { id: 'main-analytics', ...zeroData };
     this.writeLocal(memoryCache);
     return memoryCache.analytics;
   }
@@ -998,6 +1043,18 @@ class JsonDatabase {
     }
 
     analytics.lastActivity = new Date().toISOString();
+
+    if (process.env.MONGODB_URI) {
+      const connected = await connectToMongo();
+      if (connected) {
+        await Analytics.findOneAndUpdate(
+          { id: 'main-analytics' },
+          { $set: analytics },
+          { upsert: true }
+        );
+      }
+    }
+
     memoryCache.analytics = analytics;
     this.writeLocal(memoryCache);
     return analytics;
