@@ -57,32 +57,44 @@ const OwnerAnalytics = ({ onNavigate }) => {
     }
   };
 
-  // Export Analytics to CSV File
-  const handleExportCSV = () => {
-    if (!analyticsData) return;
-    const csvRows = [
-      ['المعيار (Metric)', 'القيمة (Value)'],
-      ['إجمالي الزوار الفريدين (Total Unique Visitors)', analyticsData.totalVisitors || 0],
-      ['إجمالي مشاهدات الصفحات (Total Page Views)', analyticsData.totalPageViews || 0],
-      ['إجمالي دقائق التصفح (Total Browsing Minutes)', Math.round((analyticsData.totalTimeSpentSeconds || 0) / 60)],
-      ['إجمالي نقرات الواتساب (Total WhatsApp Leads)', analyticsData.whatsappClicks || 0],
-      ['زوار الموبايل (Mobile Visitors)', analyticsData.mobileCount || 0],
-      ['زوار الكمبيوتر (Desktop Visitors)', analyticsData.desktopCount || 0],
-      ['نقرات الشارة العائمة (Floating Badge Clicks)', analyticsData.whatsappClickDetails?.floating_badge || 0],
-      ['نقرات كروت الكتالوج (Product Card Clicks)', analyticsData.whatsappClickDetails?.product_card || 0],
-      ['نقرات نافذة التفاصيل (Product Modal Clicks)', analyticsData.whatsappClickDetails?.product_modal || 0],
-      ['نقرات حاسبة الكميات (Tile Calculator Clicks)', analyticsData.whatsappClickDetails?.tile_calculator || 0],
-      ['تاريخ التصدير (Export Date)', new Date().toLocaleString('ar-EG')]
-    ];
+  // Download Full Database JSON Backup
+  const handleDownloadJSONBackup = async () => {
+    try {
+      const [prodRes, catRes, setRes] = await Promise.all([
+        axios.get('/api/products'),
+        axios.get('/api/categories'),
+        axios.get('/api/settings')
+      ]);
 
-    const csvContent = "data:text/csv;charset=utf-8,\uFEFF" + csvRows.map(e => e.join(",")).join("\n");
-    const encodedUri = encodeURI(csvContent);
-    const link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
-    link.setAttribute("download", `Elgazar_Showroom_Analytics_${Date.now()}.csv`);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+      const backupData = {
+        timestamp: new Date().toISOString(),
+        settings: setRes.data,
+        categories: catRes.data,
+        products: prodRes.data,
+        analytics: analyticsData
+      };
+
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(backupData, null, 2));
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute("href", dataStr);
+      downloadAnchor.setAttribute("download", `Elgazar_Showroom_Full_Backup_${Date.now()}.json`);
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+
+      setSuccessMsg('تم تحميل النسخة الاحتياطية الكاملة (JSON) بنجاح!');
+      setTimeout(() => setSuccessMsg(''), 4000);
+    } catch (err) {
+      console.error('Backup download error:', err);
+      alert('حدث خطأ أثناء تحميل النسخة الاحتياطية');
+    }
+  };
+
+  // Copy Secret Key to Clipboard
+  const handleCopySecretKey = () => {
+    navigator.clipboard.writeText(secretKey);
+    setSuccessMsg('تم نسخ المفتاح السري للمالك بنجاح إلى الحافظة! 📋');
+    setTimeout(() => setSuccessMsg(''), 4000);
   };
 
   const totalDeviceVisits = (analyticsData?.mobileCount || 0) + (analyticsData?.desktopCount || 0) || 1;
@@ -183,6 +195,81 @@ const OwnerAnalytics = ({ onNavigate }) => {
             {error}
           </Alert>
         )}
+
+        {/* Owner Essential Tools & Quick Links Suite Card */}
+        <div className="p-4 mb-4 rounded-4 shadow-sm bg-white border border-slate-200">
+          <div className="d-flex align-items-center justify-content-between mb-3 pb-2 border-bottom">
+            <h5 className="fw-black text-dark mb-0 d-flex align-items-center gap-2">
+              <Sparkles className="text-warning" size={22} />
+              🧰 مركز أدوات وروابط المالك الملكية (Quick Owner Command Suite)
+            </h5>
+            <span className="badge bg-warning bg-opacity-15 text-dark fw-bold px-3 py-1.5 rounded-pill border border-warning border-opacity-30">
+              وصلات سريعة 100%
+            </span>
+          </div>
+
+          <Row className="g-3">
+            <Col xs={12} sm={6} md={4} lg={2}>
+              <Button 
+                variant="outline-dark" 
+                onClick={handleDownloadJSONBackup} 
+                className="w-100 py-2.5 rounded-3 fw-bold d-flex align-items-center justify-content-center gap-2 fs-7 shadow-sm"
+              >
+                📦 نسخة JSON كاملة
+              </Button>
+            </Col>
+
+            <Col xs={12} sm={6} md={4} lg={2}>
+              <Button 
+                variant="outline-warning" 
+                onClick={() => window.open('/api/export-csv', '_blank')} 
+                className="w-100 py-2.5 rounded-3 fw-bold d-flex align-items-center justify-content-center gap-2 text-dark fs-7 shadow-sm"
+              >
+                📊 تصدير Excel المنتجات
+              </Button>
+            </Col>
+
+            <Col xs={12} sm={6} md={4} lg={2}>
+              <Button 
+                variant="outline-primary" 
+                onClick={() => window.open('/api/download-all-zip', '_blank')} 
+                className="w-100 py-2.5 rounded-3 fw-bold d-flex align-items-center justify-content-center gap-2 fs-7 shadow-sm"
+              >
+                📁 تحميل ZIP الصور
+              </Button>
+            </Col>
+
+            <Col xs={12} sm={6} md={4} lg={2}>
+              <Button 
+                variant="outline-dark" 
+                onClick={() => window.open('https://github.com/seif-elmuselmani/ceramic-showroom.git', '_blank')} 
+                className="w-100 py-2.5 rounded-3 fw-bold d-flex align-items-center justify-content-center gap-2 fs-7 shadow-sm"
+              >
+                💻 مستودع GitHub
+              </Button>
+            </Col>
+
+            <Col xs={12} sm={6} md={4} lg={2}>
+              <Button 
+                variant="outline-success" 
+                onClick={() => window.open('/?manage=true', '_blank')} 
+                className="w-100 py-2.5 rounded-3 fw-bold d-flex align-items-center justify-content-center gap-2 fs-7 shadow-sm"
+              >
+                🌐 لوحة الأدمن العامة
+              </Button>
+            </Col>
+
+            <Col xs={12} sm={6} md={4} lg={2}>
+              <Button 
+                variant="outline-secondary" 
+                onClick={handleCopySecretKey} 
+                className="w-100 py-2.5 rounded-3 fw-bold d-flex align-items-center justify-content-center gap-2 fs-7 shadow-sm"
+              >
+                🔑 نسخ مفتاح المالك
+              </Button>
+            </Col>
+          </Row>
+        </div>
 
         {loading && !analyticsData ? (
           <div className="text-center py-5">
