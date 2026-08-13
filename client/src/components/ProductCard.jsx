@@ -3,7 +3,7 @@ import { Button } from 'react-bootstrap';
 import { MessageCircle, Eye } from 'lucide-react';
 import { getProductDiscount } from '../utils/discount';
 
-const ProductCard = ({ product, onSelectProduct, onOpenCalculator, settings }) => {
+const ProductCard = ({ product, onSelectProduct, onOpenCalculator, settings, onSelectBrand }) => {
   if (!product) return null;
 
   const { hasDiscount, discountPercent, savingsAmount, durationText } = getProductDiscount(product);
@@ -89,6 +89,21 @@ ${productLink}
         {/* Category Badge Top-Right */}
         <div className="card-badge">{product.category}</div>
         
+        {/* Interactive Clickable Brand Badge Bottom-Right on Image */}
+        {product.brand && (
+          <button
+            type="button"
+            className="card-brand-badge shadow-sm"
+            onClick={(e) => {
+              e.stopPropagation();
+              if (onSelectBrand) onSelectBrand(product.brand);
+            }}
+            title={`عرض جميع منتجات ماركة ${product.brand}`}
+          >
+            🏷️ {product.brand}
+          </button>
+        )}
+
         {/* Glowing Discount Badge Ribbon Top-Left */}
         {hasDiscount && (
           <div className="discount-ribbon-tag shadow-sm">
@@ -100,6 +115,26 @@ ${productLink}
 
       <div className="card-body-luxury d-flex flex-column justify-content-between p-3">
         <div>
+          {/* Brand Tag & Code Line */}
+          <div className="d-flex align-items-center justify-content-between mb-2">
+            {product.brand ? (
+              <button
+                type="button"
+                className="brand-pill-clickable"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (onSelectBrand) onSelectBrand(product.brand);
+                }}
+                title={`تصفح جميع أصناف ${product.brand}`}
+              >
+                🏷️ {product.brand}
+              </button>
+            ) : (
+              <span className="badge bg-light text-muted border">عام</span>
+            )}
+            <span className="text-muted small fw-semibold">كود: {product.code}</span>
+          </div>
+
           <h5 className="card-title-luxury text-truncate mb-2" title={product.name}>{product.name}</h5>
           
           {/* Dynamic Minimalist Specs Line */}

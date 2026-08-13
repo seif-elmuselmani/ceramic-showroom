@@ -551,18 +551,45 @@ const Home = ({ settings, categoryFilter = 'الكل', setCategoryFilter, mode =
             </div>
           </div>
         ) : (
-          <Row className="g-4">
-            {filteredProducts.map((product) => (
-              <Col key={product.id} sm={6} lg={4} xl={3}>
-                <ProductCard 
-                  product={product} 
-                  onSelectProduct={(p) => setSelectedProduct(p)}
-                  onOpenCalculator={(p) => setCalculatorProduct(p)}
-                  settings={settings}
-                />
-              </Col>
-            ))}
-          </Row>
+          <>
+            {/* Active Brand Filter Banner */}
+            {selectedBrand !== 'الكل' && (
+              <div className="alert alert-warning border-2 rounded-4 shadow-sm d-flex align-items-center justify-content-between p-3 mb-4 animate-fade-in">
+                <div className="d-flex align-items-center gap-2">
+                  <span className="fs-5">🏷️</span>
+                  <span className="fw-bold text-dark">
+                    تعرض الآن أصناف وموديلات ماركة: <strong className="text-warning-dark fs-5">{selectedBrand}</strong> ({filteredProducts.length} صنف متوفر)
+                  </span>
+                </div>
+                <Button 
+                  variant="outline-dark" 
+                  size="sm" 
+                  className="rounded-pill fw-bold"
+                  onClick={() => setSelectedBrand('الكل')}
+                >
+                  ✖️ إظهار كافة الماركات
+                </Button>
+              </div>
+            )}
+
+            <Row className="g-4">
+              {filteredProducts.map((product) => (
+                <Col key={product.id} sm={6} lg={4} xl={3}>
+                  <ProductCard 
+                    product={product} 
+                    onSelectProduct={(p) => setSelectedProduct(p)}
+                    onOpenCalculator={(p) => setCalculatorProduct(p)}
+                    settings={settings}
+                    onSelectBrand={(brandName) => {
+                      setSelectedBrand(brandName);
+                      const grid = document.getElementById('catalog-grid');
+                      if (grid) grid.scrollIntoView({ behavior: 'smooth' });
+                    }}
+                  />
+                </Col>
+              ))}
+            </Row>
+          </>
         )}
       </Container>
 

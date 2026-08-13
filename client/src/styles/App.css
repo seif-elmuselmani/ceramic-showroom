@@ -548,6 +548,55 @@ p, h1, h2, h3, h4, h5, h6, span, div, a {
   letter-spacing: -0.2px;
 }
 
+/* Interactive Clickable Brand Badge on Product Cards */
+.card-brand-badge {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  background: rgba(15, 23, 42, 0.92);
+  color: #fbbf24;
+  border: 1.5px solid rgba(251, 191, 36, 0.7);
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.78rem;
+  font-weight: 800;
+  cursor: pointer;
+  z-index: 5;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.4);
+}
+
+.card-brand-badge:hover {
+  background: #fbbf24;
+  color: #0f172a;
+  border-color: #fbbf24;
+  transform: translateY(-2px) scale(1.06);
+  box-shadow: 0 6px 16px rgba(251, 191, 36, 0.5);
+}
+
+.brand-pill-clickable {
+  background: rgba(251, 191, 36, 0.15);
+  color: #d97706;
+  border: 1px solid rgba(251, 191, 36, 0.45);
+  border-radius: 14px;
+  padding: 2px 10px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.brand-pill-clickable:hover {
+  background: #fbbf24;
+  color: #0f172a;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(251, 191, 36, 0.3);
+}
+
 /* Modals & Dialogs Mobile Styling */
 .modal-luxury .modal-dialog {
   margin: 10px auto;
