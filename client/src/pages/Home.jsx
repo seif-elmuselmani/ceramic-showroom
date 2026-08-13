@@ -26,6 +26,10 @@ const Home = ({ settings, categoryFilter = 'الكل', setCategoryFilter, mode =
   const [availableFinishes, setAvailableFinishes] = useState([]); // Dynamic finish options
   const [availableGrades, setAvailableGrades] = useState([]); // Dynamic grade options
 
+  // Smart Pagination State
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(12);
+
   // Modal States
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [calculatorProduct, setCalculatorProduct] = useState(null);
@@ -39,6 +43,11 @@ const Home = ({ settings, categoryFilter = 'الكل', setCategoryFilter, mode =
     setSelectedCategory(categoryFilter);
     setSelectedSubcategory('الكل');
   }, [categoryFilter]);
+
+  // Reset to page 1 whenever any filter changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [selectedCategory, selectedSubcategory, selectedBrand, selectedFinish, selectedGrade, searchTerm, inStockOnly, onSaleOnly, sortBy, itemsPerPage]);
 
   // Deep Link Parser: Automatically open modal if ?product=ID is present in URL
   useEffect(() => {
@@ -572,23 +581,117 @@ const Home = ({ settings, categoryFilter = 'الكل', setCategoryFilter, mode =
               </div>
             )}
 
-            <Row className="g-4">
-              {filteredProducts.map((product) => (
-                <Col key={product.id} sm={6} lg={4} xl={3}>
-                  <ProductCard 
-                    product={product} 
-                    onSelectProduct={(p) => setSelectedProduct(p)}
-                    onOpenCalculator={(p) => setCalculatorProduct(p)}
-                    settings={settings}
-                    onSelectBrand={(brandName) => {
-                      setSelectedBrand(brandName);
-                      const grid = document.getElementById('catalog-grid');
-                      if (grid) grid.scrollIntoView({ behavior: 'smooth' });
-                    }}
-                  />
-                </Col>
-              ))}
-            </Row>
+            {/* Calculate Paginated Products */}
+            {(() => {
+              const perPage = itemsPerPage === 'all' ? filteredProducts.length : Number(itemsPerPage);
+              const totalPages = Math.max(1, Math.ceil(filteredProducts.length / perPage));
+              const safePage = Math.min(currentPage, totalPages);
+              const startIndex = (safePage - 1) * perPage;
+              const paginatedProducts = itemsPerPage === 'all' 
+                ? filteredProducts 
+                : filteredProducts.slice(startIndex, startIndex + perPage);
+
+              return (
+                <>
+                  <Row className="g-4">
+                    {paginatedProducts.map((product) => (
+                      <Col key={product.id} sm={6} lg={4} xl={3}>
+                        <ProductCard 
+                          product={product} 
+                          onSelectProduct={(p) => setSelectedProduct(p)}
+                          onOpenCalculator={(p) => setCalculatorProduct(p)}
+                          settings={settings}
+                          onSelectBrand={(brandName) => {
+                            setSelectedBrand(brandName);
+                            const grid = document.getElementById('catalog-grid');
+                            if (grid) grid.scrollIntoView({ behavior: 'smooth' });
+                          }}
+                        />
+                      </Col>
+                    ))}
+                  </Row>
+
+                  {/* Luxury Pagination Control Bar */}
+                  {filteredProducts.length > 0 && (itemsPerPage !== 'all' && totalPages > 1) && (
+                    <div className="d-flex flex-column flex-md-row align-items-center justify-content-between gap-3 mt-5 pt-4 border-top animate-fade-in">
+                      <div className="text-muted small fw-bold text-center text-md-start">
+                        عرض الأصناف من <strong className="text-dark">{startIndex + 1}</strong> إلى <strong className="text-dark">{Math.min(startIndex + perPage, filteredProducts.length)}</strong> من إجمالي <strong className="text-warning-dark fs-6">{filteredProducts.length}</strong> صنف
+                      </div>
+
+                      <div className="d-flex align-items-center gap-1.5 flex-wrap justify-content-center">
+                        {/* Previous Button */}
+                        <Button
+                          variant="outline-secondary"
+                          size="sm"
+                          disabled={safePage === 1}
+                          onClick={() => {
+                            setCurrentPage(prev => Math.max(1, prev - 1));
+                            const grid = document.getElementById('catalog-grid');
+                            if (grid) grid.scrollIntoView({ behavior: 'smooth' });
+                          }}
+                          className="rounded-pill px-3 fw-bold"
+                        >
+                          ← السابقة
+                        </Button>
+
+                        {/* Page Numbers */}
+                        {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                          <Button
+                            key={page}
+                            variant={safePage === page ? 'warning' : 'outline-light'}
+                            size="sm"
+                            onClick={() => {
+                              setCurrentPage(page);
+                              const grid = document.getElementById('catalog-grid');
+                              if (grid) grid.scrollIntoView({ behavior: 'smooth' });
+                            }}
+                            className={`rounded-circle px-3 py-1.5 fw-bold ${safePage === page ? 'text-dark shadow-sm' : 'text-dark border'}`}
+                            style={{ width: '38px', height: '38px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}
+                          >
+                            {page}
+                          </Button>
+                        ))}
+
+                        {/* Next Button */}
+                        <Button
+                          variant="outline-secondary"
+                          size="sm"
+                          disabled={safePage === totalPages}
+                          onClick={() => {
+                            setCurrentPage(prev => Math.min(totalPages, prev + 1));
+                            const grid = document.getElementById('catalog-grid');
+                            if (grid) grid.scrollIntoView({ behavior: 'smooth' });
+                          }}
+                          className="rounded-pill px-3 fw-bold"
+                        >
+                          التالية →
+                        </Button>
+                      </div>
+
+                      {/* Items Per Page Selector */}
+                      <div className="d-flex align-items-center gap-2">
+                        <span className="text-muted small fw-bold">الأصناف بالصفحة:</span>
+                        <Form.Select
+                          size="sm"
+                          value={itemsPerPage}
+                          onChange={(e) => {
+                            setItemsPerPage(e.target.value === 'all' ? 'all' : Number(e.target.value));
+                            setCurrentPage(1);
+                          }}
+                          className="rounded-3 border-secondary custom-input py-1"
+                          style={{ width: '90px' }}
+                        >
+                          <option value={12}>12</option>
+                          <option value={24}>24</option>
+                          <option value={48}>48</option>
+                          <option value="all">الكل</option>
+                        </Form.Select>
+                      </div>
+                    </div>
+                  )}
+                </>
+              );
+            })()}
           </>
         )}
       </Container>
