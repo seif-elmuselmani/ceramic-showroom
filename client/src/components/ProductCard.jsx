@@ -6,6 +6,8 @@ import { getProductDiscount } from '../utils/discount';
 const ProductCard = ({ product, onSelectProduct, onOpenCalculator, settings }) => {
   if (!product) return null;
 
+  const { hasDiscount, discountPercent, savingsAmount, durationText } = getProductDiscount(product);
+
   const whatsappNumber = settings?.whatsappNumber || '201012345678';
   
   const productLink = `${window.location.origin}${window.location.pathname}?product=${product.id || product._id}`;
@@ -48,8 +50,6 @@ ${productLink}
       console.error('Error sharing:', err);
     }
   };
-
-  const { hasDiscount, discountPercent, savingsAmount, durationText } = getProductDiscount(product);
 
   // Clean origin & finish for card snippet safely
   const cleanOrigin = typeof product.origin === 'string' ? product.origin.split(' ')[0].replace(/[\(\)]/g, '') : String(product.origin || '');
