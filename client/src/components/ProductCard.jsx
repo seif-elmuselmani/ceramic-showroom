@@ -149,12 +149,12 @@ ${productLink}
           {/* Price & Offer Block matching Client Screenshot */}
           <div className="price-tag-luxury mb-2">
             <div className="d-flex align-items-center gap-2 flex-wrap mb-1">
-              <span className="fs-3 fw-black text-dark">{product.price.toLocaleString()}</span>
+              <span className="fs-3 fw-black text-dark">{(Number(product.price) || 0).toLocaleString()}</span>
               <span className="small fw-bold text-muted">ج.م / {product.priceUnit || 'م2'}</span>
               
               {hasDiscount && (
                 <del className="text-muted small text-decoration-line-through me-1">
-                  {product.originalPrice.toLocaleString()} ج.م
+                  {(Number(product.originalPrice) || 0).toLocaleString()} ج.م
                 </del>
               )}
 
@@ -166,7 +166,7 @@ ${productLink}
             {hasDiscount && (
               <div className="d-flex align-items-center gap-2 mt-1.5 flex-wrap">
                 <span className="pill-savings-green">
-                  وفرت {savingsAmount.toLocaleString()} جنيه
+                  وفرت {(Number(savingsAmount) || 0).toLocaleString()} جنيه
                 </span>
                 {durationText && (
                   <span className="pill-duration-yellow">

@@ -108,11 +108,11 @@ ${productLink}
               {/* Price & Offer Card matching Client Screenshot */}
               <div className="p-3 bg-white rounded-4 border mb-3 shadow-sm">
                 <div className="d-flex align-items-baseline gap-2 flex-wrap mb-2">
-                  <span className="fs-1 fw-black text-dark">{product.price.toLocaleString()}</span>
+                  <span className="fs-1 fw-black text-dark">{(Number(product.price) || 0).toLocaleString()}</span>
                   <span className="fs-5 text-muted fw-bold">جنيه / {product.priceUnit || 'م2'}</span>
                   {hasDiscount && (
                     <del className="text-muted fs-6 text-decoration-line-through me-1">
-                      {product.originalPrice.toLocaleString()} ج.م
+                      {(Number(product.originalPrice) || 0).toLocaleString()} ج.م
                     </del>
                   )}
                   {hasDiscount && (
@@ -123,7 +123,7 @@ ${productLink}
                 <div className="d-flex align-items-center gap-2 flex-wrap">
                   {hasDiscount && (
                     <span className="pill-savings-green fs-6 px-3 py-1.5">
-                      وفرت {savingsAmount.toLocaleString()} جنيه
+                      وفرت {(Number(savingsAmount) || 0).toLocaleString()} جنيه
                     </span>
                   )}
                   {product.inStock ? (
