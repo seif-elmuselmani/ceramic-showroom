@@ -118,24 +118,25 @@
   "products": [
     {
       "id": "prod-1786579246519",
-      "inStock": true,
+      "inStock": false,
       "featured": false,
       "priceUnit": "متر مربع",
-      "boxCoverage": 1,
+      "boxCoverage": 1.44,
       "name": "T - سيراميك مطابخ فنتج أزرق أندلسي 20x20",
       "code": "T-AND-BLUE-2020",
       "category": "سيراميك حوائط حمامات ومطابخ",
       "subcategory": "موزاييك وديكور",
       "brand": "Pyramids",
-      "price": 210,
-      "originalPrice": 260,
+      "price": 0,
+      "originalPrice": 0,
       "dimensions": "20x20 سم",
       "finish": "مط زخرفي",
       "grade": "فرز أول",
       "origin": "إسبانيا",
       "usage": "حوائط مطابخ وأرضيات ديكور",
       "description": "عينة اختبار جديدة T: سيراميك مطابخ كلاسيك أندلسي أزرق.",
-      "image": "https://images.unsplash.com/photo-1527352726752-1903158a3745?auto=format&fit=crop&w=1000&q=80"
+      "image": "https://images.unsplash.com/photo-1527352726752-1903158a3745?auto=format&fit=crop&w=1000&q=80",
+      "discountPercent": 0
     },
     {
       "id": "prod-1786579246517",
