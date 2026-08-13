@@ -820,13 +820,20 @@ app.post(['/api/products', '/products'], authenticateToken, async (req, res) => 
 // Update Product
 app.put(['/api/products/:id', '/products/:id'], authenticateToken, async (req, res) => {
   try {
-    const sanitizedBody = {
-      ...req.body,
-      price: Math.max(0, Number(req.body.price) || 0),
-      originalPrice: Math.max(0, Number(req.body.originalPrice) || 0),
-      discountPercent: Math.max(0, Number(req.body.discountPercent) || 0),
-      boxCoverage: Math.max(0.1, Number(req.body.boxCoverage) || 1.44)
-    };
+    const sanitizedBody = { ...req.body };
+    if (req.body.price !== undefined) {
+      sanitizedBody.price = Math.max(0, Number(req.body.price) || 0);
+    }
+    if (req.body.originalPrice !== undefined) {
+      sanitizedBody.originalPrice = Math.max(0, Number(req.body.originalPrice) || 0);
+    }
+    if (req.body.discountPercent !== undefined) {
+      sanitizedBody.discountPercent = Math.max(0, Number(req.body.discountPercent) || 0);
+    }
+    if (req.body.boxCoverage !== undefined) {
+      sanitizedBody.boxCoverage = Math.max(0.1, Number(req.body.boxCoverage) || 1.44);
+    }
+
     const updatedProduct = await db.updateProduct(req.params.id, sanitizedBody);
     if (!updatedProduct) {
       return res.status(404).json({ message: 'المنتج غير موجود' });

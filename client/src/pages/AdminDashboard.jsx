@@ -283,7 +283,7 @@ const AdminDashboard = ({ settings, onSettingsUpdated }) => {
   // Toggle Stock Status
   const handleToggleStock = async (prod) => {
     try {
-      await updateProduct(prod.id, { inStock: !prod.inStock });
+      await updateProduct(prod.id, { ...prod, inStock: !prod.inStock });
       showSuccess(`تم تغيير حالة توفر الصنف "${prod.name}"`);
       fetchDashboardData();
     } catch (err) {

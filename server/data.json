@@ -140,7 +140,7 @@
     },
     {
       "id": "prod-1786579246517",
-      "inStock": true,
+      "inStock": false,
       "featured": true,
       "priceUnit": "متر مربع",
       "boxCoverage": 1.44,
@@ -149,15 +149,16 @@
       "category": "بورسلين محلي",
       "subcategory": "الجوهرة",
       "brand": "الجوهرة",
-      "price": 480,
-      "originalPrice": 550,
+      "price": 0,
+      "originalPrice": 0,
       "dimensions": "60x120 سم",
       "finish": "لامع كريستال",
       "grade": "فرز أول",
       "origin": "مصر",
       "usage": "أرضيات ريسبشن ومطابخ",
       "description": "عينة اختبار جديدة T: بورسلين الجوهرة كريستال ناصع الجودة.",
-      "image": "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1000&q=80"
+      "image": "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1000&q=80",
+      "discountPercent": 0
     },
     {
       "id": "prod-1786579246514",
