@@ -31,7 +31,22 @@ const TileCalculatorModal = ({ product, show, onHide, settings }) => {
 
   const whatsappNumber = settings?.whatsappNumber || '201000000000';
   const productLink = `${window.location.origin}${window.location.pathname}?product=${product.id || product._id}`;
-  const calculationMessage = `مرحباً، قمت بحساب كمية السيراميك المطلوبة عبر حاسبة المعرض لصنف:\n- الصنف: ${product.name} (كود: ${product.code})\n- أبعاد الغرفة: ${length} × ${width} متر\n- المساحة الصافية: ${netArea.toFixed(2)} م²\n- المساحة مع الهالك (${wastePercent}%): ${totalAreaWithWaste.toFixed(2)} م²\n- عدد الكراتين المطلوبة: ${cartonsNeeded} كرتونة (${actualPurchasedMeters.toFixed(2)} م²)\n- إجمالي التكلفة التقديرية: ${totalPrice.toFixed(2)} ج.م${hasDiscount ? ` (🎉 وفرت ${totalSavings.toFixed(2)} ج.م بفضل الخصم!)` : ''}\n- رابط الصنف المباشر: ${productLink}\n\nأرجو التواصل لمعاينة العينات وحجز الكمية.`;
+  const calculationMessage = `السلام عليكم ورحمة الله وبركاته 💐
+أود استكمال حجز مقايسة كراتين سيراميك/بورسلين عبر حاسبة المعرض الذكية:
+
+📦 اسم الصنف: ${product.name}
+🏷️ كود الصنف: ${product.code || 'غير محدد'}
+📂 الفئة: ${product.category}${product.subcategory ? ` (${product.subcategory})` : ''}
+
+📐 أبعاد المكان: ${length} × ${width} متر (مساحة صافية: ${netArea.toFixed(2)} م²)
+📊 الهالك المحسوب (${wastePercent}%): ${totalAreaWithWaste.toFixed(2)} م² مع الهالك
+📦 عدد الكراتين المطلوبة: ${cartonsNeeded} كرتونة (${actualPurchasedMeters.toFixed(2)} م² فعلي)
+💰 إجمالي التكلفة التقديرية: ${totalPrice.toFixed(2)} ج.م${hasDiscount ? ` (🎉 ووفرت ${totalSavings.toFixed(2)} ج.م بفضل الخصم!)` : ''}
+
+🔗 رابط الصنف المباشر بالموقع:
+${productLink}
+
+أرجو التأكيد لمعاينة عينة الصنف بالمحل وحجز الكراتين المطلوبة. 🙏✨`;
 
   const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(calculationMessage)}`;
 

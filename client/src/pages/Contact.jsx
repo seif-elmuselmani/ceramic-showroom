@@ -31,11 +31,15 @@ const Contact = ({ settings }) => {
     }
     
     // Construct WhatsApp message with form details
-    const text = `*طلب استفسار جديد من الموقع*\n\n` +
-                 `👤 *الاسم:* ${formData.fullName}\n` +
-                 `📞 *الهاتف:* ${formData.phone}\n` +
-                 `❓ *نوع الاستفسار:* ${formData.inquiryType}\n` +
-                 `✉️ *التفاصيل:* ${formData.message || 'لا يوجد تفاصيل إضافية'}`;
+    const text = `السلام عليكم ورحمة الله وبركاته 💐
+طلب استفسار جديد من موقع مبيعات معرض السيد الجزار:
+
+👤 *الاسم بالكامل:* ${formData.fullName}
+📞 *رقم الواتساب/الهاتف:* ${formData.phone}
+❓ *نوع الاستفسار:* ${formData.inquiryType}
+✉️ *تفاصيل الطلب:* ${formData.message || 'أود معرفة الأسعار المتاحة وتوفر الأصناف بالمحل'}
+
+يرجى التواصل معي لإفادتي بالتفاصيل ومواعيد المعاينة المتاحة بالمعرض. 🙏✨`;
                  
     const waUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(text)}`;
     

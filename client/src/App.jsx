@@ -159,20 +159,20 @@ function App() {
           )}
         </main>
 
-        {/* Floating Luxury Showroom WhatsApp Concierge Badge */}
+        {/* Floating Luxury Showroom WhatsApp Concierge Badge (General Showroom Inquiry) */}
         <a 
-          href={`https://wa.me/${settings?.whatsappNumber || '201001366499'}?text=${encodeURIComponent('السلام عليكم ورحمة الله وبركاته 💐\nأود الاستفسار عن كوتشيشن سيراميك/بورسلين وحجز معاينة عينات بالمعرض.')}`}
+          href={`https://wa.me/${settings?.whatsappNumber || '201001366499'}?text=${encodeURIComponent('السلام عليكم ورحمة الله وبركاته 💐\nمرحباً معرض السيد الجزار للسيراميك والبورسلين 🏛️\n\nأود الاستفسار عن كشف الأسعار والعروض المتاحة حالياً، ومواعيد إمكانية زيارة المعرض لمعاينة العينات. 🙏✨')}`}
           target="_blank"
           rel="noopener noreferrer"
           className="floating-whatsapp-luxury"
-          title="تواصل مباشر واستفسار مع المعرض عبر الواتساب"
+          title="تواصل مباشر واستفسار عام مع المعرض عبر الواتساب"
         >
           <div className="whatsapp-badge-icon shadow-lg">
             <MessageCircle size={26} />
             <span className="gold-ping-dot"></span>
           </div>
           <span className="whatsapp-badge-text fw-bold text-nowrap d-none d-md-inline">
-            💬 استفسار عينات المعرض
+            💬 استفسار عام مع المعرض
           </span>
         </a>
 
