@@ -218,12 +218,14 @@ const AdminDashboard = ({ settings, onSettingsUpdated }) => {
   const handleProductSubmit = async (e) => {
     e.preventDefault();
     try {
+      const defaultImg = 'https://images.unsplash.com/photo-1615873968403-89e068629265?auto=format&fit=crop&w=800&q=80';
       const payload = {
         ...formData,
         code: formData.code?.trim() || ('SER-' + Math.floor(1000 + Math.random() * 9000)),
         price: Number(formData.price),
         originalPrice: Number(formData.originalPrice) || 0,
-        boxCoverage: Number(formData.boxCoverage) || 1.44
+        boxCoverage: Number(formData.boxCoverage) || 1.44,
+        image: formData.image?.trim() || defaultImg
       };
 
       if (editingProduct) {
@@ -1180,9 +1182,12 @@ const AdminDashboard = ({ settings, onSettingsUpdated }) => {
 
               <Col xs={6} md={4}>
                 <Form.Group>
-                  <Form.Label className="fw-bold">الأبعاد والمقاس</Form.Label>
+                  <Form.Label className="fw-bold">
+                    الأبعاد والمقاس <span className="text-muted fw-normal small">(اختياري)</span>
+                  </Form.Label>
                   <Form.Control
                     type="text"
+                    placeholder="مثال: 60x120 سم"
                     value={formData.dimensions}
                     onChange={(e) => setFormData({ ...formData, dimensions: e.target.value })}
                     className="custom-input"
@@ -1192,9 +1197,12 @@ const AdminDashboard = ({ settings, onSettingsUpdated }) => {
 
               <Col xs={6} md={4}>
                 <Form.Group>
-                  <Form.Label className="fw-bold">نوع اللمعة</Form.Label>
+                  <Form.Label className="fw-bold">
+                    نوع اللمعة والتشطيب <span className="text-muted fw-normal small">(اختياري)</span>
+                  </Form.Label>
                   <Form.Control
                     type="text"
+                    placeholder="مثال: لامع / كريستال"
                     value={formData.finish}
                     onChange={(e) => setFormData({ ...formData, finish: e.target.value })}
                     className="custom-input"
@@ -1204,9 +1212,12 @@ const AdminDashboard = ({ settings, onSettingsUpdated }) => {
 
               <Col xs={6} md={4}>
                 <Form.Group>
-                  <Form.Label className="fw-bold">بلد المنشأ</Form.Label>
+                  <Form.Label className="fw-bold">
+                    بلد المنشأ <span className="text-muted fw-normal small">(اختياري)</span>
+                  </Form.Label>
                   <Form.Control
                     type="text"
+                    placeholder="مثال: إسبانيا / مصر"
                     value={formData.origin}
                     onChange={(e) => setFormData({ ...formData, origin: e.target.value })}
                     className="custom-input"
@@ -1216,9 +1227,12 @@ const AdminDashboard = ({ settings, onSettingsUpdated }) => {
 
               <Col md={6}>
                 <Form.Group>
-                  <Form.Label className="fw-bold">رابط الصورة (Image URL)</Form.Label>
+                  <Form.Label className="fw-bold">
+                    رابط الصورة (Image URL) <span className="text-muted fw-normal small">(اختياري - يوجد افتراضي)</span>
+                  </Form.Label>
                   <Form.Control
                     type="text"
+                    placeholder="https://..."
                     value={formData.image}
                     onChange={(e) => setFormData({ ...formData, image: e.target.value })}
                     className="custom-input"
@@ -1228,7 +1242,9 @@ const AdminDashboard = ({ settings, onSettingsUpdated }) => {
 
               <Col md={6}>
                 <Form.Group>
-                  <Form.Label className="fw-bold">رفع صورة من الموبايل/الكمبيوتر</Form.Label>
+                  <Form.Label className="fw-bold">
+                    رفع صورة من جهازك <span className="text-muted fw-normal small">(اختياري)</span>
+                  </Form.Label>
                   <Form.Control
                     type="file"
                     accept="image/*"
@@ -1242,10 +1258,13 @@ const AdminDashboard = ({ settings, onSettingsUpdated }) => {
 
               <Col md={12}>
                 <Form.Group>
-                  <Form.Label className="fw-bold">وصف الصنف والاستخدام</Form.Label>
+                  <Form.Label className="fw-bold">
+                    وصف الصنف والاستخدام <span className="text-muted fw-normal small">(اختياري)</span>
+                  </Form.Label>
                   <Form.Control
                     as="textarea"
                     rows={2}
+                    placeholder="وصف اختياري للمنتج..."
                     value={formData.description}
                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                     className="custom-input"
