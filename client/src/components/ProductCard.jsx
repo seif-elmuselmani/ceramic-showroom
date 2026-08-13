@@ -9,7 +9,20 @@ const ProductCard = ({ product, onSelectProduct, onOpenCalculator, settings }) =
   const whatsappNumber = settings?.whatsappNumber || '201012345678';
   
   const productLink = `${window.location.origin}${window.location.pathname}?product=${product.id || product._id}`;
-  const messageText = `مرحباً، أستفسر عن صنف السيراميك/البورسلين:\n- الاسم: ${product.name}\n- الكود: ${product.code}\n- السعر: ${product.price} ج.م / ${product.priceUnit || 'م2'}\n- رابط الصنف: ${productLink}\n\nهل الصنف متوفر في المعرض حالياً؟`;
+  const messageText = `السلام عليكم ورحمة الله وبركاته 💐
+أود الاستفسار وحجز معاينة صنف من معرضكم العامر:
+
+📦 اسم الصنف: ${product.name}
+🏷️ كود الصنف: ${product.code || 'غير محدد'}
+📂 الفئة: ${product.category}${product.subcategory ? ` (${product.subcategory})` : ''}
+📐 المقاس: ${product.dimensions || 'قياسي'}
+✨ السطح: ${product.finish || 'ممتاز'}
+💰 السعر: ${product.price} ج.م / ${product.priceUnit || 'متر مربع'}${hasDiscount ? ` (خصم ${discountPercent}% - توفير ${savingsAmount} ج.م)` : ''}
+
+🔗 رابط الصنف المباشر:
+${productLink}
+
+هل الصنف متوفر في المعرض حالياً لمعاينة العينة؟ 🙏✨`;
   const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(messageText)}`;
 
   const [copiedToast, setCopiedToast] = React.useState(false);

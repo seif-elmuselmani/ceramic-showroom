@@ -10,7 +10,20 @@ const ProductModal = ({ product, show, onHide, settings, onOpenCalculator }) => 
 
   const whatsappNumber = settings?.whatsappNumber || '201000000000';
   const productLink = `${window.location.origin}${window.location.pathname}?product=${product.id || product._id}`;
-  const messageText = `مرحباً، أرغب في الاستفسار وحجز الصنف التالي:\n- الاسم: ${product.name}\n- الكود: ${product.code}\n- السعر: ${product.price} ج.م / ${product.priceUnit || 'م2'}${hasDiscount ? ` (بدلاً من ${product.originalPrice} ج.م - وفرت ${savingsAmount} ج.م [خصم ${discountPercent}%])` : ''}\n- الفئة: ${product.category}${product.subcategory ? ` (${product.subcategory})` : ''}\n- رابط الصنف المباشر: ${productLink}\n\nيرجى تأكيد التوافر وموعد المعاينة.`;
+  const messageText = `السلام عليكم ورحمة الله وبركاته 💐
+أود الاستفسار وحجز طلبية صنف السيراميك/البورسلين التالي:
+
+📦 اسم الصنف: ${product.name}
+🏷️ كود الصنف: ${product.code || 'غير محدد'}
+📂 الفئة: ${product.category}${product.subcategory ? ` (${product.subcategory})` : ''}
+📐 المقاس والتشطيب: ${product.dimensions || 'قياسي'} | ${product.finish || 'ممتاز'}
+🏭 بلد المنشأ: ${product.origin || 'مستورد'}
+💰 السعر الحالي: ${product.price} ج.م / ${product.priceUnit || 'م2'}${hasDiscount ? ` (بدلاً من ${product.originalPrice} ج.م - ووفرت ${savingsAmount} ج.م [خصم ${discountPercent}%])` : ''}
+
+🔗 رابط معاينة الصنف بالموقع:
+${productLink}
+
+يرجى تأكيد التوافر بالمخزن وأقرب فرع للمعاينة تسليم فوري. 🙏✨`;
   const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(messageText)}`;
 
   const handleShare = async (e) => {

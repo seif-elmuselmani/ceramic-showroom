@@ -159,15 +159,21 @@ function App() {
           )}
         </main>
 
-        {/* Floating WhatsApp Action Button for Mobile Users */}
+        {/* Floating Luxury Showroom WhatsApp Concierge Badge */}
         <a 
-          href={`https://wa.me/${settings?.whatsappNumber || '201223817860'}?text=${encodeURIComponent('مرحباً، أستفسر عن أصناف السيراميك والبورسلين بالمعرض')}`}
+          href={`https://wa.me/${settings?.whatsappNumber || '201001366499'}?text=${encodeURIComponent('السلام عليكم ورحمة الله وبركاته 💐\nأود الاستفسار عن كوتشيشن سيراميك/بورسلين وحجز معاينة عينات بالمعرض.')}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="floating-whatsapp-btn"
-          title="تواصل مباشر عبر الواتساب"
+          className="floating-whatsapp-luxury"
+          title="تواصل مباشر واستفسار مع المعرض عبر الواتساب"
         >
-          <MessageCircle size={30} />
+          <div className="whatsapp-badge-icon shadow-lg">
+            <MessageCircle size={26} />
+            <span className="gold-ping-dot"></span>
+          </div>
+          <span className="whatsapp-badge-text fw-bold text-nowrap d-none d-md-inline">
+            💬 استفسار عينات المعرض
+          </span>
         </a>
 
         <Footer settings={settings} onNavigate={handleNavigate} categories={categories} />
