@@ -206,10 +206,10 @@ ${productLink}
               onOpenCalculator(product);
             }}
             className="d-flex align-items-center gap-1 py-2 px-3 fw-bold text-dark border-warning"
-            title="احسب الأمتار والكراتين المطلوبة"
+            title={product.priceUnit && (product.priceUnit.includes('قطعة') || product.priceUnit.includes('طقم') || product.priceUnit.includes('وحدة') || product.category?.includes('أطقم')) ? "حساب الكمية والقطع المطلوبة" : "احسب الأمتار والكراتين المطلوبة"}
           >
             <Calculator size={18} />
-            حاسبة الأمتار والكراتين
+            {product.priceUnit && (product.priceUnit.includes('قطعة') || product.priceUnit.includes('طقم') || product.priceUnit.includes('وحدة') || product.category?.includes('أطقم')) ? "حاسبة الكمية والقطع" : "حاسبة الأمتار والكراتين"}
           </Button>
         )}
 

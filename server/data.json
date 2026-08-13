@@ -127,7 +127,7 @@
       "category": "سيراميك حوائط حمامات ومطابخ",
       "subcategory": "موزاييك وديكور",
       "brand": "Pyramids",
-      "price": 250,
+      "price": 0,
       "originalPrice": 0,
       "dimensions": "20x20 سم",
       "finish": "مط زخرفي",
@@ -149,7 +149,7 @@
       "category": "بورسلين محلي",
       "subcategory": "الجوهرة",
       "brand": "الجوهرة",
-      "price": 250,
+      "price": 0,
       "originalPrice": 0,
       "dimensions": "60x120 سم",
       "finish": "لامع كريستال",
@@ -179,7 +179,8 @@
       "origin": "إيطاليا",
       "usage": "حمامات ماستر وضيوف",
       "description": "عينة اختبار جديدة T: طقم خلاطات إيطالي ذهبي مقاوم للصدأ والترسبات.",
-      "image": "https://images.unsplash.com/photo-1620626011761-996317b69798?auto=format&fit=crop&w=1000&q=80"
+      "image": "https://images.unsplash.com/photo-1620626011761-996317b69798?auto=format&fit=crop&w=1000&q=80",
+      "discountPercent": 0
     },
     {
       "id": "prod-1786579246512",
