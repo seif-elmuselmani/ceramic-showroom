@@ -10,6 +10,7 @@ import AdminLogin from './pages/AdminLogin';
 import AdminDashboard from './pages/AdminDashboard';
 import Contact from './pages/Contact';
 import NotFound from './pages/NotFound';
+import OwnerAnalytics from './pages/OwnerAnalytics';
 import ErrorBoundary from './components/ErrorBoundary';
 import ToastNotification from './components/ToastNotification';
 
@@ -42,9 +43,11 @@ function App() {
       setIsAdmin(true);
     }
 
-    // Check URL parameters for 404 page or secret login
+    // Check URL parameters for secret owner analytics or 404
     const queryParams = new URLSearchParams(window.location.search);
-    if (queryParams.get('page') === '404' || window.location.hash === '#404') {
+    if (queryParams.get('stats') === 'true' || queryParams.get('analytics') === 'true' || window.location.hash === '#owner-stats') {
+      setActiveTab('owner-stats');
+    } else if (queryParams.get('page') === '404' || window.location.hash === '#404') {
       setActiveTab('404');
     } else if (queryParams.get('manage') === 'true' || window.location.hash === '#admin-login') {
       setActiveTab('login');
@@ -135,6 +138,10 @@ function App() {
               setCategoryFilter={setCategoryFilter}
               mode="featured"
             />
+          )}
+
+          {activeTab === 'owner-stats' && (
+            <OwnerAnalytics />
           )}
 
           {activeTab === 'contact' && (
