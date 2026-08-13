@@ -18,7 +18,23 @@ import { getSettings, getCategories } from './services/api';
 import { initAnalyticsTracker, trackWhatsAppClick } from './services/analytics';
 
 function App() {
-  const [activeTab, setActiveTab] = useState('catalog');
+  const [activeTab, setActiveTab] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const q = new URLSearchParams(window.location.search);
+      const pathname = window.location.pathname;
+      const hash = window.location.hash;
+      if (q.get('stats') === 'true' || q.get('analytics') === 'true' || hash === '#owner-stats' || hash === '#stats' || pathname.includes('/stats') || pathname.includes('/analytics')) {
+        return 'owner-stats';
+      }
+      if (q.get('page') === '404' || hash === '#404') {
+        return '404';
+      }
+      if (q.get('manage') === 'true' || hash === '#admin-login') {
+        return 'login';
+      }
+    }
+    return 'catalog';
+  });
   const [isAdmin, setIsAdmin] = useState(false);
   const [categories, setCategories] = useState([]);
   const [categoryFilter, setCategoryFilter] = useState('الكل');
@@ -41,18 +57,6 @@ function App() {
     const token = localStorage.getItem('ceramic_admin_token');
     if (token) {
       setIsAdmin(true);
-    }
-
-    // Check URL parameters for secret owner analytics or 404
-    const queryParams = new URLSearchParams(window.location.search);
-    if (queryParams.get('stats') === 'true' || queryParams.get('analytics') === 'true' || window.location.hash === '#owner-stats') {
-      setActiveTab('owner-stats');
-    } else if (queryParams.get('page') === '404' || window.location.hash === '#404') {
-      setActiveTab('404');
-    } else if (queryParams.get('manage') === 'true' || window.location.hash === '#admin-login') {
-      setActiveTab('login');
-      // Clean up URL parameters/hash to keep it hidden
-      window.history.replaceState({}, document.title, window.location.pathname);
     }
 
     fetchSettings();
