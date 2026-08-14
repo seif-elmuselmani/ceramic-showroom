@@ -90,6 +90,34 @@ const OwnerAnalytics = ({ onNavigate }) => {
     }
   };
 
+  // Export Analytics to CSV File
+  const handleExportCSV = () => {
+    if (!analyticsData) return;
+    const csvRows = [
+      ['المعيار (Metric)', 'القيمة (Value)'],
+      ['إجمالي الزوار الفريدين (Total Unique Visitors)', analyticsData.totalVisitors || 0],
+      ['إجمالي مشاهدات الصفحات (Total Page Views)', analyticsData.totalPageViews || 0],
+      ['إجمالي دقائق التصفح (Total Browsing Minutes)', Math.round((analyticsData.totalTimeSpentSeconds || 0) / 60)],
+      ['إجمالي نقرات الواتساب (Total WhatsApp Leads)', analyticsData.whatsappClicks || 0],
+      ['زوار الموبايل (Mobile Visitors)', analyticsData.mobileCount || 0],
+      ['زوار الكمبيوتر (Desktop Visitors)', analyticsData.desktopCount || 0],
+      ['نقرات الشارة العائمة (Floating Badge Clicks)', analyticsData.whatsappClickDetails?.floating_badge || 0],
+      ['نقرات كروت الكتالوج (Product Card Clicks)', analyticsData.whatsappClickDetails?.product_card || 0],
+      ['نقرات نافذة التفاصيل (Product Modal Clicks)', analyticsData.whatsappClickDetails?.product_modal || 0],
+      ['نقرات حاسبة الكميات (Tile Calculator Clicks)', analyticsData.whatsappClickDetails?.tile_calculator || 0],
+      ['تاريخ التصدير (Export Date)', new Date().toLocaleString('ar-EG')]
+    ];
+
+    const csvContent = "data:text/csv;charset=utf-8,\uFEFF" + csvRows.map(e => e.join(",")).join("\n");
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `Elgazar_Showroom_Analytics_${Date.now()}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   // Copy Secret Key to Clipboard
   const handleCopySecretKey = () => {
     navigator.clipboard.writeText(secretKey);
