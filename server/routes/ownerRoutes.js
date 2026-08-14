@@ -81,12 +81,12 @@ router.get(['/api/owner/export-csv', '/owner/export-csv', '/api/export-csv', '/e
   }
 
   try {
-    const products = await db.getProducts();
+    const products = await db.getProducts(true); // Include soft-deleted products
     const headers = [
       'ID', 'كود الصنف', 'اسم الصنف', 'الفئة الرئيسية', 'الفئة الفرعية', 
       'الماركة', 'السعر الحالي', 'السعر قبل الخصم', 'الخصم %', 
       'تغطية الكرتونة م2', 'المقاس', 'اللمعة', 'الفرز', 'بلد المنشأ', 
-      'حالة المخزن', 'صنف مميز', 'تاريخ التحديث', 'رابط الصورة'
+      'حالة المخزن', 'حالة الحذف', 'صنف مميز', 'تاريخ التحديث', 'رابط الصورة'
     ];
 
     const escapeCsv = (val) => {
@@ -118,6 +118,7 @@ router.get(['/api/owner/export-csv', '/owner/export-csv', '/api/export-csv', '/e
         p.grade || '',
         p.origin || '',
         p.inStock ? 'متوفر بالمخزن' : 'غير متوفر',
+        p.isDeleted ? 'ممسوح' : 'نشط',
         p.featured ? 'مميز' : 'عادي',
         p.updatedAt || new Date().toISOString(),
         p.image || ''
@@ -522,6 +523,25 @@ router.get(['/api/owner/download-images-zip', '/owner/download-images-zip', '/ap
   } catch (err) {
     console.error("Owner ZIP Download Error:", err);
     res.status(500).json({ message: 'خطأ في تجميع ملف الصور المضغوط: ' + err.message });
+  }
+});
+
+// Restore Soft-Deleted Product Endpoint (Owner / Admin Access)
+router.post(['/api/owner/restore-product/:id', '/owner/restore-product/:id', '/api/products/restore/:id'], async (req, res) => {
+  const secretKey = req.query.secret || req.headers['x-owner-secret'] || DEFAULT_OWNER_KEY;
+  if (!isOwnerSecretValid(secretKey)) {
+    return res.status(403).json({ message: 'غير مصرح: مفتاح وصول السر الخاص بالمالك غير صحيح' });
+  }
+
+  try {
+    const success = await db.restoreProduct(req.params.id);
+    if (!success) {
+      return res.status(404).json({ message: 'الصنف غير موجود أو مفعل بالفعل' });
+    }
+    res.json({ message: 'تم استرجاع الصنف بنجاح وإعادته للكتالوج!', productId: req.params.id });
+  } catch (err) {
+    console.error("Restore Product Error:", err);
+    res.status(500).json({ message: 'خطأ في استرجاع الصنف: ' + err.message });
   }
 });
 

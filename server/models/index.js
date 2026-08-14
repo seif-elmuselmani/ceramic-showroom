@@ -44,6 +44,7 @@ const ProductSchema = new mongoose.Schema({
   usage: String,
   inStock: { type: Boolean, default: true },
   featured: { type: Boolean, default: false },
+  isDeleted: { type: Boolean, default: false, index: true },
   description: String,
   image: String
 });

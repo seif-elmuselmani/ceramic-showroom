@@ -679,24 +679,28 @@ class JsonDatabase {
     return Array.from(brandsSet);
   }
 
-  async getProducts() {
+  async getProducts(includeDeleted = false) {
     if (process.env.MONGODB_URI) {
       const connected = await connectToMongo();
       if (connected) {
-        return await Product.find().sort({ _id: -1 }).lean();
+        const query = includeDeleted ? {} : { isDeleted: { $ne: true } };
+        return await Product.find(query).sort({ _id: -1 }).lean();
       }
     }
-    return memoryCache.products;
+    if (includeDeleted) return memoryCache.products;
+    return memoryCache.products.filter(p => !p.isDeleted);
   }
 
   async getProductById(id) {
     if (process.env.MONGODB_URI) {
       const connected = await connectToMongo();
       if (connected) {
-        return await Product.findOne({ id }).lean();
+        return await Product.findOne({ id, isDeleted: { $ne: true } }).lean();
       }
     }
-    return memoryCache.products.find(p => p.id === id);
+    const found = memoryCache.products.find(p => p.id === id);
+    if (found && found.isDeleted) return null;
+    return found;
   }
 
   async addProduct(productData) {
@@ -705,6 +709,7 @@ class JsonDatabase {
       id,
       inStock: productData.inStock !== undefined ? productData.inStock : true,
       featured: productData.featured !== undefined ? productData.featured : false,
+      isDeleted: false,
       priceUnit: productData.priceUnit || "متر مربع",
       boxCoverage: Number(productData.boxCoverage) || 1.44,
       ...productData,
@@ -758,14 +763,30 @@ class JsonDatabase {
     if (process.env.MONGODB_URI) {
       const connected = await connectToMongo();
       if (connected) {
-        const result = await Product.deleteOne({ id });
-        return result.deletedCount > 0;
+        const result = await Product.updateOne({ id }, { $set: { isDeleted: true } });
+        return result.modifiedCount > 0;
       }
     }
 
-    const filtered = memoryCache.products.filter(p => p.id !== id);
-    if (filtered.length === memoryCache.products.length) return false;
-    memoryCache.products = filtered;
+    const index = memoryCache.products.findIndex(p => p.id === id);
+    if (index === -1) return false;
+    memoryCache.products[index].isDeleted = true;
+    this.writeLocal(memoryCache);
+    return true;
+  }
+
+  async restoreProduct(id) {
+    if (process.env.MONGODB_URI) {
+      const connected = await connectToMongo();
+      if (connected) {
+        const result = await Product.updateOne({ id }, { $set: { isDeleted: false } });
+        return result.modifiedCount > 0;
+      }
+    }
+
+    const index = memoryCache.products.findIndex(p => p.id === id);
+    if (index === -1) return false;
+    memoryCache.products[index].isDeleted = false;
     this.writeLocal(memoryCache);
     return true;
   }
@@ -779,10 +800,10 @@ class JsonDatabase {
       
       const existing = item.code ? memoryCache.products.find(p => p.code === item.code) : null;
       if (existing) {
-        const updated = await this.updateProduct(existing.id, item);
+        const updated = await this.updateProduct(existing.id, { ...item, isDeleted: false });
         if (updated) imported.push(updated);
       } else {
-        const added = await this.addProduct(item);
+        const added = await this.addProduct({ ...item, isDeleted: false });
         if (added) imported.push(added);
       }
     }
