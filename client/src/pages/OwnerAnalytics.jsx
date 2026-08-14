@@ -1,12 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Row, Col, Card, Button, Badge, Spinner, Alert, ProgressBar, Modal, Form, Table } from 'react-bootstrap';
+import { Container, Row, Col, Badge, Button, Spinner, Alert } from 'react-bootstrap';
 import { 
-  BarChart3, Clock, Users, MousePointerClick, Smartphone, RefreshCw, 
-  ShieldCheck, Lock, Download, Zap, Eye, PieChart, Sparkles, Activity, 
-  Upload, QrCode, Search, AlertTriangle, CheckCircle2, TrendingUp, 
-  FileSpreadsheet, PackageX, Layers, ExternalLink 
+  BarChart3, ShieldCheck, Lock, Activity, RefreshCw, Download, Sparkles, 
+  Upload, QrCode
 } from 'lucide-react';
 import axios from 'axios';
+
+import StatsCards from '../components/owner/StatsCards';
+import TopViewedProducts from '../components/owner/TopViewedProducts';
+import PopularKeywords from '../components/owner/PopularKeywords';
+import InventoryAlerts from '../components/owner/InventoryAlerts';
+import AnalyticsDetails from '../components/owner/AnalyticsDetails';
+import BulkImportModal from '../components/owner/BulkImportModal';
+import QRCodeGenerator from '../components/owner/QRCodeGenerator';
 
 const OwnerAnalytics = ({ onNavigate }) => {
   const [analyticsData, setAnalyticsData] = useState(null);
@@ -254,16 +260,6 @@ const OwnerAnalytics = ({ onNavigate }) => {
     }
   };
 
-  const totalDeviceVisits = (analyticsData?.mobileCount || 0) + (analyticsData?.desktopCount || 0) || 1;
-  const mobilePercent = Math.round(((analyticsData?.mobileCount || 0) / totalDeviceVisits) * 100);
-  const desktopPercent = 100 - mobilePercent;
-
-  const totalWaClicks = analyticsData?.whatsappClicks || 1;
-  const floatingBadgeCount = analyticsData?.whatsappClickDetails?.floating_badge || 0;
-  const productCardCount = analyticsData?.whatsappClickDetails?.product_card || 0;
-  const productModalCount = analyticsData?.whatsappClickDetails?.product_modal || 0;
-  const tileCalcCount = analyticsData?.whatsappClickDetails?.tile_calculator || 0;
-
   // Process Top Viewed Products
   const productViewsMap = analyticsData?.productViews || {};
   const sortedProductsByViews = [...productsList]
@@ -454,409 +450,41 @@ const OwnerAnalytics = ({ onNavigate }) => {
           </div>
         ) : analyticsData ? (
           <>
-            {/* Top 4 Ultra-Clean High-Contrast Metric Cards */}
+            <StatsCards analyticsData={analyticsData} />
+
             <Row className="g-4 mb-4">
-              <Col xs={12} sm={6} lg={3}>
-                <div className="p-4 rounded-4 shadow-sm bg-white border border-warning border-opacity-50 h-100">
-                  <div className="d-flex align-items-center justify-content-between mb-3">
-                    <span className="text-dark fw-bold small text-uppercase">👥 إجمالي زوار المعرض</span>
-                    <div className="p-2 rounded-3 bg-warning bg-opacity-15 text-dark fw-bold">
-                      <Users size={24} className="text-warning" />
-                    </div>
-                  </div>
-                  <div className="fs-1 fw-black text-dark mb-1">{(analyticsData.totalVisitors || 0).toLocaleString()}</div>
-                  <div className="d-flex align-items-center gap-1 text-muted small fw-semibold">
-                    <Eye size={15} className="text-warning" />
-                    <span>({(analyticsData.totalPageViews || 0).toLocaleString()} مشاهدة صفحة)</span>
-                  </div>
-                </div>
-              </Col>
-
-              <Col xs={12} sm={6} lg={3}>
-                <div className="p-4 rounded-4 shadow-sm bg-white border border-success border-opacity-50 h-100">
-                  <div className="d-flex align-items-center justify-content-between mb-3">
-                    <span className="text-dark fw-bold small text-uppercase">⏱️ وقت التصفح الإجمالي</span>
-                    <div className="p-2 rounded-3 bg-success bg-opacity-15 text-success">
-                      <Clock size={24} />
-                    </div>
-                  </div>
-                  <div className="fs-1 fw-black text-success mb-1">
-                    {Math.round((analyticsData.totalTimeSpentSeconds || 0) / 60).toLocaleString()} <span className="fs-5 fw-bold text-dark">دقيقة</span>
-                  </div>
-                  <div className="text-muted small fw-semibold">
-                    (~{(Math.round((analyticsData.totalTimeSpentSeconds || 0) / 3600 * 10) / 10)} ساعة تصفح إجمالية)
-                  </div>
-                </div>
-              </Col>
-
-              <Col xs={12} sm={6} lg={3}>
-                <div className="p-4 rounded-4 shadow-sm bg-white border border-primary border-opacity-50 h-100">
-                  <div className="d-flex align-items-center justify-content-between mb-3">
-                    <span className="text-dark fw-bold small text-uppercase">💬 استفسارات الواتساب</span>
-                    <div className="p-2 rounded-3 bg-primary bg-opacity-15 text-primary">
-                      <MousePointerClick size={24} />
-                    </div>
-                  </div>
-                  <div className="fs-1 fw-black text-primary mb-1">{(analyticsData.whatsappClicks || 0).toLocaleString()} <span className="fs-5 fw-bold text-dark">نقرة</span></div>
-                  <div className="text-muted small fw-semibold">
-                    (عملاء تواصلوا حياً عبر الواتس)
-                  </div>
-                </div>
-              </Col>
-
-              <Col xs={12} sm={6} lg={3}>
-                <div className="p-4 rounded-4 shadow-sm bg-white border border-info border-opacity-50 h-100">
-                  <div className="d-flex align-items-center justify-content-between mb-3">
-                    <span className="text-dark fw-bold small text-uppercase">📱 توزيع الأجهزة</span>
-                    <div className="p-2 rounded-3 bg-info bg-opacity-15 text-info">
-                      <Smartphone size={24} />
-                    </div>
-                  </div>
-                  <div className="d-flex align-items-center justify-content-between mb-2">
-                    <div>
-                      <span className="small text-muted d-block fw-bold">📱 موبايل:</span>
-                      <strong className="fs-4 text-dark font-black">{(analyticsData.mobileCount || 0)}</strong>
-                    </div>
-                    <div className="text-end border-start border-slate-200 ps-3">
-                      <span className="small text-muted d-block fw-bold">💻 كمبيوتر:</span>
-                      <strong className="fs-4 text-dark font-black">{(analyticsData.desktopCount || 0)}</strong>
-                    </div>
-                  </div>
-                  <ProgressBar style={{ height: '8px' }} className="rounded-pill bg-light border">
-                    <ProgressBar variant="warning" now={mobilePercent} key={1} />
-                    <ProgressBar variant="info" now={desktopPercent} key={2} />
-                  </ProgressBar>
-                </div>
-              </Col>
-            </Row>
-
-            {/* Top Products & Search Keywords Section */}
-            <Row className="g-4 mb-4">
-              {/* Top 5 Most Viewed Tile Products */}
               <Col lg={7}>
-                <div className="p-4 rounded-4 shadow-sm bg-white border border-slate-200 h-100">
-                  <div className="d-flex align-items-center justify-content-between mb-3 pb-2 border-bottom">
-                    <h5 className="fw-black text-dark mb-0 d-flex align-items-center gap-2">
-                      <TrendingUp size={22} className="text-warning" />
-                      🏆 الأكثر مشاهدة وإقبالاً من الزوار (Top Tile Products):
-                    </h5>
-                    <Badge bg="warning" className="text-dark fw-bold fs-7 px-3 py-1.5 rounded-pill">
-                      تحديث تلقائي
-                    </Badge>
-                  </div>
-
-                  {topViewedProducts.length === 0 ? (
-                    <div className="text-center py-4 text-muted fw-bold fs-6">
-                      <Eye size={36} className="text-warning opacity-50 mb-2 d-block mx-auto" />
-                      سيظهر هنا الترتيب التلقائي لأكثر بلاطات السيراميك والبورسلين زيارة عند تصفح الزوار للكتالوج.
-                    </div>
-                  ) : (
-                    <Table hover responsive className="align-middle mb-0 border-0">
-                      <thead className="bg-light fs-7 text-uppercase text-muted">
-                        <tr>
-                          <th>الترتيب</th>
-                          <th>الصورة والصنف</th>
-                          <th>الفئة والمقاس</th>
-                          <th className="text-center">السعر</th>
-                          <th className="text-end">المشاهدات</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {topViewedProducts.map((prod, idx) => (
-                          <tr key={prod.id || idx}>
-                            <td className="fw-black text-center" style={{ width: '40px' }}>
-                              <span className={`badge rounded-circle p-2 fs-7 ${idx === 0 ? 'bg-warning text-dark' : idx === 1 ? 'bg-secondary text-white' : idx === 2 ? 'bg-amber text-dark border' : 'bg-light text-dark border'}`}>
-                                #{idx + 1}
-                              </span>
-                            </td>
-                            <td>
-                              <div className="d-flex align-items-center gap-2">
-                                <img 
-                                  src={prod.image || 'https://images.unsplash.com/photo-1615873968403-89e068629265?auto=format&fit=crop&w=150&q=80'} 
-                                  alt={prod.name} 
-                                  style={{ width: '42px', height: '42px', objectFit: 'cover', borderRadius: '8px' }}
-                                />
-                                <div>
-                                  <div className="fw-bold text-dark fs-7 mb-0">{prod.name}</div>
-                                  <span className="text-muted small">كود: {prod.code || 'بدون كود'}</span>
-                                </div>
-                              </div>
-                            </td>
-                            <td>
-                              <span className="badge bg-light text-dark border mb-1 d-block w-fit">{prod.category}</span>
-                              <span className="text-muted small">{prod.dimensions || 'قياسي'}</span>
-                            </td>
-                            <td className="text-center fw-black text-success fs-7">
-                              {prod.price} ج.م
-                            </td>
-                            <td className="text-end">
-                              <Badge bg="primary" className="px-3 py-1.5 rounded-pill fs-7 fw-bold">
-                                {prod.viewsCount} زيارة
-                              </Badge>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </Table>
-                  )}
-                </div>
+                <TopViewedProducts topViewedProducts={topViewedProducts} />
               </Col>
-
-              {/* Popular Search Terms & Out of Stock Alerts */}
               <Col lg={5}>
                 <div className="d-flex flex-column gap-4 h-100">
-                  {/* Popular Search Keywords */}
-                  <div className="p-4 rounded-4 shadow-sm bg-white border border-slate-200">
-                    <div className="d-flex align-items-center justify-content-between mb-3 pb-2 border-bottom">
-                      <h5 className="fw-bold text-dark mb-0 d-flex align-items-center gap-2 fs-6">
-                        <Search size={20} className="text-primary" />
-                        🔍 الكلمات الأكثر بحثاً من الزباين:
-                      </h5>
-                      <span className="badge bg-primary bg-opacity-15 text-primary fw-bold px-2.5 py-1 rounded-pill small">
-                        اهتمامات الزوار
-                      </span>
-                    </div>
-
-                    {sortedSearchQueries.length === 0 ? (
-                      <p className="text-muted small mb-0 text-center py-2 fw-semibold">
-                        ستسجل هنا أكثر ألمع كلمات البحث (مثل: إسباني، باركيه، كليوباترا) عندما يبحث عنها الزوار.
-                      </p>
-                    ) : (
-                      <div className="d-flex flex-wrap gap-2">
-                        {sortedSearchQueries.map(({ query, count }, i) => (
-                          <span key={i} className="badge bg-light text-dark border p-2 rounded-3 fs-7 fw-bold d-inline-flex align-items-center gap-2">
-                            <span>{query}</span>
-                            <Badge bg="dark" className="rounded-pill px-2 py-0.5 small">{count}</Badge>
-                          </span>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Out of Stock Inventory Alerts */}
-                  <div className="p-4 rounded-4 shadow-sm bg-white border border-slate-200 flex-grow-1">
-                    <div className="d-flex align-items-center justify-content-between mb-3 pb-2 border-bottom">
-                      <h5 className="fw-bold text-dark mb-0 d-flex align-items-center gap-2 fs-6">
-                        <PackageX size={20} className="text-danger" />
-                        🚨 النواقص بالمخزن (Out of Stock):
-                      </h5>
-                      <Badge bg={outOfStockProducts.length > 0 ? "danger" : "success"} className="fw-bold px-2.5 py-1 rounded-pill small">
-                        {outOfStockProducts.length} صنف
-                      </Badge>
-                    </div>
-
-                    {outOfStockProducts.length === 0 ? (
-                      <div className="p-3 rounded-3 bg-success bg-opacity-10 text-success fw-bold text-center small">
-                        <CheckCircle2 size={18} className="me-1" /> كافة أصناف المعرض متوفرة حالياً بالمخزن بنسبة 100%!
-                      </div>
-                    ) : (
-                      <div className="d-flex flex-column gap-2 max-h-200 overflow-y-auto">
-                        {outOfStockProducts.map(prod => (
-                          <div key={prod.id} className="p-2.5 rounded-3 bg-light border d-flex align-items-center justify-content-between gap-2">
-                            <div>
-                              <div className="fw-bold text-dark fs-7">{prod.name}</div>
-                              <span className="text-muted small">كود: {prod.code || 'بدون كود'} | {prod.category}</span>
-                            </div>
-                            <Button 
-                              variant="success" 
-                              size="sm" 
-                              onClick={() => handleRestockProduct(prod.id)}
-                              className="rounded-pill fw-bold text-nowrap fs-7 px-3 py-1"
-                            >
-                              إعادة توفر 🟢
-                            </Button>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
+                  <PopularKeywords sortedSearchQueries={sortedSearchQueries} />
+                  <InventoryAlerts outOfStockProducts={outOfStockProducts} handleRestockProduct={handleRestockProduct} />
                 </div>
               </Col>
             </Row>
 
-            {/* Detailed Visual Analytics Breakdown */}
-            <Row className="g-4 mb-4">
-              {/* WhatsApp Lead Breakdown */}
-              <Col lg={7}>
-                <div className="p-4 rounded-4 shadow-sm bg-white border border-slate-200 h-100">
-                  <div className="d-flex align-items-center justify-content-between mb-4 pb-2 border-bottom">
-                    <h5 className="fw-bold text-dark mb-0 d-flex align-items-center gap-2">
-                      <PieChart size={22} className="text-warning" />
-                      تفاصيل مصادر نقرات استفسارات الواتساب الحية:
-                    </h5>
-                    <Badge bg="warning" className="text-dark fw-bold fs-7 px-3 py-1.5 rounded-pill shadow-sm">
-                      إجمالي {analyticsData.whatsappClicks || 0} نقرة
-                    </Badge>
-                  </div>
-
-                  <div className="d-flex flex-column gap-3">
-                    {/* Source 1: Floating Badge */}
-                    <div className="p-3 rounded-3 bg-light border">
-                      <div className="d-flex align-items-center justify-content-between mb-2">
-                        <span className="fw-bold text-dark d-flex align-items-center gap-2">
-                          💬 الشارة العائمة الملكية (استفسار عام)
-                        </span>
-                        <Badge bg="warning" className="text-dark fw-bold fs-6 px-3 py-1 rounded-pill">
-                          {floatingBadgeCount} نقرة ({Math.round((floatingBadgeCount / (totalWaClicks || 1)) * 100)}%)
-                        </Badge>
-                      </div>
-                      <ProgressBar variant="warning" now={(floatingBadgeCount / (totalWaClicks || 1)) * 100} style={{ height: '8px' }} className="rounded-pill bg-white border" />
-                    </div>
-
-                    {/* Source 2: Product Cards */}
-                    <div className="p-3 rounded-3 bg-light border">
-                      <div className="d-flex align-items-center justify-content-between mb-2">
-                        <span className="fw-bold text-dark d-flex align-items-center gap-2">
-                          📦 كروت الكتالوج والمنتجات مباشرة
-                        </span>
-                        <Badge bg="success" className="fw-bold fs-6 px-3 py-1 rounded-pill">
-                          {productCardCount} نقرة ({Math.round((productCardCount / (totalWaClicks || 1)) * 100)}%)
-                        </Badge>
-                      </div>
-                      <ProgressBar variant="success" now={(productCardCount / (totalWaClicks || 1)) * 100} style={{ height: '8px' }} className="rounded-pill bg-white border" />
-                    </div>
-
-                    {/* Source 3: Product Modal */}
-                    <div className="p-3 rounded-3 bg-light border">
-                      <div className="d-flex align-items-center justify-content-between mb-2">
-                        <span className="fw-bold text-dark d-flex align-items-center gap-2">
-                          👁️ نافذة التفاصيل والمواصفات الكاملة
-                        </span>
-                        <Badge bg="info" className="text-dark fw-bold fs-6 px-3 py-1 rounded-pill">
-                          {productModalCount} نقرة ({Math.round((productModalCount / (totalWaClicks || 1)) * 100)}%)
-                        </Badge>
-                      </div>
-                      <ProgressBar variant="info" now={(productModalCount / (totalWaClicks || 1)) * 100} style={{ height: '8px' }} className="rounded-pill bg-white border" />
-                    </div>
-
-                    {/* Source 4: Tile Calculator */}
-                    <div className="p-3 rounded-3 bg-light border">
-                      <div className="d-flex align-items-center justify-content-between mb-2">
-                        <span className="fw-bold text-dark d-flex align-items-center gap-2">
-                          🧮 حاسبة الكراتين والكميات والقطع الذكية
-                        </span>
-                        <Badge bg="primary" className="fw-bold fs-6 px-3 py-1 rounded-pill">
-                          {tileCalcCount} مقايسة ({Math.round((tileCalcCount / (totalWaClicks || 1)) * 100)}%)
-                        </Badge>
-                      </div>
-                      <ProgressBar variant="primary" now={(tileCalcCount / (totalWaClicks || 1)) * 100} style={{ height: '8px' }} className="rounded-pill bg-white border" />
-                    </div>
-                  </div>
-                </div>
-              </Col>
-
-              {/* Server Activity Status */}
-              <Col lg={5}>
-                <div className="p-4 rounded-4 shadow-sm bg-white border border-slate-200 h-100 d-flex flex-column justify-content-between">
-                  <div>
-                    <div className="d-flex align-items-center justify-content-between mb-4 pb-2 border-bottom">
-                      <h5 className="fw-bold text-dark mb-0 d-flex align-items-center gap-2">
-                        <Zap size={22} className="text-warning" />
-                        حالة الاتصال والسيرفر السحابي:
-                      </h5>
-                      <span className="badge bg-success bg-opacity-15 text-success border border-success border-opacity-30 rounded-pill px-3 py-1.5 fw-bold">
-                        🟢 متصل 100%
-                      </span>
-                    </div>
-
-                    <div className="p-4 bg-light border border-warning border-opacity-40 rounded-4 text-center mb-4">
-                      <Clock size={44} className="text-warning mb-3" />
-                      <div className="text-muted fs-6 mb-1 fw-bold">آخر حركة زائر سجلها خادم Vercel Live:</div>
-                      <div className="fs-5 fw-black text-dark">
-                        {analyticsData.lastActivity ? new Date(analyticsData.lastActivity).toLocaleString('ar-EG') : 'الآن'}
-                      </div>
-                      <div className="mt-3 text-muted small fw-semibold">
-                        تحديث الشاشة الأخير: {lastRefreshedTime.toLocaleTimeString('ar-EG')}
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="p-3 bg-warning bg-opacity-15 border border-warning rounded-3 text-dark small text-center fw-bold">
-                    <Sparkles size={16} className="me-1 text-warning" /> جميع الأرقام والبيانات محمية وحصرية لمالك المشروع وتتحدث تلقائياً.
-                  </div>
-                </div>
-              </Col>
-            </Row>
+            <AnalyticsDetails analyticsData={analyticsData} lastRefreshedTime={lastRefreshedTime} />
           </>
         ) : null}
       </Container>
 
-      {/* 1-Click Excel CSV Bulk Import Modal */}
-      <Modal show={showImportModal} onHide={() => setShowImportModal(false)} centered size="lg" className="rounded-4">
-        <Modal.Header closeButton className="border-0 pb-0">
-          <Modal.Title className="fw-black text-dark d-flex align-items-center gap-2 fs-5">
-            <Upload className="text-warning" size={24} />
-            ⚡ أداة استيراد وتحديث المنتجات من إكسيل (Bulk Import)
-          </Modal.Title>
-        </Modal.Header>
-        <Modal.Body className="py-4">
-          <Alert variant="info" className="rounded-3 small fw-bold mb-3 border-info">
-            💡 يمكنك رفع ملف CSV المستخرج من Excel أو تصدير المعرض السريع. ستقوم الأداة بمطابقة الأصناف بكود الصنف وتحديث الأسعار أو إضافة الأصناف الجديدة تلقائياً!
-          </Alert>
+      <BulkImportModal 
+        showImportModal={showImportModal}
+        setShowImportModal={setShowImportModal}
+        csvTextContent={csvTextContent}
+        setCsvTextContent={setCsvTextContent}
+        handleFileUpload={handleFileUpload}
+        importing={importing}
+        handleExecuteBulkImport={handleExecuteBulkImport}
+      />
 
-          <Form.Group className="mb-3">
-            <Form.Label className="fw-bold text-dark">اختر ملف CSV من جهازك:</Form.Label>
-            <Form.Control type="file" accept=".csv,text/csv" onChange={handleFileUpload} className="rounded-3" />
-          </Form.Group>
-
-          <Form.Group className="mb-3">
-            <Form.Label className="fw-bold text-dark">أو قم بلصق نص محتوى CSV هنا مباشرة:</Form.Label>
-            <Form.Control 
-              as="textarea" 
-              rows={6} 
-              value={csvTextContent}
-              onChange={(e) => setCsvTextContent(e.target.value)}
-              placeholder={`ID,"كود الصنف","اسم الصنف","الفئة الرئيسية","الفئة الفرعية","الماركة","السعر الحالي"\n"1","ESP-60120","بورسلين إسباني كالاكاتا","بورسلين مستورد","إسباني","Porcelanosa","650"`}
-              className="rounded-3 fs-7 font-monospace"
-            />
-          </Form.Group>
-        </Modal.Body>
-        <Modal.Footer className="border-0 pt-0">
-          <Button variant="outline-secondary" className="rounded-pill fw-bold" onClick={() => setShowImportModal(false)}>
-            إلغاء
-          </Button>
-          <Button 
-            variant="warning" 
-            className="rounded-pill fw-black text-dark px-4"
-            disabled={importing || !csvTextContent.trim()}
-            onClick={handleExecuteBulkImport}
-          >
-            {importing ? <Spinner animation="border" size="sm" /> : '🚀 بدء الاستيراد بنقرة واحدة'}
-          </Button>
-        </Modal.Footer>
-      </Modal>
-
-      {/* Showroom HD QR Code Generator Modal */}
-      <Modal show={showQRModal} onHide={() => setShowQRModal(false)} centered className="rounded-4 text-center">
-        <Modal.Header closeButton className="border-0 pb-0">
-          <Modal.Title className="fw-black text-dark d-flex align-items-center gap-2 fs-5 w-100 justify-content-center">
-            <QrCode className="text-warning" size={24} />
-            📱 رمز QR Code الملكي للمعرض (Showroom QR)
-          </Modal.Title>
-        </Modal.Header>
-        <Modal.Body className="py-4">
-          <p className="text-muted small fw-bold mb-3">
-            اطبع هذا الرمز وضعه في الفروع (بنها - مدخل قبلي / برج السنهوي)، ليمسحه الزبائن بهواتفهم وتصفح الكتالوج بالكامل!
-          </p>
-
-          <div className="p-4 bg-white border border-warning rounded-4 d-inline-block shadow-sm mb-3">
-            <img src={qrCodeImageUrl} alt="Showroom QR Code" style={{ width: '220px', height: '220px' }} />
-          </div>
-
-          <div className="small text-dark font-monospace fw-bold mb-3">
-            {siteOrigin}
-          </div>
-        </Modal.Body>
-        <Modal.Footer className="border-0 pt-0 justify-content-center">
-          <Button 
-            variant="warning" 
-            className="rounded-pill fw-black text-dark px-4 d-inline-flex align-items-center gap-2"
-            onClick={() => window.open(qrCodeImageUrl, '_blank')}
-          >
-            <Download size={16} /> تحميل الصورة بجودة عالية HD
-          </Button>
-        </Modal.Footer>
-      </Modal>
+      <QRCodeGenerator 
+        showQRModal={showQRModal}
+        setShowQRModal={setShowQRModal}
+        qrCodeImageUrl={qrCodeImageUrl}
+        siteOrigin={siteOrigin}
+      />
     </div>
   );
 };
