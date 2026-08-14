@@ -835,6 +835,25 @@ class JsonDatabase {
     return true;
   }
 
+  async bulkImportProducts(items) {
+    if (!Array.isArray(items) || items.length === 0) return { importedCount: 0, items: [] };
+
+    const imported = [];
+    for (const item of items) {
+      if (!item.name || !item.category) continue;
+      
+      const existing = item.code ? memoryCache.products.find(p => p.code === item.code) : null;
+      if (existing) {
+        const updated = await this.updateProduct(existing.id, item);
+        if (updated) imported.push(updated);
+      } else {
+        const added = await this.addProduct(item);
+        if (added) imported.push(added);
+      }
+    }
+    return { importedCount: imported.length, items: imported };
+  }
+
   async addCategory(catData) {
     const id = "cat-" + Date.now();
     

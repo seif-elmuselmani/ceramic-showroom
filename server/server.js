@@ -306,6 +306,31 @@ app.post(['/api/analytics/reset', '/analytics/reset'], async (req, res) => {
   }
 });
 
+// Bulk Import Products (Owner Protected Endpoint)
+app.post(['/api/owner/import-products', '/owner/import-products', '/api/products/import-bulk'], async (req, res) => {
+  const secretKey = req.query.secret || req.headers['x-owner-secret'] || DEFAULT_OWNER_KEY;
+  if (!isOwnerSecretValid(secretKey)) {
+    return res.status(403).json({ message: 'غير مصرح: مفتاح وصول السر الخاص بالمالك غير صحيح' });
+  }
+
+  const { products } = req.body;
+  if (!Array.isArray(products) || products.length === 0) {
+    return res.status(400).json({ message: 'لم يتم تزويد أي بيانات أصناف صالحة للاستيراد' });
+  }
+
+  try {
+    const result = await db.bulkImportProducts(products);
+    res.json({
+      message: `تم استيراد وتحديث ${result.importedCount} صنف بنجاح في الكتالوج!`,
+      importedCount: result.importedCount,
+      items: result.items
+    });
+  } catch (err) {
+    console.error("Bulk Import Error:", err);
+    res.status(500).json({ message: 'خطأ في استيراد الأصناف: ' + err.message });
+  }
+});
+
 // Secret CSV / Excel Inventory Export (Owner Only)
 app.get(['/api/owner/export-csv', '/owner/export-csv', '/api/export-csv', '/export-csv'], async (req, res) => {
   const secretKey = req.query.secret || req.headers['x-owner-secret'] || DEFAULT_OWNER_KEY;
