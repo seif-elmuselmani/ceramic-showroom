@@ -185,29 +185,53 @@ ${productLink}
                 </div>
               )}
 
-              {/* 2 Separate Independent Rows for Color & Cover Type (Exact Match to Customer Screenshot) */}
+              {/* 7-Star Luxury Variant Selection Box (Exact Match to Customer Request) */}
               {hasVariants && (
-                <div className="p-3 mb-3 bg-light rounded-4 border border-slate-200">
-                  {/* Row 1: Color Selection */}
+                <div className="p-3 mb-3 bg-light rounded-4 border border-slate-200 shadow-sm">
+                  {/* Row 1: Color Selection with Color Swatch Dots */}
                   {availableColors.length > 0 && (
                     <div className="mb-3">
-                      <div className="fs-7 fw-bold text-dark mb-1.5 d-flex align-items-center gap-1">
-                        <span>اللون</span>
+                      <div className="fs-7 fw-bold text-dark mb-2 d-flex align-items-center justify-content-between">
+                        <span className="d-flex align-items-center gap-1.5">
+                          🎨 اللون المختار: <strong className="text-primary">{selectedColor}</strong>
+                        </span>
+                        <span className="badge bg-white text-muted border rounded-pill px-2.5 py-1 fs-8">
+                          {availableColors.length} ألوان متوفرة
+                        </span>
                       </div>
+
                       <div className="d-flex flex-wrap gap-2">
                         {availableColors.map((colorName) => {
                           const isSelected = selectedColor === colorName;
+                          const colorHex = 
+                            colorName.includes('أبيض') ? '#ffffff' :
+                            colorName.includes('برجامون') || colorName.includes('بيج') ? '#f5e6d3' :
+                            colorName.includes('أسود') ? '#1e293b' :
+                            colorName.includes('ذهب') ? '#d4af37' :
+                            colorName.includes('فض') || colorName.includes('كروم') ? '#cbd5e1' :
+                            colorName.includes('رمادي') ? '#64748b' :
+                            colorName.includes('خشب') || colorName.includes('بني') ? '#8b5a2b' : '#334155';
+
                           return (
                             <button
                               key={colorName}
                               type="button"
                               onClick={() => handleColorClick(colorName)}
-                              className={`btn rounded-3 px-3 py-1.5 fs-7 fw-bold transition-all ${
+                              className={`btn rounded-3 px-3 py-2 fs-7 fw-bold transition-all d-flex align-items-center gap-2 ${
                                 isSelected 
-                                  ? 'btn-primary text-white shadow border-primary' 
-                                  : 'btn-outline-secondary bg-white text-dark border-slate-300'
+                                  ? 'bg-dark text-warning border-dark shadow-sm' 
+                                  : 'bg-white text-dark border-slate-300 hover-bg-light'
                               }`}
                             >
+                              <span 
+                                className="rounded-circle border d-inline-block flex-shrink-0"
+                                style={{
+                                  width: '16px',
+                                  height: '16px',
+                                  backgroundColor: colorHex,
+                                  border: isSelected ? '1px solid #d4af37' : '1px solid #94a3b8'
+                                }}
+                              />
                               {colorName}
                             </button>
                           );
@@ -219,9 +243,12 @@ ${productLink}
                   {/* Row 2: Cover Type Selection */}
                   {availableCoverTypes.length > 0 && (
                     <div>
-                      <div className="fs-7 fw-bold text-dark mb-1.5 d-flex align-items-center gap-1">
-                        <span>نوع الغطاء</span>
+                      <div className="fs-7 fw-bold text-dark mb-2 d-flex align-items-center justify-content-between">
+                        <span className="d-flex align-items-center gap-1.5">
+                          🚽 نوع الغطاء / المواصفة: <strong className="text-primary">{selectedCoverType}</strong>
+                        </span>
                       </div>
+
                       <div className="d-flex flex-wrap gap-2">
                         {availableCoverTypes.map((coverName) => {
                           const isSelected = selectedCoverType === coverName;
@@ -230,10 +257,10 @@ ${productLink}
                               key={coverName}
                               type="button"
                               onClick={() => handleCoverClick(coverName)}
-                              className={`btn rounded-3 px-3 py-1.5 fs-7 fw-bold transition-all ${
+                              className={`btn rounded-3 px-3 py-2 fs-7 fw-bold transition-all ${
                                 isSelected 
-                                  ? 'btn-primary text-white shadow border-primary' 
-                                  : 'btn-outline-secondary bg-white text-dark border-slate-300'
+                                  ? 'bg-dark text-warning border-dark shadow-sm' 
+                                  : 'bg-white text-dark border-slate-300 hover-bg-light'
                               }`}
                             >
                               {coverName}

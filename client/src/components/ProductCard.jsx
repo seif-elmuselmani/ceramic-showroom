@@ -197,18 +197,24 @@ ${productLink}
 
           <h5 className="card-title-luxury text-truncate mb-2" title={product.name}>{product.name}</h5>
 
-          {/* 2 Separate Independent Rows for Color & Cover Type (Matching Screenshot) */}
+          {/* Ultra-Sleek Compact Color Swatches & Cover Tag (7-Star UX) */}
           {hasVariants && (
-            <div className="variant-selectors-container mb-3 p-2.5 bg-light rounded-3 border border-slate-200">
-              {/* Row 1: Color Selection */}
+            <div className="d-flex align-items-center justify-content-between mb-2.5 pt-1 border-top border-light">
               {availableColors.length > 0 && (
-                <div className="mb-2">
-                  <div className="fs-8 fw-bold text-dark mb-1 d-flex align-items-center gap-1">
-                    <span>اللون</span>
-                  </div>
-                  <div className="d-flex flex-wrap gap-1.5">
+                <div className="d-flex align-items-center gap-1.5">
+                  <span className="text-muted fs-8 fw-semibold me-1">🎨 اللون:</span>
+                  <div className="d-flex align-items-center gap-1.5">
                     {availableColors.map((colorName) => {
                       const isSelected = selectedColor === colorName;
+                      const colorHex = 
+                        colorName.includes('أبيض') ? '#ffffff' :
+                        colorName.includes('برجامون') || colorName.includes('بيج') ? '#f5e6d3' :
+                        colorName.includes('أسود') ? '#1e293b' :
+                        colorName.includes('ذهب') ? '#d4af37' :
+                        colorName.includes('فض') || colorName.includes('كروم') ? '#cbd5e1' :
+                        colorName.includes('رمادي') ? '#64748b' :
+                        colorName.includes('خشب') || colorName.includes('بني') ? '#8b5a2b' : '#334155';
+
                       return (
                         <button
                           key={colorName}
@@ -217,49 +223,27 @@ ${productLink}
                             e.stopPropagation();
                             handleColorClick(colorName);
                           }}
-                          className={`btn btn-sm rounded-3 px-3 py-1 fs-8 fw-bold transition-all ${
-                            isSelected 
-                              ? 'btn-primary text-white shadow-sm border-primary' 
-                              : 'btn-outline-secondary bg-white text-dark border-slate-300'
-                          }`}
-                        >
-                          {colorName}
-                        </button>
+                          title={`اللون: ${colorName}`}
+                          className="rounded-circle border p-0 cursor-pointer transition-all d-inline-block flex-shrink-0"
+                          style={{
+                            width: '20px',
+                            height: '20px',
+                            backgroundColor: colorHex,
+                            border: isSelected ? '2px solid #0f172a' : '1px solid #cbd5e1',
+                            boxShadow: isSelected ? '0 0 0 2px #d4af37' : 'none',
+                            transform: isSelected ? 'scale(1.15)' : 'scale(1)'
+                          }}
+                        />
                       );
                     })}
                   </div>
                 </div>
               )}
 
-              {/* Row 2: Cover Type Selection */}
               {availableCoverTypes.length > 0 && (
-                <div>
-                  <div className="fs-8 fw-bold text-dark mb-1 d-flex align-items-center gap-1">
-                    <span>نوع الغطاء</span>
-                  </div>
-                  <div className="d-flex flex-wrap gap-1.5">
-                    {availableCoverTypes.map((coverName) => {
-                      const isSelected = selectedCoverType === coverName;
-                      return (
-                        <button
-                          key={coverName}
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleCoverClick(coverName);
-                          }}
-                          className={`btn btn-sm rounded-3 px-3 py-1 fs-8 fw-bold transition-all ${
-                            isSelected 
-                              ? 'btn-primary text-white shadow-sm border-primary' 
-                              : 'btn-outline-secondary bg-white text-dark border-slate-300'
-                          }`}
-                        >
-                          {coverName}
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
+                <span className="badge bg-light text-secondary border rounded-pill fs-8 fw-normal text-truncate ms-auto" style={{ maxWidth: '140px' }} title={selectedCoverType}>
+                  🚽 {selectedCoverType}
+                </span>
               )}
             </div>
           )}
