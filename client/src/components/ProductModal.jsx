@@ -91,6 +91,11 @@ ${productLink}
                 alt={product.name}
                 className="img-fluid w-100 style-modal-product-img"
                 style={{ maxHeight: '420px', objectFit: 'cover' }}
+                referrerPolicy="no-referrer"
+                onError={(e) => {
+                  e.target.onerror = null;
+                  e.target.src = 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=1000&q=80';
+                }}
               />
             </div>
           </Col>

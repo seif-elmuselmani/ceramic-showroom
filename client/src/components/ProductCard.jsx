@@ -93,6 +93,11 @@ ${productLink}
           alt={product.name}
           className="card-img-top-luxury"
           loading="lazy"
+          referrerPolicy="no-referrer"
+          onError={(e) => {
+            e.target.onerror = null;
+            e.target.src = 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=800&q=80';
+          }}
         />
 
         {/* Floating Badges */}
