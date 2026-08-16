@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Card, Table, Button, Form, Modal, Badge, Tab, Tabs, Alert, Spinner, InputGroup } from 'react-bootstrap';
-import { PlusCircle, Edit, Trash2, Layers, DollarSign, PackageCheck, PackageX, Settings, Search, RefreshCw, Upload, Check, BarChart3, Clock, Users, MousePointerClick, Smartphone, Monitor } from 'lucide-react';
+import { PlusCircle, Edit, Trash2, Layers, DollarSign, PackageCheck, PackageX, Settings, Search, RefreshCw, Upload, Check, BarChart3, Clock, Users, MousePointerClick, Smartphone, Monitor, Sparkles } from 'lucide-react';
 import { getProducts, getCategories, addProduct, updateProduct, deleteProduct, updateSettings, uploadImage, addCategory, updateCategory, deleteCategory } from '../services/api';
 import axios from 'axios';
 
