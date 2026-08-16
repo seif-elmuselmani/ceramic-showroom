@@ -3,10 +3,30 @@ import { Modal, Button, Badge, Row, Col } from 'react-bootstrap';
 import { MessageCircle, CheckCircle2, ShieldAlert, Share2, Calculator, Sparkles } from 'lucide-react';
 import { getProductDiscount } from '../utils/discount';
 
-const ProductModal = ({ product, show, onHide, settings, onOpenCalculator }) => {
+const ProductModal = ({ product, show, onHide, settings, onOpenCalculator, onSelectBrand }) => {
   if (!product) return null;
 
-  const { hasDiscount, discountPercent, savingsAmount, durationText } = getProductDiscount(product);
+  const [selectedVariantIndex, setSelectedVariantIndex] = React.useState(product.activeVariantIndex || 0);
+
+  React.useEffect(() => {
+    if (product.activeVariantIndex !== undefined) {
+      setSelectedVariantIndex(product.activeVariantIndex);
+    } else {
+      setSelectedVariantIndex(0);
+    }
+  }, [product]);
+
+  const hasVariants = Boolean(product.hasVariants && Array.isArray(product.variants) && product.variants.length > 0);
+  const activeVariant = hasVariants ? (product.variants[selectedVariantIndex] || product.variants[0]) : null;
+
+  const effectivePrice = activeVariant && activeVariant.price !== undefined ? Number(activeVariant.price) : Number(product.price);
+  const effectiveOriginalPrice = activeVariant && activeVariant.originalPrice !== undefined ? Number(activeVariant.originalPrice) : Number(product.originalPrice);
+  const effectiveCode = activeVariant && activeVariant.code ? activeVariant.code : product.code;
+  const effectiveImage = activeVariant && activeVariant.image ? activeVariant.image : product.image;
+  const effectiveColor = activeVariant && activeVariant.color ? activeVariant.color : product.color;
+  const effectiveCoverType = activeVariant && activeVariant.coverType ? activeVariant.coverType : product.coverType;
+
+  const { hasDiscount, discountPercent, savingsAmount, durationText } = getProductDiscount(product, activeVariant);
 
   const whatsappNumber = settings?.whatsappNumber || '201000000000';
   const productLink = `${window.location.origin}${window.location.pathname}?product=${product.id || product._id}`;
@@ -14,11 +34,11 @@ const ProductModal = ({ product, show, onHide, settings, onOpenCalculator }) => 
 أود الاستفسار وحجز طلبية صنف السيراميك/البورسلين التالي:
 
 📦 اسم الصنف: ${product.name}
-🏷️ كود الصنف: ${product.code || 'غير محدد'}
+🏷️ كود الصنف: ${effectiveCode || 'غير محدد'}
 📂 الفئة: ${product.category}${product.subcategory ? ` (${product.subcategory})` : ''}
-📐 المقاس والتشطيب: ${product.dimensions || 'قياسي'} | ${product.finish || 'ممتاز'}
+${effectiveColor ? `🎨 اللون المختار: ${effectiveColor}\n` : ''}${effectiveCoverType ? `🚽 نوع الغطاء: ${effectiveCoverType}\n` : ''}📐 المقاس والتشطيب: ${product.dimensions || 'قياسي'} | ${product.finish || 'ممتاز'}
 🏭 بلد المنشأ: ${product.origin || 'مستورد'}
-💰 السعر الحالي: ${product.price} ج.م / ${product.priceUnit || 'م2'}${hasDiscount ? ` (بدلاً من ${product.originalPrice} ج.م - ووفرت ${savingsAmount} ج.م [خصم ${discountPercent}%])` : ''}
+💰 السعر الحالي: ${effectivePrice} ج.م / ${product.priceUnit || 'م2'}${hasDiscount ? ` (بدلاً من ${effectiveOriginalPrice} ج.م - ووفرت ${savingsAmount} ج.م [خصم ${discountPercent}%])` : ''}
 
 🔗 رابط معاينة الصنف بالموقع:
 ${productLink}
@@ -31,7 +51,7 @@ ${productLink}
     const shareUrl = `${window.location.origin}${window.location.pathname}?product=${product.id || product._id}`;
     const shareData = {
       title: product.name,
-      text: `شاهد سيراميك/بورسلين: ${product.name} (كود: ${product.code}) - في معرض السيد الجزار`,
+      text: `شاهد سيراميك/بورسلين: ${product.name} (كود: ${effectiveCode}) - في معرض السيد الجزار`,
       url: shareUrl
     };
 
@@ -48,39 +68,43 @@ ${productLink}
   };
 
   return (
-    <Modal show={show} onHide={onHide} size="lg" centered className="modal-luxury">
-      <Modal.Header closeButton className="modal-header-luxury">
-        <Modal.Title className="d-flex align-items-center gap-2">
-          <Sparkles className="text-warning" size={24} />
-          <span>تفاصيل صنف السيراميك / البورسلين</span>
-        </Modal.Title>
+    <Modal show={show} onHide={onHide} size="lg" centered className="product-details-modal">
+      <Modal.Header closeButton className="border-0 pb-0">
+        <div className="d-flex align-items-center gap-2">
+          <Badge bg="warning" text="dark" className="px-3 py-1.5 rounded-pill fw-bold">
+            {product.category}
+          </Badge>
+          {product.featured && (
+            <Badge bg="dark" className="px-3 py-1.5 rounded-pill fw-bold">
+              ⭐ صنف مميز
+            </Badge>
+          )}
+        </div>
       </Modal.Header>
-
-      <Modal.Body className="p-4">
-        <Row className="g-4">
-          <Col md={6}>
-            <div className="rounded-4 overflow-hidden border shadow-sm" style={{ height: '320px', backgroundColor: '#0f172a' }}>
+      
+      <Modal.Body className="p-4 pt-2">
+        <Row className="g-4 align-items-start">
+          <Col lg={6}>
+            <div className="modal-img-container rounded-4 overflow-hidden shadow-sm border bg-light text-center">
               <img 
-                src={product.image} 
-                alt={product.name} 
-                loading="lazy"
-                decoding="async"
-                style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+                src={effectiveImage || product.image || 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=1000&q=80'} 
+                alt={product.name}
+                className="img-fluid w-100 style-modal-product-img"
+                style={{ maxHeight: '420px', objectFit: 'cover' }}
               />
             </div>
           </Col>
 
-          <Col md={6} className="d-flex flex-column justify-content-between">
+          <Col lg={6}>
             <div>
-              <div className="d-flex align-items-center gap-2 mb-2 flex-wrap">
-                <Badge bg="warning" text="dark" className="px-3 py-2 fs-6">{product.category}</Badge>
-                {product.subcategory && <Badge bg="info" className="text-dark bg-opacity-25 px-3 py-2 fs-6">{product.subcategory}</Badge>}
+              <div className="d-flex align-items-center justify-content-between mb-2">
+                <span className="badge bg-light text-muted border">كود الصنف: {effectiveCode}</span>
                 {product.inStock ? (
-                  <Badge bg="success" className="px-3 py-2 fs-6 d-flex align-items-center gap-1">
+                  <Badge bg="success" className="px-3 py-1.5 rounded-pill d-flex align-items-center gap-1">
                     <CheckCircle2 size={16} /> متوفر بالمعرض
                   </Badge>
                 ) : (
-                  <Badge bg="danger" className="px-3 py-2 fs-6 d-flex align-items-center gap-1">
+                  <Badge bg="danger" className="px-3 py-1.5 rounded-pill d-flex align-items-center gap-1">
                     <ShieldAlert size={16} /> غير متوفر
                   </Badge>
                 )}
@@ -88,11 +112,10 @@ ${productLink}
 
               <h4 className="fw-bold text-dark mt-2 mb-2">{product.name}</h4>
               
-              <div className="d-flex align-items-center gap-2 flex-wrap mb-3">
-                <span className="text-muted small">كود الصنف: <span className="badge bg-secondary">{product.code}</span></span>
-                {product.brand && (
+              {product.brand && (
+                <div className="mb-3">
                   <span 
-                    className="badge bg-light text-dark border px-2.5 py-1.5 brand-chip-link cursor-pointer shadow-sm"
+                    className="badge bg-light text-dark border px-3 py-2 brand-chip-link cursor-pointer shadow-sm fs-7"
                     onClick={() => {
                       if (onSelectBrand) onSelectBrand(product.brand);
                       onHide();
@@ -102,17 +125,60 @@ ${productLink}
                   >
                     🏷️ الماركة: <strong className="text-primary">{product.brand}</strong> ↗
                   </span>
-                )}
-              </div>
+                </div>
+              )}
 
-              {/* Price & Offer Card matching Client Screenshot */}
+              {hasVariants && (
+                <div className="p-3 mb-3 bg-light rounded-4 border shadow-sm">
+                  <div className="d-flex align-items-center justify-content-between mb-2 pb-1 border-bottom">
+                    <span className="fw-bold text-dark fs-7 d-flex align-items-center gap-1">
+                      <Sparkles size={16} className="text-warning" />
+                      الخيارات المتاحة (الألوان وأنواع الغطاء):
+                    </span>
+                    <span className="badge bg-warning bg-opacity-20 text-dark border border-warning border-opacity-30 rounded-pill px-2.5 py-1 fs-8">
+                      {product.variants.length} خيارات متوفرة
+                    </span>
+                  </div>
+
+                  <div className="d-flex flex-wrap gap-2">
+                    {product.variants.map((variant, vIdx) => {
+                      const isSelected = selectedVariantIndex === vIdx;
+                      const labelParts = [];
+                      if (variant.color) labelParts.push(`🎨 ${variant.color}`);
+                      if (variant.coverType) labelParts.push(`🚽 ${variant.coverType}`);
+                      const labelText = labelParts.join(' | ') || `خيار ${vIdx + 1}`;
+
+                      return (
+                        <button
+                          key={variant.id || vIdx}
+                          type="button"
+                          onClick={() => setSelectedVariantIndex(vIdx)}
+                          className={`btn rounded-3 px-3 py-2 text-nowrap fw-bold fs-7 transition-all ${
+                            isSelected 
+                              ? 'btn-primary text-white shadow border-primary' 
+                              : 'btn-outline-dark bg-white text-dark border-secondary border-opacity-25'
+                          }`}
+                        >
+                          {isSelected ? '✓ ' : ''}{labelText}
+                          {variant.price !== undefined && (
+                            <span className={`ms-2 small ${isSelected ? 'text-warning-light' : 'text-primary'}`}>
+                              ({(Number(variant.price) || 0).toLocaleString()} ج.م)
+                            </span>
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
               <div className="p-3 bg-white rounded-4 border mb-3 shadow-sm">
                 <div className="d-flex align-items-baseline gap-2 flex-wrap mb-2">
-                  <span className="fs-1 fw-black text-dark">{(Number(product.price) || 0).toLocaleString()}</span>
+                  <span className="fs-1 fw-black text-dark">{(Number(effectivePrice) || 0).toLocaleString()}</span>
                   <span className="fs-5 text-muted fw-bold">جنيه / {product.priceUnit || 'م2'}</span>
                   {hasDiscount && (
                     <del className="text-muted fs-6 text-decoration-line-through me-1">
-                      {(Number(product.originalPrice) || 0).toLocaleString()} ج.م
+                      {(Number(effectiveOriginalPrice) || 0).toLocaleString()} ج.م
                     </del>
                   )}
                   {hasDiscount && (

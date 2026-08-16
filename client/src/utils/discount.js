@@ -2,14 +2,21 @@
  * Calculates discount status, percentage, savings amount, and auto-expiry duration text for a product.
  * If offerEndDate has passed or is invalid, handles gracefully without throwing RangeError.
  */
-export function getProductDiscount(product) {
+export function getProductDiscount(product, activeVariant = null) {
   try {
-    if (!product || typeof product !== 'object' || !product.originalPrice || Number(product.originalPrice) <= Number(product.price)) {
+    if (!product || typeof product !== 'object') {
       return { hasDiscount: false, discountPercent: 0, savingsAmount: 0, durationText: '' };
     }
 
-    const orig = Number(product.originalPrice);
-    const curr = Number(product.price);
+    const price = activeVariant && activeVariant.price !== undefined ? activeVariant.price : product.price;
+    const originalPrice = activeVariant && activeVariant.originalPrice !== undefined ? activeVariant.originalPrice : product.originalPrice;
+
+    if (!originalPrice || Number(originalPrice) <= Number(price)) {
+      return { hasDiscount: false, discountPercent: 0, savingsAmount: 0, durationText: '' };
+    }
+
+    const orig = Number(originalPrice);
+    const curr = Number(price);
     if (isNaN(orig) || isNaN(curr) || orig <= 0 || orig <= curr) {
       return { hasDiscount: false, discountPercent: 0, savingsAmount: 0, durationText: '' };
     }

@@ -104,48 +104,46 @@ const AdminDashboard = ({ settings, onSettingsUpdated }) => {
   };
 
   // Handle Add or Edit Open
-  // Handle Add or Edit Open
-  const handleOpenProductModal = (prod = null) => {
-    if (prod) {
-      setEditingProduct(prod);
-      const orig = prod.originalPrice || '';
-      const prc = prod.price || '';
-      const hasDisc = orig && Number(orig) > Number(prc);
-      const discPct = hasDisc ? Math.round(((Number(orig) - Number(prc)) / Number(orig)) * 100) : '';
+  const handleOpenProductModal = (product = null) => {
+    if (product) {
+      setEditingProduct(product);
+      const origP = Number(product.originalPrice) || 0;
+      const curP = Number(product.price) || 0;
+      const calcDisc = origP > curP ? Math.round(((origP - curP) / origP) * 100) : '';
+
       setFormData({
-        name: prod.name || '',
-        code: prod.code || '',
-        category: prod.category || 'بورسلين مستورد',
-        subcategory: prod.subcategory || '',
-        brand: prod.brand || '',
-        originalPrice: orig,
-        discountPercent: discPct,
-        price: prc,
-        offerEndDate: prod.offerEndDate || '',
-        offerNote: prod.offerNote || prod.offerDuration || '',
-        priceUnit: prod.priceUnit || 'متر مربع',
-        boxCoverage: prod.boxCoverage || '1.44',
-        dimensions: prod.dimensions || '',
-        finish: prod.finish || '',
-        grade: prod.grade || '',
-        origin: prod.origin || '',
-        usage: prod.usage || '',
-        description: prod.description || '',
-        image: prod.image || '',
-        inStock: prod.inStock ?? true,
-        featured: prod.featured ?? false
+        name: product.name || '',
+        code: product.code || '',
+        brand: product.brand || '',
+        category: product.category || categories[0]?.name || '',
+        subcategory: product.subcategory || '',
+        originalPrice: product.originalPrice || '',
+        discountPercent: calcDisc,
+        price: product.price || '',
+        offerEndDate: product.offerEndDate || '',
+        offerNote: product.offerNote || '',
+        priceUnit: product.priceUnit || 'متر مربع',
+        boxCoverage: product.boxCoverage || '',
+        dimensions: product.dimensions || '',
+        finish: product.finish || '',
+        grade: product.grade || '',
+        origin: product.origin || '',
+        usage: product.usage || '',
+        description: product.description || '',
+        image: product.image || '',
+        inStock: product.inStock !== false,
+        featured: Boolean(product.featured),
+        hasVariants: Boolean(product.hasVariants),
+        variants: Array.isArray(product.variants) ? product.variants : []
       });
     } else {
       setEditingProduct(null);
-      const defaultCategory = categories[0]?.name || 'بورسلين مستورد';
-      const defaultCategoryObj = categories.find(c => c.name === defaultCategory);
-      const defaultSubcategory = defaultCategoryObj?.subcategories?.[0] || '';
       setFormData({
         name: '',
         code: '',
         brand: '',
-        category: defaultCategory,
-        subcategory: defaultSubcategory,
+        category: categories[0]?.name || '',
+        subcategory: (categories[0]?.subcategories && categories[0]?.subcategories[0]) || '',
         originalPrice: '',
         discountPercent: '',
         price: '',
@@ -161,7 +159,9 @@ const AdminDashboard = ({ settings, onSettingsUpdated }) => {
         description: '',
         image: '',
         inStock: true,
-        featured: false
+        featured: false,
+        hasVariants: false,
+        variants: []
       });
     }
     setShowProductModal(true);
@@ -1271,6 +1271,155 @@ const AdminDashboard = ({ settings, onSettingsUpdated }) => {
                   />
                   {uploadingImage && <span className="small text-muted">جاري الرفع لـ Cloudinary...</span>}
                 </Form.Group>
+              </Col>
+
+              {/* Interactive Product Variants Builder Section */}
+              <Col xs={12}>
+                <div className="p-3 bg-light rounded-4 border shadow-sm mb-2">
+                  <div className="d-flex align-items-center justify-content-between mb-2">
+                    <div>
+                      <h6 className="fw-bold text-dark mb-0 d-flex align-items-center gap-2">
+                        <Sparkles size={18} className="text-warning" />
+                        🎨 خيارات ومتغيرات الصنف (الألوان وأنواع الغطاء والأسعار)
+                      </h6>
+                      <small className="text-muted">مفيدة للأطقم والقواعد والوحدات (اختياري 100% - اتركها فارغة للسيراميك)</small>
+                    </div>
+                    <Form.Check
+                      type="switch"
+                      id="variants-toggle-switch"
+                      label={formData.hasVariants ? 'تفعيل الخيارات ✅' : 'بدون خيارات ❌'}
+                      checked={formData.hasVariants}
+                      onChange={(e) => {
+                        const isChecked = e.target.checked;
+                        if (isChecked && formData.variants.length === 0) {
+                          handleAddVariant();
+                        } else {
+                          setFormData({ ...formData, hasVariants: isChecked });
+                        }
+                      }}
+                      className="fw-bold text-primary"
+                    />
+                  </div>
+
+                  {formData.hasVariants && (
+                    <div className="mt-3">
+                      {formData.variants.length === 0 ? (
+                        <div className="text-center py-3 bg-white rounded-3 border border-dashed">
+                          <p className="text-muted small mb-2">لم تقم بإضافة أي ألوان أو خيارات غطاء لهذا الصنف حتى الآن.</p>
+                          <Button size="sm" variant="warning" onClick={handleAddVariant} className="fw-bold text-dark">
+                            + إضافة أول خيار للصنف
+                          </Button>
+                        </div>
+                      ) : (
+                        <div className="d-flex flex-column gap-2">
+                          {formData.variants.map((vItem, vIdx) => (
+                            <div key={vItem.id || vIdx} className="p-2 bg-white rounded-3 border d-flex flex-column flex-md-row align-items-md-center gap-2">
+                              <span className="badge bg-dark text-warning rounded-circle p-2 fs-8 align-self-start align-self-md-center">
+                                #{vIdx + 1}
+                              </span>
+
+                              {/* Color Input & Presets */}
+                              <div className="flex-grow-1">
+                                <label className="form-label fs-8 fw-bold mb-1">اللون:</label>
+                                <Form.Control
+                                  type="text"
+                                  size="sm"
+                                  placeholder="مثال: أبيض / برجامون / أسود"
+                                  value={vItem.color || ''}
+                                  onChange={(e) => handleUpdateVariant(vIdx, 'color', e.target.value)}
+                                  className="custom-input fs-7"
+                                />
+                                <div className="d-flex gap-1 mt-1 flex-wrap">
+                                  {['أبيض', 'برجامون - بيج فاتح', 'أسود', 'رمادي', 'كريمي'].map(colorPreset => (
+                                    <button
+                                      key={colorPreset}
+                                      type="button"
+                                      onClick={() => handleUpdateVariant(vIdx, 'color', colorPreset)}
+                                      className="btn btn-light btn-xs border px-1.5 py-0 fs-8 text-muted"
+                                    >
+                                      + {colorPreset}
+                                    </button>
+                                  ))}
+                                </div>
+                              </div>
+
+                              {/* Cover Type Input & Presets */}
+                              <div className="flex-grow-1">
+                                <label className="form-label fs-8 fw-bold mb-1">نوع الغطاء (اختياري):</label>
+                                <Form.Control
+                                  type="text"
+                                  size="sm"
+                                  placeholder="مثال: غطاء سوفت كلوز / عادي"
+                                  value={vItem.coverType || ''}
+                                  onChange={(e) => handleUpdateVariant(vIdx, 'coverType', e.target.value)}
+                                  className="custom-input fs-7"
+                                />
+                                <div className="d-flex gap-1 mt-1 flex-wrap">
+                                  {['غطاء ذاتي الغلق (سوفت كلوز)', 'غطاء عادي', 'بدون غطاء'].map(coverPreset => (
+                                    <button
+                                      key={coverPreset}
+                                      type="button"
+                                      onClick={() => handleUpdateVariant(vIdx, 'coverType', coverPreset)}
+                                      className="btn btn-light btn-xs border px-1.5 py-0 fs-8 text-muted"
+                                    >
+                                      + {coverPreset}
+                                    </button>
+                                  ))}
+                                </div>
+                              </div>
+
+                              {/* Variant Specific Price */}
+                              <div style={{ minWidth: '110px' }}>
+                                <label className="form-label fs-8 fw-bold mb-1 text-success">السعر الخيار (ج.م):</label>
+                                <Form.Control
+                                  type="number"
+                                  size="sm"
+                                  placeholder="السعر"
+                                  value={vItem.price || ''}
+                                  onChange={(e) => handleUpdateVariant(vIdx, 'price', e.target.value)}
+                                  className="custom-input fs-7 text-success fw-bold"
+                                />
+                              </div>
+
+                              {/* Variant Specific Original Price */}
+                              <div style={{ minWidth: '110px' }}>
+                                <label className="form-label fs-8 fw-bold mb-1 text-muted">قبل الخصم:</label>
+                                <Form.Control
+                                  type="number"
+                                  size="sm"
+                                  placeholder="قبل الخصم"
+                                  value={vItem.originalPrice || ''}
+                                  onChange={(e) => handleUpdateVariant(vIdx, 'originalPrice', e.target.value)}
+                                  className="custom-input fs-7 text-muted"
+                                />
+                              </div>
+
+                              {/* Remove Variant Button */}
+                              <Button
+                                size="sm"
+                                variant="outline-danger"
+                                onClick={() => handleRemoveVariant(vIdx)}
+                                className="mt-2 mt-md-0 rounded-circle p-1 align-self-end align-self-md-center"
+                                title="حذف هذا الخيار"
+                              >
+                                <Trash2 size={16} />
+                              </Button>
+                            </div>
+                          ))}
+
+                          <Button
+                            size="sm"
+                            variant="outline-dark"
+                            onClick={handleAddVariant}
+                            className="fw-bold mt-1 align-self-start"
+                          >
+                            + إضافة خيار أو لون إضافي لهذا الصنف
+                          </Button>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
               </Col>
 
               <Col md={12}>

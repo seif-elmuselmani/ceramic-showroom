@@ -6,7 +6,19 @@ import { getProductDiscount } from '../utils/discount';
 const ProductCard = ({ product, onSelectProduct, onOpenCalculator, settings, onSelectBrand }) => {
   if (!product) return null;
 
-  const { hasDiscount, discountPercent, savingsAmount, durationText } = getProductDiscount(product);
+  const [selectedVariantIndex, setSelectedVariantIndex] = React.useState(0);
+
+  const hasVariants = Boolean(product.hasVariants && Array.isArray(product.variants) && product.variants.length > 0);
+  const activeVariant = hasVariants ? (product.variants[selectedVariantIndex] || product.variants[0]) : null;
+
+  const effectivePrice = activeVariant && activeVariant.price !== undefined ? Number(activeVariant.price) : Number(product.price);
+  const effectiveOriginalPrice = activeVariant && activeVariant.originalPrice !== undefined ? Number(activeVariant.originalPrice) : Number(product.originalPrice);
+  const effectiveCode = activeVariant && activeVariant.code ? activeVariant.code : product.code;
+  const effectiveImage = activeVariant && activeVariant.image ? activeVariant.image : product.image;
+  const effectiveColor = activeVariant && activeVariant.color ? activeVariant.color : product.color;
+  const effectiveCoverType = activeVariant && activeVariant.coverType ? activeVariant.coverType : product.coverType;
+
+  const { hasDiscount, discountPercent, savingsAmount, durationText } = getProductDiscount(product, activeVariant);
 
   const whatsappNumber = settings?.whatsappNumber || '201012345678';
   
@@ -15,11 +27,11 @@ const ProductCard = ({ product, onSelectProduct, onOpenCalculator, settings, onS
 أود الاستفسار وحجز معاينة صنف من معرضكم العامر:
 
 📦 اسم الصنف: ${product.name}
-🏷️ كود الصنف: ${product.code || 'غير محدد'}
+🏷️ كود الصنف: ${effectiveCode || 'غير محدد'}
 📂 الفئة: ${product.category}${product.subcategory ? ` (${product.subcategory})` : ''}
-📐 المقاس: ${product.dimensions || 'قياسي'}
+${effectiveColor ? `🎨 اللون المختار: ${effectiveColor}\n` : ''}${effectiveCoverType ? `🚽 نوع الغطاء: ${effectiveCoverType}\n` : ''}📐 المقاس: ${product.dimensions || 'قياسي'}
 ✨ السطح: ${product.finish || 'ممتاز'}
-💰 السعر: ${product.price} ج.م / ${product.priceUnit || 'متر مربع'}${hasDiscount ? ` (خصم ${discountPercent}% - توفير ${savingsAmount} ج.م)` : ''}
+💰 السعر: ${effectivePrice} ج.م / ${product.priceUnit || 'متر مربع'}${hasDiscount ? ` (خصم ${discountPercent}% - توفير ${savingsAmount} ج.م)` : ''}
 
 🔗 رابط الصنف المباشر:
 ${productLink}
@@ -34,7 +46,7 @@ ${productLink}
     const shareUrl = `${window.location.origin}${window.location.pathname}?product=${product.id || product._id}`;
     const shareData = {
       title: product.name,
-      text: `شاهد سيراميك/بورسلين: ${product.name} (كود: ${product.code}) - في معرض السيد الجزار`,
+      text: `شاهد سيراميك/بورسلين: ${product.name} (كود: ${effectiveCode}) - في معرض السيد الجزار`,
       url: shareUrl
     };
 
@@ -71,72 +83,94 @@ ${productLink}
         </div>
       )}
 
-      <div className="card-img-wrapper position-relative">
+      {/* Main Product Image Container with Badges */}
+      <div 
+        className="card-img-wrapper cursor-pointer"
+        onClick={() => onSelectProduct({ ...product, activeVariantIndex: selectedVariantIndex })}
+      >
         <img 
-          src={
-            product.image 
-              ? (product.image.includes('images.unsplash.com') && !product.image.includes('w=') 
-                  ? `${product.image}&auto=format&fit=crop&w=500&q=75` 
-                  : product.image)
-              : 'https://images.unsplash.com/photo-1615873968403-89e068629265?auto=format&fit=crop&w=500&q=75'
-          } 
-          alt={product.name} 
+          src={effectiveImage || product.image || 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=800&q=80'} 
+          alt={product.name}
+          className="card-img-top-luxury"
           loading="lazy"
-          decoding="async"
-          onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1615873968403-89e068629265?auto=format&fit=crop&w=500&q=75'; }}
         />
-        
-        {/* Category Badge Top-Right */}
-        <div className="card-badge">{product.category}</div>
-        
-        {/* Interactive Clickable Brand Badge Bottom-Right on Image */}
-        {product.brand && (
-          <button
-            type="button"
-            className="card-brand-badge shadow-sm"
-            onClick={(e) => {
-              e.stopPropagation();
-              if (onSelectBrand) onSelectBrand(product.brand);
-            }}
-            title={`عرض جميع منتجات ماركة ${product.brand}`}
-          >
-            🏷️ {product.brand}
-          </button>
-        )}
 
-        {/* Glowing Discount Badge Ribbon Top-Left */}
-        {hasDiscount && (
-          <div className="discount-ribbon-tag shadow-sm">
-            <span className="ribbon-fire">🔥</span>
-            <span>خصم {discountPercent}%</span>
-          </div>
-        )}
+        {/* Floating Badges */}
+        <div className="card-floating-badges">
+          {hasDiscount && (
+            <span className="badge-luxury-gold shadow-sm animate-pulse">
+              🔥 خصم {discountPercent}%
+            </span>
+          )}
+          {product.featured && (
+            <span className="badge-luxury-dark shadow-sm">
+              ⭐ مميز
+            </span>
+          )}
+        </div>
       </div>
 
-      <div className="card-body-luxury d-flex flex-column justify-content-between p-3">
+      <div className="card-body-luxury d-flex flex-column p-3">
         <div>
-          {/* Brand Tag & Code Line */}
-          <div className="d-flex align-items-center justify-content-between mb-2">
+          <div className="d-flex align-items-center justify-content-between mb-1">
             {product.brand ? (
-              <button
-                type="button"
-                className="brand-pill-clickable"
+              <button 
                 onClick={(e) => {
                   e.stopPropagation();
                   if (onSelectBrand) onSelectBrand(product.brand);
                 }}
-                title={`تصفح جميع أصناف ${product.brand}`}
+                className="badge-brand-gold-link btn btn-link p-0 text-decoration-none"
+                title={`استعرض جميع أصناف ماركة ${product.brand}`}
               >
                 🏷️ {product.brand}
               </button>
             ) : (
               <span className="badge bg-light text-muted border">عام</span>
             )}
-            <span className="text-muted small fw-semibold">كود: {product.code}</span>
+            <span className="text-muted small fw-semibold">كود: {effectiveCode}</span>
           </div>
 
           <h5 className="card-title-luxury text-truncate mb-2" title={product.name}>{product.name}</h5>
-          
+
+          {/* Interactive Product Variant Selectors (Color & Cover Type) */}
+          {hasVariants && (
+            <div className="variant-selectors-container mb-3 p-2 bg-light rounded-3 border">
+              <div className="text-dark fw-bold mb-1.5 style-variant-label d-flex align-items-center justify-content-between">
+                <span>🎨 الخيارات المتاحة:</span>
+                <span className="badge bg-warning bg-opacity-20 text-dark border border-warning border-opacity-30 rounded-pill">
+                  {product.variants.length} خيارات
+                </span>
+              </div>
+              <div className="d-flex flex-wrap gap-1">
+                {product.variants.map((variant, vIdx) => {
+                  const isSelected = selectedVariantIndex === vIdx;
+                  const labelParts = [];
+                  if (variant.color) labelParts.push(variant.color);
+                  if (variant.coverType) labelParts.push(variant.coverType);
+                  const labelText = labelParts.join(' - ') || `خيار ${vIdx + 1}`;
+
+                  return (
+                    <button
+                      key={variant.id || vIdx}
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSelectedVariantIndex(vIdx);
+                      }}
+                      className={`btn btn-sm rounded-pill px-2.5 py-1 text-nowrap fw-bold fs-8 transition-all ${
+                        isSelected 
+                          ? 'btn-primary text-white shadow-sm border-primary' 
+                          : 'btn-outline-secondary bg-white text-dark border-secondary border-opacity-25'
+                      }`}
+                    >
+                      {isSelected ? '✓ ' : ''}{labelText}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
           {/* Dynamic Minimalist Specs Line */}
           {specsList.length > 0 && (
             <div className="minimal-specs-line text-muted small mb-3 text-truncate">
