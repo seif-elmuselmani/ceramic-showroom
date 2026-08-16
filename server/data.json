@@ -117,6 +117,55 @@
   ],
   "products": [
     {
+      "id": "prod-211",
+      "inStock": true,
+      "featured": true,
+      "isDeleted": false,
+      "priceUnit": "طقم كامل",
+      "boxCoverage": 1,
+      "name": "قاعدة مرحاض روزيتا كومبي ساني بيور (SANIPURE)",
+      "code": "C-1-SNPU-RSTA",
+      "category": "أطقم حمامات وخلاطات",
+      "subcategory": "أطقم حمامات كاملة",
+      "brand": "SANIPURE",
+      "price": 6251,
+      "originalPrice": 6650,
+      "dimensions": "قياسي معلق",
+      "finish": "بورسلين ناصع التلميع",
+      "grade": "فرز أول ممتاز",
+      "origin": "SANIPURE إيطاليا / مصر",
+      "usage": "حمامات ماستر وضيوف",
+      "hasVariants": true,
+      "variants": [
+        {
+          "id": "v-1",
+          "color": "أبيض",
+          "coverType": "غطاء ذاتي الغلق (سوفت كلوز)",
+          "price": 6251,
+          "originalPrice": 6650,
+          "code": "C-1-SNPU-RSTA-W-SC"
+        },
+        {
+          "id": "v-2",
+          "color": "برجامون - بيج فاتح",
+          "coverType": "غطاء ذاتي الغلق (سوفت كلوز)",
+          "price": 6800,
+          "originalPrice": 7250,
+          "code": "C-1-SNPU-RSTA-P-SC"
+        },
+        {
+          "id": "v-3",
+          "color": "أبيض",
+          "coverType": "غطاء عادي",
+          "price": 5900,
+          "originalPrice": 6300,
+          "code": "C-1-SNPU-RSTA-W-STD"
+        }
+      ],
+      "description": "طقم قاعدة مرحاض كومبي معلق مع خزان ومشتملات سانيبور SANIPURE الممتازة مع خيارات الألوان والأغطية.",
+      "image": "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=1000&q=80"
+    },
+    {
       "id": "prod-1786579246519",
       "inStock": false,
       "featured": false,
@@ -805,7 +854,7 @@
       "price": 6251,
       "originalPrice": 6650,
       "priceUnit": "طقم كامل",
-      "boxCoverage": 1.00,
+      "boxCoverage": 1,
       "dimensions": "قياسي معلق",
       "finish": "بورسلين ناصع التلميع",
       "grade": "فرز أول ممتاز",
@@ -817,30 +866,33 @@
       "variants": [
         {
           "id": "v-1",
-          "color": "أبيض",
+          "color": "أبيض ناصع",
           "coverType": "غطاء ذاتي الغلق (سوفت كلوز)",
           "price": 6251,
           "originalPrice": 6650,
-          "code": "C-1-SNPU-RSTA-W-SC"
+          "code": "C-1-SNPU-RSTA-W-SC",
+          "image": "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=1000&q=80"
         },
         {
           "id": "v-2",
-          "color": "برجامون - بيج فاتح",
+          "color": "برجامون - بيج دافئ",
           "coverType": "غطاء ذاتي الغلق (سوفت كلوز)",
           "price": 6800,
           "originalPrice": 7250,
-          "code": "C-1-SNPU-RSTA-P-SC"
+          "code": "C-1-SNPU-RSTA-P-SC",
+          "image": "https://images.unsplash.com/photo-1620626011761-996317b69798?auto=format&fit=crop&w=1000&q=80"
         },
         {
           "id": "v-3",
-          "color": "أبيض",
-          "coverType": "غطاء عادي",
-          "price": 5900,
-          "originalPrice": 6300,
-          "code": "C-1-SNPU-RSTA-W-STD"
+          "color": "أسود ملكي فاخر",
+          "coverType": "غطاء ذاتي الغلق (سوفت كلوز)",
+          "price": 7400,
+          "originalPrice": 7900,
+          "code": "C-1-SNPU-RSTA-B-SC",
+          "image": "https://images.unsplash.com/photo-1507089947368-19c1da9775ae?auto=format&fit=crop&w=1000&q=80"
         }
       ],
-      "description": "طقم قاعدة مرحاض كومبي معلق مع خزان ومشتملات سانيبور SANIPURE الممتازة مع خيارات الألوان والأغطية.",
+      "description": "طقم قاعدة مرحاض كومبي معلق مع خزان ومشتملات سانيبور SANIPURE الممتازة مع خيارات الألوان والصور المتغيرة والصور الخاصة لكل لون.",
       "image": "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=1000&q=80"
     }
   ]
