@@ -6,25 +6,52 @@ import { getProductDiscount } from '../utils/discount';
 const ProductModal = ({ product, show, onHide, settings, onOpenCalculator, onSelectBrand }) => {
   if (!product) return null;
 
-  const [selectedVariantIndex, setSelectedVariantIndex] = React.useState(product.activeVariantIndex || 0);
+  const hasVariants = Boolean(product.hasVariants && Array.isArray(product.variants) && product.variants.length > 0);
+
+  const availableColors = React.useMemo(() => {
+    if (!hasVariants) return [];
+    const set = new Set();
+    product.variants.forEach(v => { if (v.color && v.color.trim()) set.add(v.color.trim()); });
+    return Array.from(set);
+  }, [product, hasVariants]);
+
+  const availableCoverTypes = React.useMemo(() => {
+    if (!hasVariants) return [];
+    const set = new Set();
+    product.variants.forEach(v => { if (v.coverType && v.coverType.trim()) set.add(v.coverType.trim()); });
+    return Array.from(set);
+  }, [product, hasVariants]);
+
+  const [selectedColor, setSelectedColor] = React.useState(() => availableColors[0] || product.color || '');
+  const [selectedCoverType, setSelectedCoverType] = React.useState(() => availableCoverTypes[0] || product.coverType || '');
 
   React.useEffect(() => {
-    if (product.activeVariantIndex !== undefined) {
-      setSelectedVariantIndex(product.activeVariantIndex);
-    } else {
-      setSelectedVariantIndex(0);
+    if (availableColors.length > 0 && (!selectedColor || !availableColors.includes(selectedColor))) {
+      setSelectedColor(availableColors[0]);
     }
-  }, [product]);
+    if (availableCoverTypes.length > 0 && (!selectedCoverType || !availableCoverTypes.includes(selectedCoverType))) {
+      setSelectedCoverType(availableCoverTypes[0]);
+    }
+  }, [product, availableColors, availableCoverTypes]);
 
-  const hasVariants = Boolean(product.hasVariants && Array.isArray(product.variants) && product.variants.length > 0);
-  const activeVariant = hasVariants ? (product.variants[selectedVariantIndex] || product.variants[0]) : null;
+  const activeVariant = React.useMemo(() => {
+    if (!hasVariants) return null;
+    let match = product.variants.find(v => 
+      (availableColors.length === 0 || v.color === selectedColor) && 
+      (availableCoverTypes.length === 0 || v.coverType === selectedCoverType)
+    );
+    if (!match && availableColors.length > 0) {
+      match = product.variants.find(v => v.color === selectedColor);
+    }
+    return match || product.variants[0];
+  }, [product, hasVariants, selectedColor, selectedCoverType, availableColors, availableCoverTypes]);
 
   const effectivePrice = activeVariant && activeVariant.price !== undefined ? Number(activeVariant.price) : Number(product.price);
   const effectiveOriginalPrice = activeVariant && activeVariant.originalPrice !== undefined ? Number(activeVariant.originalPrice) : Number(product.originalPrice);
   const effectiveCode = activeVariant && activeVariant.code ? activeVariant.code : product.code;
   const effectiveImage = activeVariant && activeVariant.image ? activeVariant.image : product.image;
-  const effectiveColor = activeVariant && activeVariant.color ? activeVariant.color : product.color;
-  const effectiveCoverType = activeVariant && activeVariant.coverType ? activeVariant.coverType : product.coverType;
+  const effectiveColor = selectedColor || (activeVariant && activeVariant.color) || product.color;
+  const effectiveCoverType = selectedCoverType || (activeVariant && activeVariant.coverType) || product.coverType;
 
   const { hasDiscount, discountPercent, savingsAmount, durationText } = getProductDiscount(product, activeVariant);
 
@@ -133,81 +160,64 @@ ${productLink}
                 </div>
               )}
 
-              {/* Interactive Luxury Variant Selection Box (Colors & Cover Types with Color Swatches) */}
+              {/* 2 Separate Independent Rows for Color & Cover Type (Exact Match to Customer Screenshot) */}
               {hasVariants && (
-                <div className="p-3 mb-3 bg-white rounded-4 border shadow-sm">
-                  <div className="d-flex align-items-center justify-content-between mb-2 pb-2 border-bottom">
-                    <span className="fw-bold text-dark fs-7 d-flex align-items-center gap-1.5">
-                      <Sparkles size={18} className="text-warning" />
-                      اختر اللون والغطاء المطلوبين للصنف:
-                    </span>
-                    <span className="badge bg-warning text-dark border border-warning-subtle rounded-pill px-2.5 py-1 fs-8 fw-bold">
-                      {product.variants.length} خيارات متاحة
-                    </span>
-                  </div>
+                <div className="p-3 mb-3 bg-light rounded-4 border border-slate-200">
+                  {/* Row 1: Color Selection */}
+                  {availableColors.length > 0 && (
+                    <div className="mb-3">
+                      <div className="fs-7 fw-bold text-dark mb-1.5 d-flex align-items-center gap-1">
+                        <span>اللون</span>
+                      </div>
+                      <div className="d-flex flex-wrap gap-2">
+                        {availableColors.map((colorName) => {
+                          const isSelected = selectedColor === colorName;
+                          return (
+                            <button
+                              key={colorName}
+                              type="button"
+                              onClick={() => setSelectedColor(colorName)}
+                              className={`btn rounded-3 px-3 py-1.5 fs-7 fw-bold transition-all ${
+                                isSelected 
+                                  ? 'btn-primary text-white shadow border-primary' 
+                                  : 'btn-outline-secondary bg-white text-dark border-slate-300'
+                              }`}
+                            >
+                              {colorName}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
 
-                  <div className="d-flex flex-column gap-2">
-                    {product.variants.map((variant, vIdx) => {
-                      const isSelected = selectedVariantIndex === vIdx;
-                      const colorHex = variant.color ? (
-                        variant.color.includes('أبيض') ? '#ffffff' :
-                        variant.color.includes('برجامون') || variant.color.includes('بيج') ? '#f5e6d3' :
-                        variant.color.includes('أسود') ? '#1e293b' :
-                        variant.color.includes('ذهب') ? '#d4af37' :
-                        variant.color.includes('فض') || variant.color.includes('كروم') ? '#cbd5e1' :
-                        variant.color.includes('رمادي') ? '#64748b' :
-                        variant.color.includes('خشب') || variant.color.includes('بني') ? '#8b5a2b' : '#e2e8f0'
-                      ) : '#ffffff';
-
-                      const vPrice = variant.price !== undefined ? Number(variant.price) : Number(product.price);
-
-                      return (
-                        <button
-                          key={variant.id || vIdx}
-                          type="button"
-                          onClick={() => setSelectedVariantIndex(vIdx)}
-                          className={`btn rounded-3 p-2.5 d-flex align-items-center justify-content-between transition-all border ${
-                            isSelected 
-                              ? 'bg-warning bg-opacity-15 border-warning text-dark shadow-sm fw-bold' 
-                              : 'bg-light text-dark border-slate-200 hover-bg-white'
-                          }`}
-                          style={{ textAlign: 'right' }}
-                        >
-                          <div className="d-flex align-items-center gap-2 overflow-hidden">
-                            {variant.color && (
-                              <span 
-                                className="rounded-circle border border-secondary shadow-xs d-inline-block flex-shrink-0"
-                                style={{ 
-                                  width: '18px', 
-                                  height: '18px', 
-                                  backgroundColor: colorHex,
-                                  boxShadow: isSelected ? '0 0 0 2px #d4af37' : 'none'
-                                }}
-                              />
-                            )}
-                            <div className="d-flex flex-column text-start">
-                              <span className="fs-7 fw-bold text-dark">
-                                {variant.color || `خيار ${vIdx + 1}`}
-                              </span>
-                              {variant.coverType && (
-                                <span className="fs-8 text-muted fw-semibold">
-                                  🚽 {variant.coverType}
-                                </span>
-                              )}
-                            </div>
-                          </div>
-
-                          <div className="text-end">
-                            <span className={`fs-7 fw-bold px-3 py-1 rounded-pill ${
-                              isSelected ? 'bg-dark text-warning' : 'bg-white text-dark border'
-                            }`}>
-                              {vPrice.toLocaleString()} ج.م
-                            </span>
-                          </div>
-                        </button>
-                      );
-                    })}
-                  </div>
+                  {/* Row 2: Cover Type Selection */}
+                  {availableCoverTypes.length > 0 && (
+                    <div>
+                      <div className="fs-7 fw-bold text-dark mb-1.5 d-flex align-items-center gap-1">
+                        <span>نوع الغطاء</span>
+                      </div>
+                      <div className="d-flex flex-wrap gap-2">
+                        {availableCoverTypes.map((coverName) => {
+                          const isSelected = selectedCoverType === coverName;
+                          return (
+                            <button
+                              key={coverName}
+                              type="button"
+                              onClick={() => setSelectedCoverType(coverName)}
+                              className={`btn rounded-3 px-3 py-1.5 fs-7 fw-bold transition-all ${
+                                isSelected 
+                                  ? 'btn-primary text-white shadow border-primary' 
+                                  : 'btn-outline-secondary bg-white text-dark border-slate-300'
+                              }`}
+                            >
+                              {coverName}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
 
