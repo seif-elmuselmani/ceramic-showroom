@@ -37,17 +37,42 @@ const ProductModal = ({ product, show, onHide, settings, onOpenCalculator, onSel
   const activeVariant = React.useMemo(() => {
     if (!hasVariants) return null;
     let match = product.variants.find(v => 
-      (availableColors.length === 0 || v.color === selectedColor) && 
-      (availableCoverTypes.length === 0 || v.coverType === selectedCoverType)
+      (v.color || '').trim() === (selectedColor || '').trim() && 
+      (v.coverType || '').trim() === (selectedCoverType || '').trim()
     );
-    if (!match && availableColors.length > 0) {
-      match = product.variants.find(v => v.color === selectedColor);
+    if (!match && selectedColor) {
+      match = product.variants.find(v => (v.color || '').trim() === (selectedColor || '').trim());
+    }
+    if (!match && selectedCoverType) {
+      match = product.variants.find(v => (v.coverType || '').trim() === (selectedCoverType || '').trim());
     }
     return match || product.variants[0];
-  }, [product, hasVariants, selectedColor, selectedCoverType, availableColors, availableCoverTypes]);
+  }, [product, hasVariants, selectedColor, selectedCoverType]);
 
-  const effectivePrice = activeVariant && activeVariant.price !== undefined ? Number(activeVariant.price) : Number(product.price);
-  const effectiveOriginalPrice = activeVariant && activeVariant.originalPrice !== undefined ? Number(activeVariant.originalPrice) : Number(product.originalPrice);
+  const handleColorClick = (colorName) => {
+    setSelectedColor(colorName);
+    const variantForColor = product.variants.find(v => (v.color || '').trim() === colorName.trim());
+    if (variantForColor && variantForColor.coverType) {
+      const matchingBoth = product.variants.find(v => (v.color || '').trim() === colorName.trim() && (v.coverType || '').trim() === (selectedCoverType || '').trim());
+      if (!matchingBoth) {
+        setSelectedCoverType(variantForColor.coverType.trim());
+      }
+    }
+  };
+
+  const handleCoverClick = (coverName) => {
+    setSelectedCoverType(coverName);
+    const matchingBoth = product.variants.find(v => (v.coverType || '').trim() === coverName.trim() && (v.color || '').trim() === (selectedColor || '').trim());
+    if (!matchingBoth) {
+      const variantForCover = product.variants.find(v => (v.coverType || '').trim() === coverName.trim());
+      if (variantForCover && variantForCover.color) {
+        setSelectedColor(variantForCover.color.trim());
+      }
+    }
+  };
+
+  const effectivePrice = activeVariant && activeVariant.price !== undefined && Number(activeVariant.price) > 0 ? Number(activeVariant.price) : Number(product.price);
+  const effectiveOriginalPrice = activeVariant && activeVariant.originalPrice !== undefined && Number(activeVariant.originalPrice) > 0 ? Number(activeVariant.originalPrice) : Number(product.originalPrice);
   const effectiveCode = activeVariant && activeVariant.code ? activeVariant.code : product.code;
   const effectiveImage = activeVariant && activeVariant.image ? activeVariant.image : product.image;
   const effectiveColor = selectedColor || (activeVariant && activeVariant.color) || product.color;
@@ -176,7 +201,7 @@ ${productLink}
                             <button
                               key={colorName}
                               type="button"
-                              onClick={() => setSelectedColor(colorName)}
+                              onClick={() => handleColorClick(colorName)}
                               className={`btn rounded-3 px-3 py-1.5 fs-7 fw-bold transition-all ${
                                 isSelected 
                                   ? 'btn-primary text-white shadow border-primary' 
@@ -204,7 +229,7 @@ ${productLink}
                             <button
                               key={coverName}
                               type="button"
-                              onClick={() => setSelectedCoverType(coverName)}
+                              onClick={() => handleCoverClick(coverName)}
                               className={`btn rounded-3 px-3 py-1.5 fs-7 fw-bold transition-all ${
                                 isSelected 
                                   ? 'btn-primary text-white shadow border-primary' 
