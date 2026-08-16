@@ -133,43 +133,77 @@ ${productLink}
                 </div>
               )}
 
+              {/* Interactive Luxury Variant Selection Box (Colors & Cover Types with Color Swatches) */}
               {hasVariants && (
-                <div className="p-3 mb-3 bg-light rounded-4 border shadow-sm">
-                  <div className="d-flex align-items-center justify-content-between mb-2 pb-1 border-bottom">
-                    <span className="fw-bold text-dark fs-7 d-flex align-items-center gap-1">
-                      <Sparkles size={16} className="text-warning" />
-                      الخيارات المتاحة (الألوان وأنواع الغطاء):
+                <div className="p-3 mb-3 bg-white rounded-4 border shadow-sm">
+                  <div className="d-flex align-items-center justify-content-between mb-2 pb-2 border-bottom">
+                    <span className="fw-bold text-dark fs-7 d-flex align-items-center gap-1.5">
+                      <Sparkles size={18} className="text-warning" />
+                      اختر اللون والغطاء المطلوبين للصنف:
                     </span>
-                    <span className="badge bg-warning bg-opacity-20 text-dark border border-warning border-opacity-30 rounded-pill px-2.5 py-1 fs-8">
-                      {product.variants.length} خيارات متوفرة
+                    <span className="badge bg-warning text-dark border border-warning-subtle rounded-pill px-2.5 py-1 fs-8 fw-bold">
+                      {product.variants.length} خيارات متاحة
                     </span>
                   </div>
 
-                  <div className="d-flex flex-wrap gap-2">
+                  <div className="d-flex flex-column gap-2">
                     {product.variants.map((variant, vIdx) => {
                       const isSelected = selectedVariantIndex === vIdx;
-                      const labelParts = [];
-                      if (variant.color) labelParts.push(`🎨 ${variant.color}`);
-                      if (variant.coverType) labelParts.push(`🚽 ${variant.coverType}`);
-                      const labelText = labelParts.join(' | ') || `خيار ${vIdx + 1}`;
+                      const colorHex = variant.color ? (
+                        variant.color.includes('أبيض') ? '#ffffff' :
+                        variant.color.includes('برجامون') || variant.color.includes('بيج') ? '#f5e6d3' :
+                        variant.color.includes('أسود') ? '#1e293b' :
+                        variant.color.includes('ذهب') ? '#d4af37' :
+                        variant.color.includes('فض') || variant.color.includes('كروم') ? '#cbd5e1' :
+                        variant.color.includes('رمادي') ? '#64748b' :
+                        variant.color.includes('خشب') || variant.color.includes('بني') ? '#8b5a2b' : '#e2e8f0'
+                      ) : '#ffffff';
+
+                      const vPrice = variant.price !== undefined ? Number(variant.price) : Number(product.price);
 
                       return (
                         <button
                           key={variant.id || vIdx}
                           type="button"
                           onClick={() => setSelectedVariantIndex(vIdx)}
-                          className={`btn rounded-3 px-3 py-2 text-nowrap fw-bold fs-7 transition-all ${
+                          className={`btn rounded-3 p-2.5 d-flex align-items-center justify-content-between transition-all border ${
                             isSelected 
-                              ? 'btn-primary text-white shadow border-primary' 
-                              : 'btn-outline-dark bg-white text-dark border-secondary border-opacity-25'
+                              ? 'bg-warning bg-opacity-15 border-warning text-dark shadow-sm fw-bold' 
+                              : 'bg-light text-dark border-slate-200 hover-bg-white'
                           }`}
+                          style={{ textAlign: 'right' }}
                         >
-                          {isSelected ? '✓ ' : ''}{labelText}
-                          {variant.price !== undefined && (
-                            <span className={`ms-2 small ${isSelected ? 'text-warning-light' : 'text-primary'}`}>
-                              ({(Number(variant.price) || 0).toLocaleString()} ج.م)
+                          <div className="d-flex align-items-center gap-2 overflow-hidden">
+                            {variant.color && (
+                              <span 
+                                className="rounded-circle border border-secondary shadow-xs d-inline-block flex-shrink-0"
+                                style={{ 
+                                  width: '18px', 
+                                  height: '18px', 
+                                  backgroundColor: colorHex,
+                                  boxShadow: isSelected ? '0 0 0 2px #d4af37' : 'none'
+                                }}
+                              />
+                            )}
+                            <div className="d-flex flex-column text-start">
+                              <span className="fs-7 fw-bold text-dark">
+                                {variant.color || `خيار ${vIdx + 1}`}
+                              </span>
+                              {variant.coverType && (
+                                <span className="fs-8 text-muted fw-semibold">
+                                  🚽 {variant.coverType}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+
+                          <div className="text-end">
+                            <span className={`fs-7 fw-bold px-3 py-1 rounded-pill ${
+                              isSelected ? 'bg-dark text-warning' : 'bg-white text-dark border'
+                            }`}>
+                              {vPrice.toLocaleString()} ج.م
                             </span>
-                          )}
+                          </div>
                         </button>
                       );
                     })}

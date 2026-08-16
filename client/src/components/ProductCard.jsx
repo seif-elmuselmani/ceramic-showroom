@@ -137,22 +137,32 @@ ${productLink}
 
           <h5 className="card-title-luxury text-truncate mb-2" title={product.name}>{product.name}</h5>
 
-          {/* Interactive Product Variant Selectors (Color & Cover Type) */}
+          {/* Interactive Luxury Variant Selectors (Color & Cover Type with Color Dots) */}
           {hasVariants && (
-            <div className="variant-selectors-container mb-3 p-2 bg-light rounded-3 border">
-              <div className="text-dark fw-bold mb-1.5 style-variant-label d-flex align-items-center justify-content-between">
-                <span>🎨 الخيارات المتاحة:</span>
-                <span className="badge bg-warning bg-opacity-20 text-dark border border-warning border-opacity-30 rounded-pill">
-                  {product.variants.length} خيارات
+            <div className="variant-selectors-container mb-3 p-2.5 bg-white rounded-3 border border-slate-200 shadow-xs">
+              <div className="text-dark fw-bold mb-2 style-variant-label d-flex align-items-center justify-content-between border-bottom pb-1 fs-8">
+                <span className="d-flex align-items-center gap-1 text-primary">
+                  <span className="pulse-dot-gold"></span>
+                  اختر اللون والغطاء المطلوبة:
+                </span>
+                <span className="badge bg-warning text-dark border border-warning-subtle rounded-pill px-2 py-0.5 fs-8 fw-bold">
+                  {product.variants.length} خيارات متاحة
                 </span>
               </div>
-              <div className="d-flex flex-wrap gap-1">
+              <div className="d-flex flex-column gap-1.5">
                 {product.variants.map((variant, vIdx) => {
                   const isSelected = selectedVariantIndex === vIdx;
-                  const labelParts = [];
-                  if (variant.color) labelParts.push(variant.color);
-                  if (variant.coverType) labelParts.push(variant.coverType);
-                  const labelText = labelParts.join(' - ') || `خيار ${vIdx + 1}`;
+                  const colorHex = variant.color ? (
+                    variant.color.includes('أبيض') ? '#ffffff' :
+                    variant.color.includes('برجامون') || variant.color.includes('بيج') ? '#f5e6d3' :
+                    variant.color.includes('أسود') ? '#1e293b' :
+                    variant.color.includes('ذهب') ? '#d4af37' :
+                    variant.color.includes('فض') || variant.color.includes('كروم') ? '#cbd5e1' :
+                    variant.color.includes('رمادي') ? '#64748b' :
+                    variant.color.includes('خشب') || variant.color.includes('بني') ? '#8b5a2b' : '#e2e8f0'
+                  ) : '#ffffff';
+
+                  const vPrice = variant.price !== undefined ? Number(variant.price) : Number(product.price);
 
                   return (
                     <button
@@ -162,13 +172,37 @@ ${productLink}
                         e.stopPropagation();
                         setSelectedVariantIndex(vIdx);
                       }}
-                      className={`btn btn-sm rounded-pill px-2.5 py-1 text-nowrap fw-bold fs-8 transition-all ${
+                      className={`btn btn-sm w-100 rounded-3 px-2.5 py-1.5 d-flex align-items-center justify-content-between transition-all border ${
                         isSelected 
-                          ? 'btn-primary text-white shadow-sm border-primary' 
-                          : 'btn-outline-secondary bg-white text-dark border-secondary border-opacity-25'
+                          ? 'bg-warning bg-opacity-15 border-warning text-dark shadow-sm fw-bold' 
+                          : 'bg-light text-dark border-slate-200 hover-bg-white'
                       }`}
+                      style={{ textAlign: 'right' }}
                     >
-                      {isSelected ? '✓ ' : ''}{labelText}
+                      <div className="d-flex align-items-center gap-2 overflow-hidden text-truncate">
+                        {/* Color Dot Swatch Indicator */}
+                        {variant.color && (
+                          <span 
+                            className="rounded-circle border border-secondary shadow-xs d-inline-block flex-shrink-0"
+                            style={{ 
+                              width: '14px', 
+                              height: '14px', 
+                              backgroundColor: colorHex,
+                              boxShadow: isSelected ? '0 0 0 2px #d4af37' : 'none'
+                            }}
+                          />
+                        )}
+                        <span className="fs-8 text-truncate">
+                          {variant.color || `خيار ${vIdx + 1}`}
+                          {variant.coverType ? ` • (${variant.coverType})` : ''}
+                        </span>
+                      </div>
+
+                      <span className={`fs-8 fw-bold px-2 py-0.5 rounded-pill flex-shrink-0 ms-1 ${
+                        isSelected ? 'bg-dark text-warning' : 'bg-white text-dark border'
+                      }`}>
+                        {vPrice.toLocaleString()} ج.م
+                      </span>
                     </button>
                   );
                 })}
