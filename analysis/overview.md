@@ -5,7 +5,15 @@ The **Ceramic Showroom Platform (معرض السيراميك والبورسلي�
 
 ---
 
-## 2. Directory Structure Walkthrough
+## 2. AI Knowledge Base & Guidelines
+If you are an AI Agent assigned to this project, you **MUST** read the following files before editing any code:
+- 🤖 **[AI_HANDBOOK.md](file:///c:/Users/smart/Downloads/سراميك/analysis/AI_HANDBOOK.md)**: The mandatory AI system prompt, critical rules, and local dev workflow.
+- 🚧 **[roadmap_and_state.md](file:///c:/Users/smart/Downloads/سراميك/analysis/roadmap_and_state.md)**: What is currently done, known issues, and pending features.
+- 📐 **[development_guidelines.md](file:///c:/Users/smart/Downloads/سراميك/analysis/development_guidelines.md)**: Code standards, UI conventions (Cashmere/Gold colors), and backend fallback rules.
+
+---
+
+## 3. Directory Structure Walkthrough
 Below is the directory tree of the workspace, detailing the responsibility of each folder:
 
 ```
