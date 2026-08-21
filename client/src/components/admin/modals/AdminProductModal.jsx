@@ -1,8 +1,31 @@
 import React from 'react';
 import { Modal, Form, Row, Col, InputGroup, Button, Badge, Spinner } from 'react-bootstrap';
-import { Save, PlusCircle, CheckCircle2, ShieldCheck, Award, XCircle, Trash2 } from 'lucide-react';
+import { Save, PlusCircle, CheckCircle2, ShieldCheck, Award, XCircle, Trash2, Sparkles, Image, Info } from 'lucide-react';
 
-const AdminProductModal = ({ showProductModal, setShowProductModal, editingProduct, formData, setFormData, handleProductSubmit, categories, uploadingImage, handlePricingChange, handleImageUpload, handleAddVariant, handleUpdateVariant, handleRemoveVariant }) => {
+const AdminProductModal = ({ showProductModal, setShowProductModal, editingProduct, formData, setFormData, handleProductSubmit, categories, uploadingImage, handlePricingChange, handleImageUpload }) => {
+  const handleAddVariant = () => {
+    setFormData(prev => ({
+      ...prev,
+      hasVariants: true,
+      variants: [...(prev.variants || []), { color: '', coverType: '', price: '', originalPrice: '' }]
+    }));
+  };
+
+  const handleUpdateVariant = (index, field, value) => {
+    setFormData(prev => {
+      const newVariants = [...(prev.variants || [])];
+      newVariants[index] = { ...newVariants[index], [field]: value };
+      return { ...prev, variants: newVariants };
+    });
+  };
+
+  const handleRemoveVariant = (index) => {
+    setFormData(prev => {
+      const newVariants = (prev.variants || []).filter((_, i) => i !== index);
+      return { ...prev, hasVariants: newVariants.length > 0, variants: newVariants };
+    });
+  };
+
   return (
 <>
       <Modal show={showProductModal} onHide={() => setShowProductModal(false)} size="lg" centered className="modal-luxury">

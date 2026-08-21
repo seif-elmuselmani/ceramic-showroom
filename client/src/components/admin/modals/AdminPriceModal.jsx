@@ -2,7 +2,7 @@ import React from 'react';
 import { Modal, Form, Button } from 'react-bootstrap';
 import { DollarSign } from 'lucide-react';
 
-const AdminPriceModal = ({ showPriceModal, setShowPriceModal, priceProduct, newOriginalPrice, setNewOriginalPrice, handleSavePrice }) => {
+const AdminPriceModal = ({ showPriceModal, setShowPriceModal, priceProduct, newOriginalPrice, setNewOriginalPrice, newPrice, setNewPrice, handleSavePrice }) => {
   return (
 <>
       <Modal show={showPriceModal} onHide={() => setShowPriceModal(false)} centered size="sm">

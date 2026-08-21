@@ -551,10 +551,7 @@ const AdminDashboard = ({ settings, onSettingsUpdated }) => {
           uploadingImage={uploadingImage}
           handlePricingChange={handlePricingChange}
           handleImageUpload={handleImageUpload}
-          handleAddVariant={handleAddVariant}
-          handleUpdateVariant={handleUpdateVariant}
-          handleRemoveVariant={handleRemoveVariant}
-        showProductModal={showProductModal}
+          showProductModal={showProductModal}
         setShowProductModal={setShowProductModal}
         editingProduct={editingProduct}
         formData={formData}
@@ -568,6 +565,8 @@ const AdminDashboard = ({ settings, onSettingsUpdated }) => {
         priceProduct={priceProduct}
         newOriginalPrice={newOriginalPrice}
         setNewOriginalPrice={setNewOriginalPrice}
+          newPrice={newPrice}
+          setNewPrice={setNewPrice}
         handleSavePrice={handleSavePrice}
       />
       <AdminCategoryModal
