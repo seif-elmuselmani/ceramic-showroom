@@ -28,7 +28,7 @@ const AdminProductModal = ({ showProductModal, setShowProductModal, editingProdu
 
   return (
 <>
-      <Modal show={showProductModal} onHide={() => setShowProductModal(false)} size="lg" centered className="modal-luxury">
+      <Modal show={showProductModal} onHide={() => setShowProductModal(false)} size="lg" centered scrollable className="modal-luxury">
         <Modal.Header closeButton bg="dark" className="bg-dark text-white border-bottom border-warning">
           <Modal.Title className="fw-bold fs-6">
             {editingProduct ? `تعديل: ${editingProduct.name}` : 'إضافة صنف سيراميك / بورسلين جديد'}
@@ -334,7 +334,7 @@ const AdminProductModal = ({ showProductModal, setShowProductModal, editingProdu
 
                   {formData.hasVariants && (
                     <div className="mt-3">
-                      <div className="table-responsive bg-white rounded-3 border">
+                      <div className="table-responsive bg-white rounded-3 border" style={{ maxHeight: '350px', overflowY: 'auto' }}>
                         <table className="table table-hover table-sm align-middle text-center mb-0">
                           <thead className="table-light">
                             <tr>
