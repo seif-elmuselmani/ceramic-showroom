@@ -22,7 +22,6 @@ const AdminLogin = ({ onLoginSuccess, onCancel }) => {
 
     try {
       const res = await adminLogin({ username: username.trim(), password: password.trim() });
-      localStorage.setItem('ceramic_admin_token', res.data.token);
       onLoginSuccess();
     } catch (err) {
       console.error('Login error:', err);

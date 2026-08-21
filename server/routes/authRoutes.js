@@ -41,13 +41,37 @@ router.post(['/api/admin/login', '/admin/login'], loginLimiter, async (req, res)
 
     if (isEnvValid || isDefaultValid) {
       const token = jwt.sign({ username: username || 'admin', role: 'admin' }, JWT_SECRET, { expiresIn: '24h' });
-      return res.json({ token, username: 'الأدمن الرئيسي', message: 'تم تسجيل الدخول بنجاح' });
+      res.cookie('ceramic_admin_token', token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production' || !!process.env.VERCEL,
+        sameSite: 'strict',
+        maxAge: 24 * 60 * 60 * 1000 // 24 hours
+      });
+      return res.json({ username: 'الأدمن الرئيسي', message: 'تم تسجيل الدخول بنجاح' });
     }
   } catch (err) {
     console.error("Authentication check failed:", err);
   }
 
   res.status(401).json({ message: 'اسم المستخدم أو كلمة المرور غير صحيحة' });
+});
+
+// Verify Admin Session
+router.get('/api/admin/verify', (req, res) => {
+  const token = req.cookies.ceramic_admin_token;
+  if (!token) return res.status(401).json({ authenticated: false });
+  try {
+    jwt.verify(token, JWT_SECRET);
+    return res.json({ authenticated: true });
+  } catch (err) {
+    return res.status(401).json({ authenticated: false });
+  }
+});
+
+// Admin Logout
+router.post('/api/admin/logout', (req, res) => {
+  res.clearCookie('ceramic_admin_token');
+  res.json({ message: 'تم تسجيل الخروج بنجاح' });
 });
 
 module.exports = router;

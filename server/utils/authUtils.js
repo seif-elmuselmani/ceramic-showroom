@@ -3,8 +3,7 @@ const jwt = require('jsonwebtoken');
 const JWT_SECRET = process.env.JWT_SECRET || 'ceramic_admin_super_secret_key_2026';
 
 const authenticateToken = (req, res, next) => {
-  const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1];
+  const token = req.cookies?.ceramic_admin_token;
   
   if (!token) return res.status(401).json({ message: 'غير مصرح: يرجى تسجيل الدخول' });
 

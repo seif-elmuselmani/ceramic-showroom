@@ -14,7 +14,7 @@ import OwnerAnalytics from './pages/OwnerAnalytics';
 import ErrorBoundary from './components/ErrorBoundary';
 import ToastNotification from './components/ToastNotification';
 
-import { getSettings, getCategories } from './services/api';
+import { getSettings, getCategories, verifyAdminSession, adminLogout } from './services/api';
 import { initAnalyticsTracker, trackWhatsAppClick } from './services/analytics';
 
 function App() {
@@ -53,11 +53,12 @@ function App() {
     // Initialize Telemetry Analytics Tracker
     const cleanupAnalytics = initAnalyticsTracker();
 
-    // Check local authentication status
-    const token = localStorage.getItem('ceramic_admin_token');
-    if (token) {
-      setIsAdmin(true);
-    }
+    // Check remote authentication session (Secure HttpOnly Cookie)
+    verifyAdminSession().then(res => {
+      if (res.data && res.data.authenticated) {
+        setIsAdmin(true);
+      }
+    }).catch(() => setIsAdmin(false));
 
     fetchSettings();
     fetchCategories();
@@ -106,8 +107,13 @@ function App() {
     setActiveTab('admin');
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem('ceramic_admin_token');
+  const handleLogout = async () => {
+    try {
+      await adminLogout();
+    } catch(err) {
+      console.error(err);
+    }
+    localStorage.removeItem('ceramic_admin_token'); // Cleanup legacy tokens if any
     setIsAdmin(false);
     setActiveTab('catalog');
   };

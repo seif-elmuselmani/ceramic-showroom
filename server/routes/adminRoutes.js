@@ -66,7 +66,7 @@ router.put(['/api/settings', '/settings'], authenticateToken, async (req, res) =
     res.json({ message: 'تم تحديث البيانات بنجاح', settings: updated });
   } catch (err) {
     console.error("Failed updating settings:", err);
-    res.status(500).json({ message: 'خطأ في حفظ البيانات' });
+    res.status(500).json({ message: err.message || 'خطأ في حفظ البيانات' });
   }
 });
 
@@ -117,7 +117,7 @@ router.post(['/api/products', '/products'], authenticateToken, async (req, res) 
     res.status(201).json({ message: 'تم إضافة المنتج بنجاح', product: newProduct });
   } catch (err) {
     console.error("Failed adding product:", err);
-    res.status(500).json({ message: 'خطأ في إضافة المنتج لقاعدة البيانات' });
+    res.status(500).json({ message: err.message || 'خطأ في إضافة المنتج لقاعدة البيانات' });
   }
 });
 
@@ -145,7 +145,7 @@ router.put(['/api/products/:id', '/products/:id'], authenticateToken, async (req
     res.json({ message: 'تم تحديث بيانات المنتج بنجاح', product: updatedProduct });
   } catch (err) {
     console.error("Failed updating product:", err);
-    res.status(500).json({ message: 'خطأ في تعديل المنتج لقاعدة البيانات' });
+    res.status(500).json({ message: err.message || 'خطأ في تعديل المنتج لقاعدة البيانات' });
   }
 });
 
@@ -157,7 +157,7 @@ router.delete(['/api/products/:id', '/products/:id'], authenticateToken, async (
     res.json({ message: 'تم حذف المنتج بنجاح' });
   } catch (err) {
     console.error("Failed deleting product:", err);
-    res.status(500).json({ message: 'خطأ في حذف المنتج' });
+    res.status(500).json({ message: err.message || 'خطأ في حذف المنتج' });
   }
 });
 
@@ -172,7 +172,7 @@ router.post(['/api/categories', '/categories'], authenticateToken, async (req, r
     res.status(201).json({ message: 'تم إضافة الفئة بنجاح', category: newCategory });
   } catch (err) {
     console.error("Failed adding category:", err);
-    res.status(500).json({ message: 'خطأ في إضافة الفئة' });
+    res.status(500).json({ message: err.message || 'خطأ في إضافة الفئة' });
   }
 });
 
@@ -184,7 +184,7 @@ router.put(['/api/categories/:id', '/categories/:id'], authenticateToken, async 
     res.json({ message: 'تم تحديث الفئة بنجاح', category: updated });
   } catch (err) {
     console.error("Failed updating category:", err);
-    res.status(500).json({ message: 'خطأ في تحديث الفئة' });
+    res.status(500).json({ message: err.message || 'خطأ في تحديث الفئة' });
   }
 });
 
@@ -196,7 +196,7 @@ router.delete(['/api/categories/:id', '/categories/:id'], authenticateToken, asy
     res.json({ message: 'تم حذف الفئة بنجاح' });
   } catch (err) {
     console.error("Failed deleting category:", err);
-    res.status(500).json({ message: 'خطأ في حذف الفئة' });
+    res.status(500).json({ message: err.message || 'خطأ في حذف الفئة' });
   }
 });
 

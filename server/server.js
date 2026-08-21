@@ -5,6 +5,8 @@ const path = require('path');
 const fs = require('fs');
 const helmet = require('helmet');
 const multer = require('multer');
+const cookieParser = require('cookie-parser');
+const db = require('./db');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -17,8 +19,12 @@ if (!process.env.JWT_SECRET) {
 app.use(helmet({
   crossOriginResourcePolicy: false, // Allow cross-origin images to load statically
 }));
-app.use(cors());
+app.use(cors({
+  origin: true,
+  credentials: true
+}));
 app.use(express.json());
+app.use(cookieParser());
 
 // Ensure local uploads folder exists
 const uploadsDir = process.env.VERCEL ? '/tmp' : path.join(__dirname, 'uploads');
@@ -53,6 +59,63 @@ app.use(analyticsRoutes);
 // 404 API Endpoint Handler for unhandled routes
 app.use('/api/*', (req, res) => {
   res.status(404).json({ message: 'المسار المطلوب غير موجود (404 Not Found)' });
+});
+
+// Serve static assets for local dev and fallback
+const clientDistPath = path.join(__dirname, '..', 'client', 'dist');
+app.use(express.static(clientDistPath, { index: false }));
+
+// Catch-all route to serve index.html with Dynamic SEO Meta Tags
+app.get('*', async (req, res) => {
+  const indexPath = path.join(clientDistPath, 'index.html');
+  let html;
+  try {
+    if (process.env.VERCEL) {
+      // Fetch static HTML from the Vercel edge network to avoid file path issues in serverless functions
+      const protocol = req.headers['x-forwarded-proto'] || 'https';
+      const baseUrl = `${protocol}://${req.headers.host}`;
+      const response = await fetch(`${baseUrl}/index.html`);
+      if (!response.ok) throw new Error('Failed to fetch index.html from edge');
+      html = await response.text();
+    } else {
+      html = fs.readFileSync(indexPath, 'utf8');
+    }
+  } catch (e) {
+    console.error("Failed loading index.html:", e);
+    return res.status(404).send('Frontend index not found. Please build the client.');
+  }
+
+  try {
+    const productId = req.query.product;
+    if (productId) {
+      const product = await db.getProductById(productId);
+      const settings = await db.getSettings();
+      
+      if (product) {
+        const title = `سيراميك وبورسلين ${product.name} | ${settings.showroomName}`;
+        const description = product.description || `تصفح تشكيلة ${product.category} في معرض ${settings.showroomName}.`;
+        const imageUrl = product.image || 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=800&q=80';
+        
+        const ogTags = `
+          <meta property="og:title" content="${title}" />
+          <meta property="og:description" content="${description}" />
+          <meta property="og:image" content="${imageUrl}" />
+          <meta property="og:url" content="${req.protocol}://${req.get('host')}${req.originalUrl}" />
+          <meta name="twitter:card" content="summary_large_image" />
+          <meta name="twitter:title" content="${title}" />
+          <meta name="twitter:description" content="${description}" />
+          <meta name="twitter:image" content="${imageUrl}" />
+        `;
+        
+        html = html.replace('</head>', `${ogTags}</head>`);
+        html = html.replace(/<title>.*?<\/title>/, `<title>${title}</title>`);
+      }
+    }
+  } catch (err) {
+    console.error("Error generating OpenGraph tags:", err);
+  }
+
+  res.send(html);
 });
 
 // Express Error Handling Middleware (Catches Multer / Image upload errors)

@@ -653,6 +653,11 @@ class JsonDatabase {
   }
 
   writeLocal(data) {
+    // Vercel Ephemeral Filesystem Protection (Read-Only Fallback)
+    if (process.env.VERCEL) {
+      throw new Error("⚠️ النظام حالياً في وضع الطوارئ (القراءة فقط). تم إيقاف تعديلات السيرفر لمنع فقدان البيانات. يرجى الانتظار حتى تعود قاعدة البيانات للعمل.");
+    }
+
     const dbPaths = [
       path.join(process.cwd(), 'server', 'data.json'),
       path.join(__dirname, 'data.json')
