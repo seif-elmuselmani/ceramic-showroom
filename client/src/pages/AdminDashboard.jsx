@@ -548,6 +548,12 @@ const AdminDashboard = ({ settings, onSettingsUpdated }) => {
 
       {/* Add / Edit Product Modal */}
       <AdminProductModal
+          uploadingImage={uploadingImage}
+          handlePricingChange={handlePricingChange}
+          handleImageUpload={handleImageUpload}
+          handleAddVariant={handleAddVariant}
+          handleUpdateVariant={handleUpdateVariant}
+          handleRemoveVariant={handleRemoveVariant}
         showProductModal={showProductModal}
         setShowProductModal={setShowProductModal}
         editingProduct={editingProduct}
