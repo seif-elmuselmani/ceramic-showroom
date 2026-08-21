@@ -57,3 +57,17 @@ ceramic-showroom/
 | **BcryptJS** | Security | Cryptographic one-way hashing for secure database admin credentials |
 | **JWT (JsonWebToken)** | Security | Access tokens issued to authorize admin actions (create, edit, delete) |
 | **Bootstrap & React-Bootstrap** | Styling | Grid system, modals, forms, and responsive components |
+
+---
+
+## 4. Recent Project Phases
+
+### Phase 5: Production Refinement (Completed)
+- Separated frontend and backend gracefully.
+- Configured Vercel deployment with stateless MongoDB connection.
+- Resolved local CORS and port issues (Vite on `5173`, Express on `5000`).
+
+### Phase 6: Assets & UI/UX Audit (Completed)
+- **Cloudinary Integration:** Replaced local file uploads with direct Cloudinary uploads (`/api/upload`) to ensure images persist across Vercel deployments.
+- **Premium UI Overhaul:** Refactored `ProductCard.jsx` and global CSS to implement an Ultra-Premium design system (Glassmorphism, hover-scaling animations, optimized flex layouts).
+- **UX Analysis:** Established `ui_ux_audit.md` to continuously track visual bugs and layout improvements.

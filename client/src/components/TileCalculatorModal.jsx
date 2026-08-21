@@ -41,41 +41,13 @@ const TileCalculatorModal = ({ product, show, onHide, settings }) => {
   const totalPieceOriginalPrice = hasDiscount ? pQtyNum * Number(product.originalPrice) : 0;
   const totalPieceSavings = hasDiscount ? totalPieceOriginalPrice - totalPiecePrice : 0;
 
-  const calculationMessage = isPieceProduct ? `السلام عليكم ورحمة الله وبركاته 💐
-أود استكمال طلب شراء وتوريد الصنف التالي من المعرض:
-
-📦 اسم الصنف: ${product.name}
-🏷️ كود الصنف: ${product.code || 'غير محدد'}
-📂 الفئة: ${product.category}${product.subcategory ? ` (${product.subcategory})` : ''}
-
-🔢 الكمية المطلوبة: ${pQtyNum} ${product.priceUnit || 'قطعة/طقم'}
-💰 إجمالي التكلفة التقديرية: ${totalPiecePrice.toFixed(2)} ج.م${hasDiscount ? ` (🎉 ووفرت ${totalPieceSavings.toFixed(2)} ج.م بفضل الخصم!)` : ''}
-
-🔗 رابط الصنف المباشر بالموقع:
-${productLink}
-
-أرجو التأكيد لمعاينة العينة بالمحل وتحديد موعد التسليم. 🙏✨` : `السلام عليكم ورحمة الله وبركاته 💐
-أود استكمال حجز مقايسة كراتين سيراميك/بورسلين عبر حاسبة المعرض الذكية:
-
-📦 اسم الصنف: ${product.name}
-🏷️ كود الصنف: ${product.code || 'غير محدد'}
-📂 الفئة: ${product.category}${product.subcategory ? ` (${product.subcategory})` : ''}
-
-📐 أبعاد المكان: ${length} × ${width} متر (مساحة صافية: ${netArea.toFixed(2)} م²)
-📊 الهالك المحسوب (${wastePercent}%): ${totalAreaWithWaste.toFixed(2)} م² مع الهالك
-📦 عدد الكراتين المطلوبة: ${cartonsNeeded} كرتونة (${actualPurchasedMeters.toFixed(2)} م² فعلي)
-💰 إجمالي التكلفة التقديرية: ${totalPrice.toFixed(2)} ج.م${hasDiscount ? ` (🎉 ووفرت ${totalSavings.toFixed(2)} ج.م بفضل الخصم!)` : ''}
-
-🔗 رابط الصنف المباشر بالموقع:
-${productLink}
-
-أرجو التأكيد لمعاينة عينة الصنف بالمحل وحجز الكراتين المطلوبة. 🙏✨`;
+  const calculationMessage = isPieceProduct ? `السلام عليكم، أود حجز الصنف التالي:\n\n📦 ${product.name}\n🏷️ الكود: ${product.code || 'غير محدد'}\n🔢 الكمية: ${pQtyNum} ${product.priceUnit || 'قطعة/طقم'}\n\n🔗 الرابط:\n${productLink}\n\nهل الصنف متوفر حالياً؟` : `السلام عليكم، أود حجز الصنف التالي بناءً على حسابات المساحة:\n\n📦 ${product.name}\n🏷️ الكود: ${product.code || 'غير محدد'}\n📦 المطلوب: ${cartonsNeeded} كرتونة\n\n🔗 الرابط:\n${productLink}\n\nهل الصنف متوفر حالياً؟`;
 
   const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(calculationMessage)}`;
 
   return (
     <Modal show={show} onHide={onHide} size="lg" centered className="modal-luxury">
-      <Modal.Header closeButton className="modal-header-luxury">
+      <Modal.Header closeButton className="modal-header-luxury align-items-start pe-4">
         <Modal.Title className="d-flex align-items-center gap-2">
           <Calculator className="text-warning" size={26} />
           <span>{isPieceProduct ? 'حاسبة الكميات والقطع المطلوبة' : 'حاسبة السيراميك والكراتين الدقيقة'}</span>
@@ -189,7 +161,7 @@ ${productLink}
                 </Col>
 
                 <Col md={4} className="border-start border-end border-warning">
-                  <div className="text-muted small mb-1">الكراتين المطلوبة فلي</div>
+                  <div className="text-muted small mb-1">الكراتين المطلوبة فعلياً</div>
                   <div className="fs-3 fw-black text-warning-dark">{cartonsNeeded} كرتونة</div>
                   <div className="small text-muted">({actualPurchasedMeters.toFixed(2)} م² فعلية)</div>
                 </Col>
@@ -215,7 +187,7 @@ ${productLink}
           className="btn-whatsapp py-2 px-4 fs-6"
         >
           <MessageCircle size={20} />
-          إرسال نتيجة الحساب للمبيعات عبر الواتساب وتأكيد التوفر
+          إرسال النتيجة عبر الواتساب
         </a>
         <Button variant="outline-secondary" onClick={onHide}>إغلاق</Button>
       </Modal.Footer>

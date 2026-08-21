@@ -137,6 +137,7 @@ const AdminDashboard = ({ settings, onSettingsUpdated }) => {
         usage: product.usage || '',
         description: product.description || '',
         image: product.image || '',
+        images: Array.isArray(product.images) ? product.images : [],
         inStock: product.inStock !== false,
         featured: Boolean(product.featured),
         hasVariants: Boolean(product.hasVariants),
@@ -164,6 +165,7 @@ const AdminDashboard = ({ settings, onSettingsUpdated }) => {
         usage: '',
         description: '',
         image: '',
+        images: [],
         inStock: true,
         featured: false,
         hasVariants: false,
@@ -204,24 +206,37 @@ const AdminDashboard = ({ settings, onSettingsUpdated }) => {
   };
 
   // Image Upload Handler
-  const handleImageUpload = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    const data = new FormData();
-    data.append('image', file);
+  const handleImageUpload = async (e, isGallery = false) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
 
     try {
       setUploadingImage(true);
+      const data = new FormData();
+      data.append('image', files[0]); // Uploading one by one for now to keep backend simple
       const res = await uploadImage(data);
-      setFormData(prev => ({ ...prev, image: res.data.imageUrl }));
-      showSuccess('تم رفع صورة الصنف الأساسية لـ Cloudinary بنجاح!');
+      
+      if (isGallery) {
+        setFormData(prev => ({ ...prev, images: [...(prev.images || []), res.data.imageUrl] }));
+        showSuccess('تم إضافة الصورة الإضافية للمعرض بنجاح!');
+      } else {
+        setFormData(prev => ({ ...prev, image: res.data.imageUrl }));
+        showSuccess('تم رفع صورة الصنف الأساسية بنجاح!');
+      }
     } catch (err) {
       console.error('Upload failed:', err);
       alert('فشل رفع الصورة');
     } finally {
       setUploadingImage(false);
     }
+  };
+
+  const handleRemoveGalleryImage = (index) => {
+    setFormData(prev => {
+      const newImages = [...(prev.images || [])];
+      newImages.splice(index, 1);
+      return { ...prev, images: newImages };
+    });
   };
 
   const handleVariantImageUpload = async (e, vIdx) => {
@@ -534,7 +549,7 @@ const AdminDashboard = ({ settings, onSettingsUpdated }) => {
         </Row>
 
         {/* Dashboard Tabs */}
-        <Tabs defaultActiveKey="products" className="mb-4 custom-tabs">
+        <Tabs defaultActiveKey="products" className="mb-4 custom-tabs flex-nowrap overflow-auto hide-scrollbar">
           <Tab eventKey="products" title="إدارة الأصناف والأسعار">
             <AdminProductsTab 
               searchTerm={searchTerm} 
@@ -570,13 +585,13 @@ const AdminDashboard = ({ settings, onSettingsUpdated }) => {
         </Tabs>
       </Container>
 
-      {/* Add / Edit Product Modal */}
       <AdminProductModal
-          uploadingImage={uploadingImage}
-          handlePricingChange={handlePricingChange}
-          handleImageUpload={handleImageUpload}
-          handleVariantImageUpload={handleVariantImageUpload}
-          showProductModal={showProductModal}
+        uploadingImage={uploadingImage}
+        handlePricingChange={handlePricingChange}
+        handleImageUpload={handleImageUpload}
+        handleRemoveGalleryImage={handleRemoveGalleryImage}
+        handleVariantImageUpload={handleVariantImageUpload}
+        showProductModal={showProductModal}
         setShowProductModal={setShowProductModal}
         editingProduct={editingProduct}
         formData={formData}

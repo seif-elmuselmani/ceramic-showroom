@@ -113,7 +113,7 @@ function App() {
     } catch(err) {
       console.error(err);
     }
-    localStorage.removeItem('ceramic_admin_token'); // Cleanup legacy tokens if any
+    // Token is handled by HttpOnly cookie, nothing to clear in localStorage
     setIsAdmin(false);
     setActiveTab('catalog');
   };

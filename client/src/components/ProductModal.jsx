@@ -1,5 +1,5 @@
 import React from 'react';
-import { Modal, Button, Badge, Row, Col } from 'react-bootstrap';
+import { Modal, Button, Badge, Row, Col, Carousel } from 'react-bootstrap';
 import { MessageCircle, CheckCircle2, ShieldAlert, Share2, Calculator, Sparkles } from 'lucide-react';
 import { getProductDiscount } from '../utils/discount';
 
@@ -82,20 +82,7 @@ const ProductModal = ({ product, show, onHide, settings, onOpenCalculator, onSel
 
   const whatsappNumber = settings?.whatsappNumber || '201000000000';
   const productLink = `${window.location.origin}${window.location.pathname}?product=${product.id || product._id}`;
-  const messageText = `السلام عليكم ورحمة الله وبركاته 💐
-أود الاستفسار وحجز طلبية صنف السيراميك/البورسلين التالي:
-
-📦 اسم الصنف: ${product.name}
-🏷️ كود الصنف: ${effectiveCode || 'غير محدد'}
-📂 الفئة: ${product.category}${product.subcategory ? ` (${product.subcategory})` : ''}
-${effectiveColor ? `🎨 اللون المختار: ${effectiveColor}\n` : ''}${effectiveCoverType ? `🚽 نوع الغطاء: ${effectiveCoverType}\n` : ''}📐 المقاس والتشطيب: ${product.dimensions || 'قياسي'} | ${product.finish || 'ممتاز'}
-🏭 بلد المنشأ: ${product.origin || 'مستورد'}
-💰 السعر الحالي: ${effectivePrice} ج.م / ${product.priceUnit || 'م2'}${hasDiscount ? ` (بدلاً من ${effectiveOriginalPrice} ج.م - ووفرت ${savingsAmount} ج.م [خصم ${discountPercent}%])` : ''}
-
-🔗 رابط معاينة الصنف بالموقع:
-${productLink}
-
-يرجى تأكيد التوافر بالمخزن وأقرب فرع للمعاينة تسليم فوري. 🙏✨`;
+  const messageText = `السلام عليكم، أود الاستفسار وحجز الصنف التالي:\n\n📦 ${product.name}\n🏷️ الكود: ${effectiveCode || 'غير محدد'}\n\n🔗 الرابط:\n${productLink}\n\nهل الصنف متوفر في المعرض حالياً؟`;
   const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(messageText)}`;
 
   const handleShare = async (e) => {
@@ -137,18 +124,45 @@ ${productLink}
       <Modal.Body className="p-4 pt-2">
         <Row className="g-4 align-items-start">
           <Col lg={6}>
-            <div className="modal-img-container rounded-4 overflow-hidden shadow-sm border bg-light text-center">
-              <img 
-                src={effectiveImage || product.image || 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=1000&q=80'} 
-                alt={product.name}
-                className="img-fluid w-100 style-modal-product-img"
-                style={{ maxHeight: '420px', objectFit: 'cover' }}
-                referrerPolicy="no-referrer"
-                onError={(e) => {
-                  e.target.onerror = null;
-                  e.target.src = 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=1000&q=80';
-                }}
-              />
+            <div className="modal-img-container rounded-4 overflow-hidden shadow-sm border bg-light text-center position-relative">
+              {product.images && product.images.length > 0 ? (
+                <Carousel slide={false} interval={null} className="product-carousel">
+                  <Carousel.Item>
+                    <img
+                      src={effectiveImage || product.image || 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=1000&q=80'}
+                      alt={`${product.name} - الرئيسية`}
+                      className="img-fluid w-100 style-modal-product-img"
+                      style={{ maxHeight: '420px', objectFit: 'cover' }}
+                      referrerPolicy="no-referrer"
+                      onError={(e) => { e.target.onerror = null; e.target.src = 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=1000&q=80'; }}
+                    />
+                  </Carousel.Item>
+                  {product.images.map((imgUrl, idx) => (
+                    <Carousel.Item key={idx}>
+                      <img
+                        src={imgUrl}
+                        alt={`${product.name} - ${idx + 1}`}
+                        className="img-fluid w-100 style-modal-product-img"
+                        style={{ maxHeight: '420px', objectFit: 'cover' }}
+                        referrerPolicy="no-referrer"
+                        onError={(e) => { e.target.onerror = null; e.target.src = 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=1000&q=80'; }}
+                      />
+                    </Carousel.Item>
+                  ))}
+                </Carousel>
+              ) : (
+                <img 
+                  src={effectiveImage || product.image || 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=1000&q=80'} 
+                  alt={product.name}
+                  className="img-fluid w-100 style-modal-product-img"
+                  style={{ maxHeight: '420px', objectFit: 'cover' }}
+                  referrerPolicy="no-referrer"
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=1000&q=80';
+                  }}
+                />
+              )}
             </div>
           </Col>
 

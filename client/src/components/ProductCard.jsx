@@ -83,20 +83,7 @@ const ProductCard = ({ product, onSelectProduct, onOpenCalculator, settings, onS
   const whatsappNumber = settings?.whatsappNumber || '201012345678';
   
   const productLink = `${window.location.origin}${window.location.pathname}?product=${product.id || product._id}`;
-  const messageText = `السلام عليكم ورحمة الله وبركاته 💐
-أود الاستفسار وحجز معاينة صنف من معرضكم العامر:
-
-📦 اسم الصنف: ${product.name}
-🏷️ كود الصنف: ${effectiveCode || 'غير محدد'}
-📂 الفئة: ${product.category}${product.subcategory ? ` (${product.subcategory})` : ''}
-${effectiveColor ? `🎨 اللون المختار: ${effectiveColor}\n` : ''}${effectiveCoverType ? `🚽 نوع الغطاء: ${effectiveCoverType}\n` : ''}📐 المقاس: ${product.dimensions || 'قياسي'}
-✨ السطح: ${product.finish || 'ممتاز'}
-💰 السعر: ${effectivePrice} ج.م / ${product.priceUnit || 'متر مربع'}${hasDiscount ? ` (خصم ${discountPercent}% - توفير ${savingsAmount} ج.م)` : ''}
-
-🔗 رابط الصنف المباشر:
-${productLink}
-
-هل الصنف متوفر في المعرض حالياً لمعاينة العينة؟ 🙏✨`;
+  const messageText = `السلام عليكم، أود الاستفسار وحجز الصنف التالي:\n\n📦 ${product.name}\n🏷️ الكود: ${effectiveCode || 'غير محدد'}\n\n🔗 الرابط:\n${productLink}\n\nهل الصنف متوفر في المعرض حالياً؟`;
   const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(messageText)}`;
 
   const [copiedToast, setCopiedToast] = React.useState(false);
@@ -132,8 +119,13 @@ ${productLink}
   if (cleanOrigin) specsList.push(`🌍 ${cleanOrigin}`);
   if (cleanFinish) specsList.push(`✨ ${cleanFinish}`);
 
+  const selectedVariantIndex = React.useMemo(() => {
+    if (!hasVariants) return 0;
+    return product.variants.findIndex(v => v === activeVariant);
+  }, [hasVariants, product.variants, activeVariant]);
+
   return (
-    <div className={`ceramic-card position-relative ${hasDiscount ? 'on-sale-card' : ''}`}>
+    <div className={`ceramic-card position-relative shadow-sm rounded-4 border-0 h-100 d-flex flex-column transition-all ${hasDiscount ? 'on-sale-card' : ''}`}>
       {copiedToast && (
         <div 
           className="position-absolute top-0 start-50 translate-middle-x mt-2 px-3 py-1.5 rounded-pill shadow-lg text-white small fw-bold d-flex align-items-center gap-1 border border-warning"
@@ -175,34 +167,62 @@ ${productLink}
         </div>
       </div>
 
-      <div className="card-body-luxury d-flex flex-column p-3">
-        <div>
-          <div className="d-flex align-items-center justify-content-between mb-1">
+      <div className="card-body-luxury d-flex flex-column p-3 pt-3 flex-grow-1">
+        <div className="d-flex flex-column flex-grow-1">
+          <div className="d-flex align-items-center justify-content-between mb-2">
             {product.brand ? (
               <button 
                 onClick={(e) => {
                   e.stopPropagation();
                   if (onSelectBrand) onSelectBrand(product.brand);
                 }}
-                className="badge-brand-gold-link btn btn-link p-0 text-decoration-none"
+                className="btn btn-link p-0 text-decoration-none text-primary fw-bold"
                 title={`استعرض جميع أصناف ماركة ${product.brand}`}
+                style={{ fontSize: '0.8rem' }}
               >
-                🏷️ {product.brand}
+                {product.brand}
               </button>
             ) : (
-              <span className="badge bg-light text-muted border">عام</span>
+              <span className="badge bg-light text-muted border fw-normal" style={{ fontSize: '0.75rem' }}>عام</span>
             )}
-            <span className="text-muted small fw-semibold">كود: {effectiveCode}</span>
+            <span className="text-muted fw-semibold" style={{ fontSize: '0.75rem', backgroundColor: '#f8fafc', padding: '2px 6px', borderRadius: '4px' }}>
+              كود: {effectiveCode}
+            </span>
           </div>
 
-          <h5 className="card-title-luxury text-truncate mb-2" title={product.name}>{product.name}</h5>
+          <h5 
+            className="card-title-luxury mb-2 text-dark fw-bold" 
+            style={{ 
+              display: '-webkit-box', 
+              WebkitLineClamp: 2, 
+              WebkitBoxOrient: 'vertical', 
+              overflow: 'hidden',
+              minHeight: '2.6rem',
+              lineHeight: '1.3',
+              fontSize: '1rem'
+            }} 
+            title={product.name}
+          >
+            {product.name}
+          </h5>
+
+          {/* Dynamic Minimalist Specs Line */}
+          {specsList.length > 0 && (
+            <div className="d-flex flex-wrap gap-1 mb-2">
+              {specsList.map(spec => (
+                <span key={spec} className="badge bg-light text-secondary border border-light fw-normal rounded-1" style={{ fontSize: '0.75rem' }}>
+                  {spec}
+                </span>
+              ))}
+            </div>
+          )}
 
           {hasVariants && (
-            <div className="d-flex align-items-center justify-content-between mb-2.5 pt-1 border-top border-light">
+            <div className="d-flex flex-column gap-2 mb-2 mt-auto pt-2 border-top border-light">
               {availableColors.length > 0 && (
-                <div className="d-flex align-items-center gap-1.5">
-                  <span className="text-muted fs-8 fw-semibold me-1">🎨 اللون:</span>
-                  <div className="d-flex align-items-center gap-1.5">
+                <div className="d-flex align-items-center gap-2">
+                  <span className="text-muted fw-semibold flex-shrink-0" style={{ fontSize: '0.75rem' }}>🎨 اللون:</span>
+                  <div className="d-flex align-items-center flex-wrap gap-1">
                     {availableColors.map((colorName) => {
                       const isSelected = selectedColor === colorName;
                       const variantForColor = product.variants.find(v => (v.color || '').trim() === colorName);
@@ -227,15 +247,15 @@ ${productLink}
                           title={`اللون: ${colorName}`}
                           className="rounded-circle border p-0 cursor-pointer transition-all d-inline-block flex-shrink-0"
                           style={{
-                            width: '20px',
-                            height: '20px',
+                            width: '22px',
+                            height: '22px',
                             backgroundColor: swatchImage ? 'transparent' : colorHex,
                             backgroundImage: swatchImage ? `url(${swatchImage})` : 'none',
                             backgroundSize: 'cover',
                             backgroundPosition: 'center',
                             border: isSelected ? '2px solid #0f172a' : '1px solid #cbd5e1',
                             boxShadow: isSelected ? '0 0 0 2px #d4af37' : 'none',
-                            transform: isSelected ? 'scale(1.15)' : 'scale(1)'
+                            transform: isSelected ? 'scale(1.1)' : 'scale(1)'
                           }}
                         />
                       );
@@ -245,46 +265,50 @@ ${productLink}
               )}
 
               {availableCoverTypes.length > 0 && (
-                <span className="badge bg-light text-secondary border rounded-pill fs-8 fw-normal text-truncate ms-auto" style={{ maxWidth: '140px' }} title={selectedCoverType}>
-                  🚽 {selectedCoverType}
-                </span>
+                <div className="d-flex align-items-center gap-2 mt-1">
+                  <span className="text-muted fw-semibold flex-shrink-0" style={{ fontSize: '0.75rem' }}>🚽 الغطاء:</span>
+                  <div className="d-flex flex-wrap gap-1">
+                    {availableCoverTypes.map(cover => (
+                      <button
+                        key={cover}
+                        onClick={(e) => { e.stopPropagation(); handleCoverClick(cover); }}
+                        className={`badge ${selectedCoverType === cover ? 'bg-dark text-white border-dark' : 'bg-light text-secondary border-secondary'} border cursor-pointer px-2 py-1 fw-normal rounded-pill`}
+                        style={{ fontSize: '0.7rem' }}
+                      >
+                        {cover}
+                      </button>
+                    ))}
+                  </div>
+                </div>
               )}
-            </div>
-          )}
-
-          {/* Dynamic Minimalist Specs Line */}
-          {specsList.length > 0 && (
-            <div className="minimal-specs-line text-muted small mb-3 text-truncate">
-              {specsList.join('  •  ')}
             </div>
           )}
         </div>
 
-        <div className="card-footer-luxury mt-auto pt-2 border-top">
+        <div className="card-footer-luxury mt-auto pt-3 border-top border-light">
           {/* Price & Offer Block matching Client Screenshot */}
-          <div className="price-tag-luxury mb-2">
+          <div className="price-tag-luxury mb-3">
             <div className="d-flex align-items-center gap-2 flex-wrap mb-1">
-              <span className="fs-3 fw-black text-dark">{(Number(product.price) || 0).toLocaleString()}</span>
-              <span className="small fw-bold text-muted">ج.م / {product.priceUnit || 'م2'}</span>
+              <span className="fs-4 fw-black text-dark" style={{ color: '#0f172a' }}>{(Number(effectivePrice) || 0).toLocaleString()}</span>
+              <span className="small fw-bold text-muted" style={{ fontSize: '0.8rem' }}>ج.م / {product.priceUnit || 'م2'}</span>
               
               {hasDiscount && (
-                <del className="text-muted small text-decoration-line-through me-1">
-                  {(Number(product.originalPrice) || 0).toLocaleString()} ج.م
-                </del>
-              )}
-
-              {hasDiscount && (
-                <span className="badge-pink-discount">-{discountPercent}%</span>
+                <div className="d-flex align-items-center gap-2 ms-auto">
+                  <del className="text-muted text-decoration-line-through" style={{ fontSize: '0.8rem' }}>
+                    {(Number(effectiveOriginalPrice) || 0).toLocaleString()}
+                  </del>
+                  <span className="badge bg-danger rounded-pill px-2 fw-bold" style={{ fontSize: '0.75rem' }}>-{discountPercent}%</span>
+                </div>
               )}
             </div>
 
             {hasDiscount && (
-              <div className="d-flex align-items-center gap-2 mt-1.5 flex-wrap">
-                <span className="pill-savings-green">
+              <div className="d-flex align-items-center gap-2 mt-2 flex-wrap">
+                <span className="badge bg-success-subtle text-success border border-success-subtle rounded-1 fw-semibold px-2 py-1" style={{ fontSize: '0.75rem' }}>
                   وفرت {(Number(savingsAmount) || 0).toLocaleString()} جنيه
                 </span>
                 {durationText && (
-                  <span className="pill-duration-yellow">
+                  <span className="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle rounded-1 fw-semibold px-2 py-1" style={{ fontSize: '0.75rem' }}>
                     ⏰ {durationText}
                   </span>
                 )}
@@ -294,28 +318,27 @@ ${productLink}
 
           {/* Minimal 2 Action Buttons */}
           <div className="d-flex gap-2 align-items-center">
-            <Button 
-              variant="outline-dark"
-              className="btn-details-minimal flex-grow-1 flex-shrink-0 text-nowrap d-flex align-items-center justify-content-center gap-1.5 rounded-3 px-2.5 fw-bold"
-              onClick={() => onSelectProduct(product)}
-              title="عرض التفاصيل والحساب"
-              style={{ minHeight: '44px' }}
-            >
-              <Eye size={16} className="flex-shrink-0" />
-              <span>التفاصيل</span>
-            </Button>
-
             <a 
               href={whatsappUrl} 
               target="_blank" 
               rel="noopener noreferrer"
-              className="btn-whatsapp flex-grow-1 text-nowrap d-flex align-items-center justify-content-center gap-1.5 rounded-3 text-white fw-bold text-decoration-none px-2"
+              className="btn btn-success flex-grow-1 text-nowrap d-flex align-items-center justify-content-center gap-2 rounded-3 text-white fw-bold shadow-sm"
               title="تواصل مباشر عبر الواتساب"
               style={{ minHeight: '44px' }}
             >
-              <MessageCircle size={18} className="flex-shrink-0" />
-              <span className="btn-wa-text">تواصل واتساب</span>
+              <MessageCircle size={18} />
+              <span style={{ fontSize: '0.9rem' }}>تواصل واتساب</span>
             </a>
+
+            <Button 
+              variant="light"
+              className="btn-details-minimal text-nowrap d-flex align-items-center justify-content-center gap-2 rounded-3 fw-bold border shadow-sm"
+              onClick={() => onSelectProduct({ ...product, activeVariantIndex: selectedVariantIndex })}
+              title="عرض التفاصيل والحساب"
+              style={{ minHeight: '44px', width: '44px', padding: '0' }}
+            >
+              <Eye size={18} className="text-dark" />
+            </Button>
           </div>
         </div>
       </div>

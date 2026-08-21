@@ -8,14 +8,14 @@
 - **Category Management**: Full Admin Dashboard support for adding, editing, and deleting categories with automatic Lucide icon matching.
 - **Deep Linking & Quick Share**: Added a "Share" button to Product Cards. It uses native mobile sharing sheets and copies a deep-link URL (e.g., `/?product=123`) that auto-opens the product modal when visited.
 - **Carton Calculator**: The product modal includes an interactive calculator that computes exactly how many carton boxes a user needs based on room area, tile size, and wastage factors.
+- **SEO & Link Previews (OpenGraph)**: Backend dynamically injects `og:type`, `og:image`, and `og:site_name` for perfect WhatsApp and Facebook sharing previews, bypassing Vercel static router limits.
+- **JWT Security & LocalStorage Cleanup**: Successfully migrated all admin authentication to secure, HttpOnly cookies, eliminating XSS vulnerabilities from localStorage.
+- **Vercel Fallback DB Protection**: Added read-only safety locks to `data.json` to prevent silent data loss and app crashes when deployed on Vercel's ephemeral filesystem.
 
 ## 🚧 Known Issues & Constraints
 - **Vercel Serverless Limits**: Vercel kills running functions after 10-15 seconds. Ensure all API responses return quickly. Do not implement long-polling.
 - **Git Push GUI Error**: The local Git is using Windows Credential Manager. The AI agent cannot push to the remote repository. The human user must execute `git push origin main`.
 - **Enterprise Architecture Flaws to Fix**:
-  1. **SEO & Link Previews (OpenGraph)**: WhatsApp/Facebook sharing only shows the site logo because the app is a React SPA (Vite) and lacks dynamic Meta Tags on the server side.
-  2. **Vercel Fallback Database Volatility**: The `data.json` fallback writing works locally but will reset on Vercel because Serverless filesystems are read-only and ephemeral. We need a read-only fallback mode for production to prevent data loss.
-  3. **JWT Security Risk**: The admin authentication token is currently vulnerable if stored insecurely on the client (e.g., localStorage). Needs an `httpOnly` secure cookie implementation.
   4. **Unfinished Sales Drivers**: Missing features like Multi-Image Carousels and crossed-out original prices which are vital for a luxury e-commerce experience.
 
 ## 🔮 Roadmap / Future Features (Pending)

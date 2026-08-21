@@ -2,7 +2,7 @@ import React from 'react';
 import { Modal, Form, Row, Col, InputGroup, Button, Badge, Spinner } from 'react-bootstrap';
 import { Save, PlusCircle, CheckCircle2, ShieldCheck, Award, XCircle, Trash2, Sparkles, Image, Info } from 'lucide-react';
 
-const AdminProductModal = ({ showProductModal, setShowProductModal, editingProduct, formData, setFormData, handleProductSubmit, categories, uploadingImage, handlePricingChange, handleImageUpload, handleVariantImageUpload }) => {
+const AdminProductModal = ({ showProductModal, setShowProductModal, editingProduct, formData, setFormData, handleProductSubmit, categories, uploadingImage, handlePricingChange, handleImageUpload, handleRemoveGalleryImage, handleVariantImageUpload }) => {
   const handleAddVariant = () => {
     setFormData(prev => ({
       ...prev,
@@ -69,7 +69,7 @@ const AdminProductModal = ({ showProductModal, setShowProductModal, editingProdu
                 </Form.Group>
               </Col>
 
-              <Col xs={6} md={4}>
+              <Col xs={12} md={4}>
                 <Form.Group>
                   <Form.Label className="fw-bold">
                     الفئة الرئيسية <span className="text-danger">*</span>
@@ -90,7 +90,7 @@ const AdminProductModal = ({ showProductModal, setShowProductModal, editingProdu
                 </Form.Group>
               </Col>
 
-              <Col xs={6} md={4}>
+              <Col xs={12} md={4}>
                 <Form.Group>
                   <Form.Label className="fw-bold">
                     الفئة الفرعية <span className="text-muted fw-normal small">(اختياري)</span>
@@ -130,7 +130,7 @@ const AdminProductModal = ({ showProductModal, setShowProductModal, editingProdu
                     <span>🏷️</span> تسعير الصنف ونسبة الخصم والعروض
                   </div>
                   <Row className="g-2 align-items-center">
-                    <Col xs={6} md={3}>
+                    <Col xs={12} md={3}>
                       <Form.Group>
                         <Form.Label className="small fw-bold text-secondary">السعر الأساسي (قبل الخصم)</Form.Label>
                         <Form.Control
@@ -144,7 +144,7 @@ const AdminProductModal = ({ showProductModal, setShowProductModal, editingProdu
                       </Form.Group>
                     </Col>
 
-                    <Col xs={6} md={3}>
+                    <Col xs={12} md={3}>
                       <Form.Group>
                         <Form.Label className="small fw-bold text-danger">نسبة الخصم (%)</Form.Label>
                         <Form.Control
@@ -159,7 +159,7 @@ const AdminProductModal = ({ showProductModal, setShowProductModal, editingProdu
                       </Form.Group>
                     </Col>
 
-                    <Col xs={6} md={3}>
+                    <Col xs={12} md={3}>
                       <Form.Group>
                         <Form.Label className="small fw-bold text-success">
                           السعر النهائي <span className="text-danger">*</span>
@@ -176,7 +176,7 @@ const AdminProductModal = ({ showProductModal, setShowProductModal, editingProdu
                       </Form.Group>
                     </Col>
 
-                    <Col xs={6} md={3}>
+                    <Col xs={12} md={3}>
                       <Form.Group>
                         <Form.Label className="small fw-bold text-primary">تاريخ نهاية العرض (تلقائي)</Form.Label>
                         <Form.Control
@@ -212,7 +212,7 @@ const AdminProductModal = ({ showProductModal, setShowProductModal, editingProdu
                 </div>
               </Col>
 
-              <Col xs={6} md={4}>
+              <Col xs={12} md={4}>
                 <Form.Group>
                   <Form.Label className="fw-bold">
                     تغطية الكرتونة (م²) <span className="text-muted fw-normal small">(اختياري)</span>
@@ -228,7 +228,7 @@ const AdminProductModal = ({ showProductModal, setShowProductModal, editingProdu
                 </Form.Group>
               </Col>
 
-              <Col xs={6} md={4}>
+              <Col xs={12} md={4}>
                 <Form.Group>
                   <Form.Label className="fw-bold">
                     الأبعاد والمقاس <span className="text-muted fw-normal small">(اختياري)</span>
@@ -243,7 +243,7 @@ const AdminProductModal = ({ showProductModal, setShowProductModal, editingProdu
                 </Form.Group>
               </Col>
 
-              <Col xs={6} md={4}>
+              <Col xs={12} md={4}>
                 <Form.Group>
                   <Form.Label className="fw-bold">
                     نوع اللمعة والتشطيب <span className="text-muted fw-normal small">(اختياري)</span>
@@ -258,7 +258,7 @@ const AdminProductModal = ({ showProductModal, setShowProductModal, editingProdu
                 </Form.Group>
               </Col>
 
-              <Col xs={6} md={4}>
+              <Col xs={12} md={4}>
                 <Form.Group>
                   <Form.Label className="fw-bold">
                     بلد المنشأ <span className="text-muted fw-normal small">(اختياري)</span>
@@ -273,35 +273,69 @@ const AdminProductModal = ({ showProductModal, setShowProductModal, editingProdu
                 </Form.Group>
               </Col>
 
-              <Col md={6}>
-                <Form.Group>
-                  <Form.Label className="fw-bold">
-                    رابط الصورة (Image URL) <span className="text-muted fw-normal small">(اختياري - يوجد افتراضي)</span>
-                  </Form.Label>
-                  <Form.Control
-                    type="text"
-                    placeholder="https://..."
-                    value={formData.image}
-                    onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-                    className="custom-input"
-                  />
-                </Form.Group>
-              </Col>
-
-              <Col md={6}>
-                <Form.Group>
-                  <Form.Label className="fw-bold">
-                    رفع صورة من جهازك <span className="text-muted fw-normal small">(اختياري)</span>
-                  </Form.Label>
-                  <Form.Control
-                    type="file"
-                    accept="image/*"
-                    onChange={handleImageUpload}
-                    className="custom-input"
-                    disabled={uploadingImage}
-                  />
-                  {uploadingImage && <span className="small text-muted">جاري الرفع لـ Cloudinary...</span>}
-                </Form.Group>
+              <Col xs={12}>
+                <div className="p-3 bg-light rounded-4 border shadow-sm mb-2">
+                  <div className="fw-bold text-dark mb-3 d-flex align-items-center gap-2">
+                    <Image size={18} className="text-primary" />
+                    معرض الصور (إلى حد 3 صور إضافية)
+                  </div>
+                  
+                  <Row className="g-3">
+                    <Col md={6}>
+                      <Form.Group>
+                        <Form.Label className="small fw-bold">الصورة الرئيسية (الواجهة)</Form.Label>
+                        <div className="d-flex gap-2">
+                          <Form.Control
+                            type="file"
+                            accept="image/*"
+                            onChange={(e) => handleImageUpload(e, false)}
+                            className="custom-input"
+                            disabled={uploadingImage}
+                          />
+                        </div>
+                        {formData.image && (
+                          <div className="mt-2 position-relative d-inline-block">
+                            <img src={formData.image} alt="Main" className="rounded border" style={{ width: '80px', height: '80px', objectFit: 'cover' }} />
+                          </div>
+                        )}
+                      </Form.Group>
+                    </Col>
+                    
+                    <Col md={6}>
+                      <Form.Group>
+                        <Form.Label className="small fw-bold">صور إضافية (اختياري)</Form.Label>
+                        <Form.Control
+                          type="file"
+                          accept="image/*"
+                          onChange={(e) => handleImageUpload(e, true)}
+                          className="custom-input"
+                          disabled={uploadingImage || (formData.images && formData.images.length >= 3)}
+                        />
+                        {formData.images && formData.images.length >= 3 && (
+                          <div className="small text-danger mt-1">الحد الأقصى للصور الإضافية هو 3</div>
+                        )}
+                        
+                        <div className="d-flex flex-wrap gap-2 mt-2">
+                          {formData.images && formData.images.map((imgUrl, idx) => (
+                            <div key={idx} className="position-relative">
+                              <img src={imgUrl} alt={`Gallery ${idx + 1}`} className="rounded border" style={{ width: '60px', height: '60px', objectFit: 'cover' }} />
+                              <Button
+                                variant="danger"
+                                size="sm"
+                                className="position-absolute top-0 start-100 translate-middle rounded-circle p-1"
+                                style={{ width: '22px', height: '22px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                                onClick={() => handleRemoveGalleryImage(idx)}
+                              >
+                                <XCircle size={14} />
+                              </Button>
+                            </div>
+                          ))}
+                        </div>
+                        {uploadingImage && <span className="small text-muted mt-1 d-block">جاري الرفع لـ Cloudinary...</span>}
+                      </Form.Group>
+                    </Col>
+                  </Row>
+                </div>
               </Col>
 
               {/* Interactive Product Variants Builder Section */}
@@ -422,7 +456,7 @@ const AdminProductModal = ({ showProductModal, setShowProductModal, editingProdu
                 </Form.Group>
               </Col>
 
-              <Col xs={6}>
+              <Col xs={12}>
                 <Form.Check
                   type="switch"
                   id="stock-switch"
@@ -433,7 +467,7 @@ const AdminProductModal = ({ showProductModal, setShowProductModal, editingProdu
                 />
               </Col>
 
-              <Col xs={6}>
+              <Col xs={12}>
                 <Form.Check
                   type="switch"
                   id="featured-switch"

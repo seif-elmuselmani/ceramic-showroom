@@ -17,7 +17,7 @@ api.interceptors.response.use(
   (error) => {
     if (error.response) {
       if (error.response.status === 401 || error.response.status === 403) {
-        localStorage.removeItem('ceramic_admin_token');
+        // Token is handled by HttpOnly cookie, nothing to clear in localStorage
       } else if (error.response.status >= 500) {
         showToastNotification('تعذر الاتصال بالخادم الرئيسي، جاري استعادة البيانات تلقائياً', 'warning', 4500);
       }

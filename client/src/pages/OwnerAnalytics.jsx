@@ -4,7 +4,7 @@ import {
   BarChart3, ShieldCheck, Lock, Activity, RefreshCw, Download, Sparkles, 
   Upload, QrCode
 } from 'lucide-react';
-import axios from 'axios';
+import api from '../services/api';
 
 import StatsCards from '../components/owner/StatsCards';
 import TopViewedProducts from '../components/owner/TopViewedProducts';
@@ -37,8 +37,8 @@ const OwnerAnalytics = ({ onNavigate }) => {
       setLoading(true);
       setError(null);
       const [analyticsRes, productsRes] = await Promise.all([
-        axios.get(`/api/analytics/stats?secret=${encodeURIComponent(secretKey)}`),
-        axios.get('/api/products').catch(() => ({ data: [] }))
+        api.get(`/analytics/stats?secret=${encodeURIComponent(secretKey)}`),
+        api.get('/products').catch(() => ({ data: [] }))
       ]);
       setAnalyticsData(analyticsRes.data);
       if (Array.isArray(productsRes.data)) {
@@ -70,7 +70,7 @@ const OwnerAnalytics = ({ onNavigate }) => {
   const handleResetAnalytics = async () => {
     if (window.confirm('🚨 هل أنت تأكد كمالك للمشروع من تصفير جميع إحصائيات الزوار ونقرات الواتساب والبدء من الصفر (0)؟')) {
       try {
-        const res = await axios.post(`/api/analytics/reset?secret=${encodeURIComponent(secretKey)}`);
+        const res = await api.post(`/analytics/reset?secret=${encodeURIComponent(secretKey)}`);
         setAnalyticsData(res.data.analytics);
         setSuccessMsg('تم تصفير جميع الإحصائيات والبدء من الصفر (0) بنجاح!');
         setTimeout(() => setSuccessMsg(''), 4000);
@@ -85,9 +85,9 @@ const OwnerAnalytics = ({ onNavigate }) => {
   const handleDownloadJSONBackup = async () => {
     try {
       const [prodRes, catRes, setRes] = await Promise.all([
-        axios.get('/api/products'),
-        axios.get('/api/categories'),
-        axios.get('/api/settings')
+        api.get('/products'),
+        api.get('/categories'),
+        api.get('/settings')
       ]);
 
       const backupData = {
@@ -231,7 +231,7 @@ const OwnerAnalytics = ({ onNavigate }) => {
         return;
       }
 
-      const res = await axios.post(`/api/owner/import-products?secret=${encodeURIComponent(secretKey)}`, { products: items });
+      const res = await api.post(`/owner/import-products?secret=${encodeURIComponent(secretKey)}`, { products: items });
       setSuccessMsg(`🎉 ${res.data.message || `تم استيراد ${items.length} صنف بنجاح!`}`);
       setShowImportModal(false);
       setCsvTextContent('');
@@ -248,9 +248,7 @@ const OwnerAnalytics = ({ onNavigate }) => {
   // Toggle Stock Status
   const handleRestockProduct = async (prodId) => {
     try {
-      const token = localStorage.getItem('ceramic_admin_token');
-      const headers = token ? { Authorization: `Bearer ${token}` } : {};
-      await axios.put(`/api/products/${prodId}`, { inStock: true }, { headers });
+      await api.put(`/products/${prodId}`, { inStock: true });
       setProductsList(prev => prev.map(p => p.id === prodId ? { ...p, inStock: true } : p));
       setSuccessMsg('تم تعديل حالة الصنف إلى "متوفر بالمخزن 🟢" بنجاح!');
       setTimeout(() => setSuccessMsg(''), 4000);

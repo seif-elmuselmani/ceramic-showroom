@@ -98,9 +98,15 @@ app.get('*', async (req, res) => {
         const imageUrl = product.image || 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=800&q=80';
         
         const ogTags = `
+          <meta name="description" content="${description}" />
+          <meta property="og:site_name" content="${settings.showroomName || 'معرض السيراميك والبورسلين'}" />
+          <meta property="og:type" content="product" />
           <meta property="og:title" content="${title}" />
           <meta property="og:description" content="${description}" />
           <meta property="og:image" content="${imageUrl}" />
+          <meta property="og:image:secure_url" content="${imageUrl}" />
+          <meta property="og:image:width" content="800" />
+          <meta property="og:image:height" content="600" />
           <meta property="og:url" content="${req.protocol}://${req.get('host')}${req.originalUrl}" />
           <meta name="twitter:card" content="summary_large_image" />
           <meta name="twitter:title" content="${title}" />
@@ -108,8 +114,10 @@ app.get('*', async (req, res) => {
           <meta name="twitter:image" content="${imageUrl}" />
         `;
         
+        // Remove existing generic tags if they exist to prevent duplicates
+        html = html.replace(/<title>.*?<\/title>/gi, `<title>${title}</title>`);
+        html = html.replace(/<meta\s+name=["']description["'][^>]*>/gi, '');
         html = html.replace('</head>', `${ogTags}</head>`);
-        html = html.replace(/<title>.*?<\/title>/, `<title>${title}</title>`);
       }
     }
   } catch (err) {

@@ -297,35 +297,36 @@ p, h1, h2, h3, h4, h5, h6, span, div, a {
   box-shadow: 0 4px 14px rgba(15, 23, 42, 0.25);
 }
 
-/* Ceramic Product Card */
+/* Ceramic Product Card - Ultra Luxury Upgrade */
 .ceramic-card {
   background: #ffffff;
-  border-radius: 18px;
+  border-radius: 24px;
   overflow: hidden;
-  border: 1px solid #e2e8f0;
-  box-shadow: var(--shadow-lux);
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  border: 1px solid rgba(197, 160, 89, 0.15);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+  transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
   height: 100%;
   display: flex;
   flex-direction: column;
+  position: relative;
 }
 
 .ceramic-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 15px 35px -8px rgba(0, 0, 0, 0.15);
-  border-color: var(--primary-gold);
+  transform: translateY(-8px);
+  box-shadow: 0 22px 45px rgba(197, 160, 89, 0.12), 0 0 20px rgba(197, 160, 89, 0.05);
+  border-color: rgba(197, 160, 89, 0.4);
 }
 
 .card-img-wrapper {
-  height: 200px;
+  height: 220px;
   overflow: hidden;
   position: relative;
-  background-color: var(--bg-dark);
+  background-color: #f8fafc;
 }
 
 @media (max-width: 576px) {
   .card-img-wrapper {
-    height: 175px;
+    height: 190px;
   }
 }
 
@@ -333,6 +334,11 @@ p, h1, h2, h3, h4, h5, h6, span, div, a {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transition: transform 0.7s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.ceramic-card:hover .card-img-wrapper img {
+  transform: scale(1.08);
 }
 
 .card-badge {
@@ -372,6 +378,14 @@ p, h1, h2, h3, h4, h5, h6, span, div, a {
   color: var(--text-dark);
   margin-bottom: 6px;
   line-height: 1.4;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.hide-scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
 }
 
 .product-specs {

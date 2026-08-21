@@ -48,7 +48,8 @@ const ProductSchema = new mongoose.Schema({
   hasVariants: { type: Boolean, default: false },
   variants: { type: Array, default: [] },
   description: String,
-  image: String
+  image: String,
+  images: { type: [String], default: [] }
 });
 
 const AnalyticsSchema = new mongoose.Schema({

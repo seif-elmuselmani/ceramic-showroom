@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Form, InputGroup, Badge, Spinner, Alert, Card, Button } from 'react-bootstrap';
 import { Search, Filter, Sparkles, Layers, SlidersHorizontal, Calculator, CheckCircle2, ShieldCheck, Award, PhoneCall, XCircle } from 'lucide-react';
 import ProductCard from '../components/ProductCard';
+import ProductSkeleton from '../components/ProductSkeleton';
 import ProductModal from '../components/ProductModal';
 import TileCalculatorModal from '../components/TileCalculatorModal';
 import { getProducts, getCategories, getBrands } from '../services/api';
@@ -33,6 +34,7 @@ const Home = ({ settings, categoryFilter = 'الكل', setCategoryFilter, mode =
   // Modal States
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [calculatorProduct, setCalculatorProduct] = useState(null);
+  const [showMobileFilters, setShowMobileFilters] = useState(false);
 
   useEffect(() => {
     fetchCategories();
@@ -293,8 +295,22 @@ const Home = ({ settings, categoryFilter = 'الكل', setCategoryFilter, mode =
       {/* Filter and Search Container */}
       <Container className="mb-5" id="catalog-grid">
         <div className="filter-card">
-          {/* Brand Filter Bar Header */}
-          {availableBrands.length > 0 && (
+          {/* Mobile Filter Toggle */}
+          <div className="d-md-none mb-3">
+            <Button 
+              variant="dark" 
+              className="w-100 rounded-pill d-flex align-items-center justify-content-center gap-2 py-3 fw-bold shadow-sm"
+              onClick={() => setShowMobileFilters(!showMobileFilters)}
+            >
+              <SlidersHorizontal size={20} />
+              {showMobileFilters ? 'إخفاء أدوات التصفية ✖️' : 'تصفية المنتجات والبحث 🔍'}
+            </Button>
+          </div>
+
+          {/* Filter Content Container (Hidden on mobile by default) */}
+          <div className={showMobileFilters ? 'd-block' : 'd-none d-md-block'}>
+            {/* Brand Filter Bar Header */}
+            {availableBrands.length > 0 && (
             <div className="mb-4 pb-3 border-bottom">
               <div className="d-flex justify-content-between align-items-center mb-2.5 flex-wrap gap-2">
                 <span className="fw-bold text-dark small d-flex align-items-center gap-1.5">
@@ -338,7 +354,8 @@ const Home = ({ settings, categoryFilter = 'الكل', setCategoryFilter, mode =
 
           <Row className="g-3 align-items-center">
             {/* Search Input */}
-            <Col md={4}>
+            {/* Search Input with Live Dropdown */}
+            <Col md={4} className="position-relative">
               <InputGroup>
                 <InputGroup.Text className="bg-light border-end-0">
                   <Search size={20} className="text-muted" />
@@ -351,6 +368,48 @@ const Home = ({ settings, categoryFilter = 'الكل', setCategoryFilter, mode =
                   className="custom-input border-start-0"
                 />
               </InputGroup>
+              
+              {searchTerm && searchTerm.trim().length > 0 && (
+                <div 
+                  className="position-absolute w-100 bg-white border rounded-3 shadow-lg z-index-dropdown"
+                  style={{ top: '100%', left: 0, marginTop: '5px', zIndex: 1050, maxHeight: '300px', overflowY: 'auto' }}
+                >
+                  {filteredProducts.slice(0, 5).map((prod) => (
+                    <div 
+                      key={prod.id} 
+                      className="d-flex align-items-center gap-3 p-2 border-bottom cursor-pointer hover-bg-light"
+                      style={{ cursor: 'pointer' }}
+                      onClick={() => {
+                        setSelectedProduct(prod);
+                        setSearchTerm('');
+                        const el = document.getElementById('catalog-grid');
+                        if (el) el.scrollIntoView({ behavior: 'smooth' });
+                      }}
+                    >
+                      <img 
+                        src={(prod.images && prod.images.length > 0) ? prod.images[0] : (prod.image || 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=100&q=80')} 
+                        alt={prod.name} 
+                        className="rounded"
+                        style={{ width: '40px', height: '40px', objectFit: 'cover' }}
+                      />
+                      <div>
+                        <div className="fw-bold text-dark fs-7 lh-sm mb-1">{prod.name}</div>
+                        <div className="text-muted small fs-8">الكود: {prod.code}</div>
+                      </div>
+                    </div>
+                  ))}
+                  {filteredProducts.length === 0 && (
+                    <div className="p-3 text-center text-muted small fw-bold">
+                      لا يوجد نتائج مطابقة للبحث
+                    </div>
+                  )}
+                  {filteredProducts.length > 5 && (
+                    <div className="p-2 text-center text-primary small fw-bold bg-light">
+                      عرض باقي النتائج ({filteredProducts.length - 5}+) في الشبكة بالأسفل 👇
+                    </div>
+                  )}
+                </div>
+              )}
             </Col>
 
             {/* Finish Filter (Dynamic) */}
@@ -500,6 +559,7 @@ const Home = ({ settings, categoryFilter = 'الكل', setCategoryFilter, mode =
               </div>
             </div>
           )}
+          </div>
         </div>
       </Container>
 
@@ -526,10 +586,13 @@ const Home = ({ settings, categoryFilter = 'الكل', setCategoryFilter, mode =
         )}
 
         {loading ? (
-          <div className="text-center py-5">
-            <Spinner animation="border" variant="warning" style={{ width: '3rem', height: '3rem' }} />
-            <p className="text-muted mt-3 fw-bold">جاري استدعاء الأصناف والأسعار المحدثة...</p>
-          </div>
+          <Row className="g-4 mb-5">
+            {[...Array(8)].map((_, idx) => (
+              <Col key={idx} sm={6} lg={4} xl={3}>
+                <ProductSkeleton />
+              </Col>
+            ))}
+          </Row>
         ) : filteredProducts.length === 0 ? (
           <div className="no-results-card text-center py-5 p-5 shadow-sm rounded-4 border bg-white position-relative overflow-hidden">
             <div className="no-results-bg-glow"></div>
