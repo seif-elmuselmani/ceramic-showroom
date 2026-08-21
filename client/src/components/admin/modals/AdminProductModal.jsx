@@ -35,9 +35,9 @@ const AdminProductModal = ({ showProductModal, setShowProductModal, editingProdu
           </Modal.Title>
         </Modal.Header>
 
-        <Form onSubmit={handleProductSubmit}>
-          <Modal.Body className="p-3">
-            <Row className="g-3">
+        <Modal.Body className="p-0">
+          <Form id="product-form" onSubmit={handleProductSubmit} className="p-3">
+            <Row className="g-4">
               <Col md={8}>
                 <Form.Group>
                   <Form.Label className="fw-bold">
@@ -334,45 +334,52 @@ const AdminProductModal = ({ showProductModal, setShowProductModal, editingProdu
 
                   {formData.hasVariants && (
                     <div className="mt-3">
-                      <div className="table-responsive bg-white rounded-3 border" style={{ maxHeight: '350px', overflowY: 'auto' }}>
-                        <table className="table table-hover table-sm align-middle text-center mb-0">
-                          <thead className="table-light">
+                      <div className="table-responsive rounded-4 border shadow-sm" style={{ maxHeight: '350px', overflowY: 'auto' }}>
+                        <table className="table table-borderless table-hover align-middle mb-0" style={{ minWidth: '700px' }}>
+                          <thead className="bg-light sticky-top" style={{ zIndex: 1 }}>
                             <tr>
-                              <th>#</th>
-                              <th>اللون</th>
-                              <th>نوع الغطاء</th>
-                              <th>السعر</th>
-                              <th>السعر القديم</th>
-                              <th>صورة مخصصة</th>
-                              <th></th>
+                              <th className="text-muted fw-bold fs-8 py-3 text-center">#</th>
+                              <th className="text-muted fw-bold fs-8 py-3">اللون</th>
+                              <th className="text-muted fw-bold fs-8 py-3">نوع الغطاء</th>
+                              <th className="text-muted fw-bold fs-8 py-3">السعر</th>
+                              <th className="text-muted fw-bold fs-8 py-3">السعر القديم</th>
+                              <th className="text-muted fw-bold fs-8 py-3">صورة مخصصة</th>
+                              <th className="text-muted fw-bold fs-8 py-3 text-center">حذف</th>
                             </tr>
                           </thead>
-                          <tbody>
+                          <tbody className="bg-white">
                             {formData.variants.length === 0 ? (
                               <tr>
-                                <td colSpan="7" className="text-muted py-4 border-dashed">لم تقم بإضافة أي خيارات بعد.</td>
+                                <td colSpan="7" className="text-center text-muted py-5 border-bottom-0">
+                                  <div className="d-flex flex-column align-items-center gap-2">
+                                    <Sparkles size={24} className="text-slate-300" />
+                                    <span className="fw-bold text-slate-400">لم تقم بإضافة أي خيارات بعد</span>
+                                  </div>
+                                </td>
                               </tr>
                             ) : (
                               formData.variants.map((vItem, vIdx) => (
-                                <tr key={vItem.id || vIdx}>
-                                  <td><Badge bg="dark" className="rounded-circle">{vIdx + 1}</Badge></td>
+                                <tr key={vItem.id || vIdx} className="border-bottom border-light">
+                                  <td className="text-center"><Badge bg="dark" className="rounded-circle px-2 py-1 fs-9 shadow-sm">{vIdx + 1}</Badge></td>
                                   <td>
-                                    <Form.Control size="sm" type="text" placeholder="اللون..." value={vItem.color || ''} onChange={(e) => handleUpdateVariant(vIdx, 'color', e.target.value)} className="fs-8" />
-                                  </td>
-                                  <td>
-                                    <Form.Control size="sm" type="text" placeholder="الغطاء..." value={vItem.coverType || ''} onChange={(e) => handleUpdateVariant(vIdx, 'coverType', e.target.value)} className="fs-8" />
-                                  </td>
-                                  <td style={{width: '90px'}}>
-                                    <Form.Control size="sm" type="number" placeholder="0" value={vItem.price || ''} onChange={(e) => handleUpdateVariant(vIdx, 'price', e.target.value)} className="fs-8 text-success fw-bold" />
-                                  </td>
-                                  <td style={{width: '90px'}}>
-                                    <Form.Control size="sm" type="number" placeholder="0" value={vItem.originalPrice || ''} onChange={(e) => handleUpdateVariant(vIdx, 'originalPrice', e.target.value)} className="fs-8 text-muted" />
-                                  </td>
-                                  <td style={{width: '120px'}}>
-                                    <Form.Control size="sm" type="text" placeholder="رابط الصورة" value={vItem.image || ''} onChange={(e) => handleUpdateVariant(vIdx, 'image', e.target.value)} className="fs-8" />
+                                    <Form.Control type="text" placeholder="مثال: أسود" value={vItem.color || ''} onChange={(e) => handleUpdateVariant(vIdx, 'color', e.target.value)} className="bg-light border-0 shadow-none fs-7 fw-bold" style={{ borderRadius: '8px' }} />
                                   </td>
                                   <td>
-                                    <Button size="sm" variant="outline-danger" className="p-1 rounded-circle" onClick={() => handleRemoveVariant(vIdx)} title="حذف"><Trash2 size={14} /></Button>
+                                    <Form.Control type="text" placeholder="مثال: هيدروليك" value={vItem.coverType || ''} onChange={(e) => handleUpdateVariant(vIdx, 'coverType', e.target.value)} className="bg-light border-0 shadow-none fs-7 fw-bold" style={{ borderRadius: '8px' }} />
+                                  </td>
+                                  <td style={{width: '110px'}}>
+                                    <Form.Control type="number" placeholder="0" value={vItem.price || ''} onChange={(e) => handleUpdateVariant(vIdx, 'price', e.target.value)} className="bg-light border-0 shadow-none fs-7 text-success fw-bold" style={{ borderRadius: '8px' }} />
+                                  </td>
+                                  <td style={{width: '110px'}}>
+                                    <Form.Control type="number" placeholder="0" value={vItem.originalPrice || ''} onChange={(e) => handleUpdateVariant(vIdx, 'originalPrice', e.target.value)} className="bg-light border-0 shadow-none fs-7 text-muted" style={{ borderRadius: '8px' }} />
+                                  </td>
+                                  <td style={{width: '140px'}}>
+                                    <Form.Control type="text" placeholder="https://..." value={vItem.image || ''} onChange={(e) => handleUpdateVariant(vIdx, 'image', e.target.value)} className="bg-light border-0 shadow-none fs-8 text-primary" style={{ borderRadius: '8px' }} />
+                                  </td>
+                                  <td className="text-center">
+                                    <Button variant="light" className="p-2 rounded-circle text-danger hover-bg-danger hover-text-white transition-all border-0 shadow-sm" onClick={() => handleRemoveVariant(vIdx)} title="حذف">
+                                      <Trash2 size={16} />
+                                    </Button>
                                   </td>
                                 </tr>
                               ))
@@ -380,8 +387,8 @@ const AdminProductModal = ({ showProductModal, setShowProductModal, editingProdu
                           </tbody>
                         </table>
                       </div>
-                      <Button size="sm" variant="warning" onClick={handleAddVariant} className="fw-bold mt-2 text-dark">
-                        + إضافة خيار جديد
+                      <Button variant="dark" onClick={handleAddVariant} className="fw-bold mt-3 shadow-sm rounded-pill px-4 py-2 fs-7 d-flex align-items-center gap-2">
+                        <PlusCircle size={16} /> إضافة خيار جديد
                       </Button>
                     </div>
                   )}
@@ -425,16 +432,16 @@ const AdminProductModal = ({ showProductModal, setShowProductModal, editingProdu
                   className="fw-bold"
                 />
               </Col>
-            </Row>
-          </Modal.Body>
+              </Row>
+          </Form>
+            </Modal.Body>
 
-          <Modal.Footer className="bg-light p-2">
-            <Button variant="secondary" size="sm" onClick={() => setShowProductModal(false)}>إلغاء</Button>
-            <Button type="submit" className="admin-btn px-4 py-2">
+          <Modal.Footer className="bg-light p-3 border-top">
+            <Button variant="secondary" className="rounded-pill px-4" onClick={() => setShowProductModal(false)}>إلغاء</Button>
+            <Button type="submit" form="product-form" className="admin-btn rounded-pill px-4 py-2 shadow-sm fw-bold">
               {editingProduct ? 'حفظ التعديلات' : 'إضافة الصنف'}
             </Button>
           </Modal.Footer>
-        </Form>
       </Modal>
 
       {/* Quick Price Modal */}
