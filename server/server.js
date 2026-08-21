@@ -18,6 +18,7 @@ if (!process.env.JWT_SECRET) {
 // Middleware
 app.use(helmet({
   crossOriginResourcePolicy: false, // Allow cross-origin images to load statically
+  contentSecurityPolicy: false // Allow external images (Cloudinary, Unsplash)
 }));
 app.use(cors({
   origin: true,
