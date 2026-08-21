@@ -197,7 +197,6 @@ ${productLink}
 
           <h5 className="card-title-luxury text-truncate mb-2" title={product.name}>{product.name}</h5>
 
-          {/* Ultra-Sleek Compact Color Swatches & Cover Tag (7-Star UX) */}
           {hasVariants && (
             <div className="d-flex align-items-center justify-content-between mb-2.5 pt-1 border-top border-light">
               {availableColors.length > 0 && (
@@ -206,6 +205,8 @@ ${productLink}
                   <div className="d-flex align-items-center gap-1.5">
                     {availableColors.map((colorName) => {
                       const isSelected = selectedColor === colorName;
+                      const variantForColor = product.variants.find(v => (v.color || '').trim() === colorName);
+                      const swatchImage = variantForColor?.image;
                       const colorHex = 
                         colorName.includes('أبيض') ? '#ffffff' :
                         colorName.includes('برجامون') || colorName.includes('بيج') ? '#f5e6d3' :
@@ -228,7 +229,10 @@ ${productLink}
                           style={{
                             width: '20px',
                             height: '20px',
-                            backgroundColor: colorHex,
+                            backgroundColor: swatchImage ? 'transparent' : colorHex,
+                            backgroundImage: swatchImage ? `url(${swatchImage})` : 'none',
+                            backgroundSize: 'cover',
+                            backgroundPosition: 'center',
                             border: isSelected ? '2px solid #0f172a' : '1px solid #cbd5e1',
                             boxShadow: isSelected ? '0 0 0 2px #d4af37' : 'none',
                             transform: isSelected ? 'scale(1.15)' : 'scale(1)'

@@ -188,7 +188,7 @@ ${productLink}
               {/* 7-Star Luxury Variant Selection Box (Exact Match to Customer Request) */}
               {hasVariants && (
                 <div className="p-3 mb-3 bg-light rounded-4 border border-slate-200 shadow-sm">
-                  {/* Row 1: Color Selection with Color Swatch Dots */}
+                  {/* Row 1: Color Selection with Visual Swatches */}
                   {availableColors.length > 0 && (
                     <div className="mb-3">
                       <div className="fs-7 fw-bold text-dark mb-2 d-flex align-items-center justify-content-between">
@@ -203,6 +203,9 @@ ${productLink}
                       <div className="d-flex flex-wrap gap-2">
                         {availableColors.map((colorName) => {
                           const isSelected = selectedColor === colorName;
+                          const variantForColor = product.variants.find(v => (v.color || '').trim() === colorName);
+                          const swatchImage = variantForColor?.image;
+                          
                           const colorHex = 
                             colorName.includes('أبيض') ? '#ffffff' :
                             colorName.includes('برجامون') || colorName.includes('بيج') ? '#f5e6d3' :
@@ -226,9 +229,12 @@ ${productLink}
                               <span 
                                 className="rounded-circle border d-inline-block flex-shrink-0"
                                 style={{
-                                  width: '16px',
-                                  height: '16px',
-                                  backgroundColor: colorHex,
+                                  width: swatchImage ? '24px' : '16px',
+                                  height: swatchImage ? '24px' : '16px',
+                                  backgroundColor: swatchImage ? 'transparent' : colorHex,
+                                  backgroundImage: swatchImage ? `url(${swatchImage})` : 'none',
+                                  backgroundSize: 'cover',
+                                  backgroundPosition: 'center',
                                   border: isSelected ? '1px solid #d4af37' : '1px solid #94a3b8'
                                 }}
                               />
@@ -252,18 +258,28 @@ ${productLink}
                       <div className="d-flex flex-wrap gap-2">
                         {availableCoverTypes.map((coverName) => {
                           const isSelected = selectedCoverType === coverName;
+                          const v = product.variants.find(v => (v.coverType || '').trim() === coverName && (v.color || '').trim() === selectedColor);
+                          const currentBasePrice = Number(product.price) || 0;
+                          const variantPrice = v && v.price ? Number(v.price) : currentBasePrice;
+                          const diff = variantPrice - currentBasePrice;
+                          
+                          let priceBadge = '';
+                          if (diff > 0) priceBadge = ` (+${diff.toLocaleString()} ج)`;
+                          else if (diff < 0) priceBadge = ` (-${Math.abs(diff).toLocaleString()} ج)`;
+
                           return (
                             <button
                               key={coverName}
                               type="button"
                               onClick={() => handleCoverClick(coverName)}
-                              className={`btn rounded-3 px-3 py-2 fs-7 fw-bold transition-all ${
+                              className={`btn rounded-3 px-3 py-2 fs-7 transition-all d-flex align-items-center gap-2 ${
                                 isSelected 
-                                  ? 'bg-dark text-warning border-dark shadow-sm' 
-                                  : 'bg-white text-dark border-slate-300 hover-bg-light'
+                                  ? 'bg-primary text-white border-primary shadow-sm fw-bold' 
+                                  : 'bg-white text-secondary border-slate-300 hover-bg-light'
                               }`}
                             >
-                              {coverName}
+                              {isSelected ? <CheckCircle2 size={16} /> : <div style={{width:'16px'}}/>}
+                              <span>{coverName} <small className={diff > 0 ? 'text-warning' : ''}>{priceBadge}</small></span>
                             </button>
                           );
                         })}

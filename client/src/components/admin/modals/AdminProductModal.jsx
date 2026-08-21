@@ -334,120 +334,55 @@ const AdminProductModal = ({ showProductModal, setShowProductModal, editingProdu
 
                   {formData.hasVariants && (
                     <div className="mt-3">
-                      {formData.variants.length === 0 ? (
-                        <div className="text-center py-3 bg-white rounded-3 border border-dashed">
-                          <p className="text-muted small mb-2">لم تقم بإضافة أي ألوان أو خيارات غطاء لهذا الصنف حتى الآن.</p>
-                          <Button size="sm" variant="warning" onClick={handleAddVariant} className="fw-bold text-dark">
-                            + إضافة أول خيار للصنف
-                          </Button>
-                        </div>
-                      ) : (
-                        <div className="d-flex flex-column gap-2">
-                          {formData.variants.map((vItem, vIdx) => (
-                            <div key={vItem.id || vIdx} className="p-2 bg-white rounded-3 border d-flex flex-column flex-md-row align-items-md-center gap-2">
-                              <span className="badge bg-dark text-warning rounded-circle p-2 fs-8 align-self-start align-self-md-center">
-                                #{vIdx + 1}
-                              </span>
-
-                              {/* Color Input & Presets */}
-                              <div className="flex-grow-1">
-                                <label className="form-label fs-8 fw-bold mb-1">اللون:</label>
-                                <Form.Control
-                                  type="text"
-                                  size="sm"
-                                  placeholder="مثال: أبيض / برجامون / أسود"
-                                  value={vItem.color || ''}
-                                  onChange={(e) => handleUpdateVariant(vIdx, 'color', e.target.value)}
-                                  className="custom-input fs-7"
-                                />
-                                <div className="d-flex gap-1 mt-1 flex-wrap">
-                                  {['أبيض', 'برجامون - بيج فاتح', 'أسود', 'رمادي', 'كريمي'].map(colorPreset => (
-                                    <button
-                                      key={colorPreset}
-                                      type="button"
-                                      onClick={() => handleUpdateVariant(vIdx, 'color', colorPreset)}
-                                      className="btn btn-light btn-xs border px-1.5 py-0 fs-8 text-muted"
-                                    >
-                                      + {colorPreset}
-                                    </button>
-                                  ))}
-                                </div>
-                              </div>
-
-                              {/* Cover Type Input & Presets */}
-                              <div className="flex-grow-1">
-                                <label className="form-label fs-8 fw-bold mb-1">نوع الغطاء (اختياري):</label>
-                                <Form.Control
-                                  type="text"
-                                  size="sm"
-                                  placeholder="مثال: غطاء سوفت كلوز / عادي"
-                                  value={vItem.coverType || ''}
-                                  onChange={(e) => handleUpdateVariant(vIdx, 'coverType', e.target.value)}
-                                  className="custom-input fs-7"
-                                />
-                                <div className="d-flex gap-1 mt-1 flex-wrap">
-                                  {['غطاء ذاتي الغلق (سوفت كلوز)', 'غطاء عادي', 'بدون غطاء'].map(coverPreset => (
-                                    <button
-                                      key={coverPreset}
-                                      type="button"
-                                      onClick={() => handleUpdateVariant(vIdx, 'coverType', coverPreset)}
-                                      className="btn btn-light btn-xs border px-1.5 py-0 fs-8 text-muted"
-                                    >
-                                      + {coverPreset}
-                                    </button>
-                                  ))}
-                                </div>
-                              </div>
-
-                              {/* Variant Specific Price */}
-                              <div style={{ minWidth: '110px' }}>
-                                <label className="form-label fs-8 fw-bold mb-1 text-success">السعر الخيار (ج.م):</label>
-                                <Form.Control
-                                  type="number"
-                                  size="sm"
-                                  placeholder="السعر"
-                                  value={vItem.price || ''}
-                                  onChange={(e) => handleUpdateVariant(vIdx, 'price', e.target.value)}
-                                  className="custom-input fs-7 text-success fw-bold"
-                                />
-                              </div>
-
-                              {/* Variant Specific Original Price */}
-                              <div style={{ minWidth: '110px' }}>
-                                <label className="form-label fs-8 fw-bold mb-1 text-muted">قبل الخصم:</label>
-                                <Form.Control
-                                  type="number"
-                                  size="sm"
-                                  placeholder="قبل الخصم"
-                                  value={vItem.originalPrice || ''}
-                                  onChange={(e) => handleUpdateVariant(vIdx, 'originalPrice', e.target.value)}
-                                  className="custom-input fs-7 text-muted"
-                                />
-                              </div>
-
-                              {/* Remove Variant Button */}
-                              <Button
-                                size="sm"
-                                variant="outline-danger"
-                                onClick={() => handleRemoveVariant(vIdx)}
-                                className="mt-2 mt-md-0 rounded-circle p-1 align-self-end align-self-md-center"
-                                title="حذف هذا الخيار"
-                              >
-                                <Trash2 size={16} />
-                              </Button>
-                            </div>
-                          ))}
-
-                          <Button
-                            size="sm"
-                            variant="outline-dark"
-                            onClick={handleAddVariant}
-                            className="fw-bold mt-1 align-self-start"
-                          >
-                            + إضافة خيار أو لون إضافي لهذا الصنف
-                          </Button>
-                        </div>
-                      )}
+                      <div className="table-responsive bg-white rounded-3 border">
+                        <table className="table table-hover table-sm align-middle text-center mb-0">
+                          <thead className="table-light">
+                            <tr>
+                              <th>#</th>
+                              <th>اللون</th>
+                              <th>نوع الغطاء</th>
+                              <th>السعر</th>
+                              <th>السعر القديم</th>
+                              <th>صورة مخصصة</th>
+                              <th></th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {formData.variants.length === 0 ? (
+                              <tr>
+                                <td colSpan="7" className="text-muted py-4 border-dashed">لم تقم بإضافة أي خيارات بعد.</td>
+                              </tr>
+                            ) : (
+                              formData.variants.map((vItem, vIdx) => (
+                                <tr key={vItem.id || vIdx}>
+                                  <td><Badge bg="dark" className="rounded-circle">{vIdx + 1}</Badge></td>
+                                  <td>
+                                    <Form.Control size="sm" type="text" placeholder="اللون..." value={vItem.color || ''} onChange={(e) => handleUpdateVariant(vIdx, 'color', e.target.value)} className="fs-8" />
+                                  </td>
+                                  <td>
+                                    <Form.Control size="sm" type="text" placeholder="الغطاء..." value={vItem.coverType || ''} onChange={(e) => handleUpdateVariant(vIdx, 'coverType', e.target.value)} className="fs-8" />
+                                  </td>
+                                  <td style={{width: '90px'}}>
+                                    <Form.Control size="sm" type="number" placeholder="0" value={vItem.price || ''} onChange={(e) => handleUpdateVariant(vIdx, 'price', e.target.value)} className="fs-8 text-success fw-bold" />
+                                  </td>
+                                  <td style={{width: '90px'}}>
+                                    <Form.Control size="sm" type="number" placeholder="0" value={vItem.originalPrice || ''} onChange={(e) => handleUpdateVariant(vIdx, 'originalPrice', e.target.value)} className="fs-8 text-muted" />
+                                  </td>
+                                  <td style={{width: '120px'}}>
+                                    <Form.Control size="sm" type="text" placeholder="رابط الصورة" value={vItem.image || ''} onChange={(e) => handleUpdateVariant(vIdx, 'image', e.target.value)} className="fs-8" />
+                                  </td>
+                                  <td>
+                                    <Button size="sm" variant="outline-danger" className="p-1 rounded-circle" onClick={() => handleRemoveVariant(vIdx)} title="حذف"><Trash2 size={14} /></Button>
+                                  </td>
+                                </tr>
+                              ))
+                            )}
+                          </tbody>
+                        </table>
+                      </div>
+                      <Button size="sm" variant="warning" onClick={handleAddVariant} className="fw-bold mt-2 text-dark">
+                        + إضافة خيار جديد
+                      </Button>
                     </div>
                   )}
                 </div>
