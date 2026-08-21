@@ -2,7 +2,7 @@ import React from 'react';
 import { Modal, Form, Row, Col, InputGroup, Button, Badge, Spinner } from 'react-bootstrap';
 import { Save, PlusCircle, CheckCircle2, ShieldCheck, Award, XCircle, Trash2, Sparkles, Image, Info } from 'lucide-react';
 
-const AdminProductModal = ({ showProductModal, setShowProductModal, editingProduct, formData, setFormData, handleProductSubmit, categories, uploadingImage, handlePricingChange, handleImageUpload }) => {
+const AdminProductModal = ({ showProductModal, setShowProductModal, editingProduct, formData, setFormData, handleProductSubmit, categories, uploadingImage, handlePricingChange, handleImageUpload, handleVariantImageUpload }) => {
   const handleAddVariant = () => {
     setFormData(prev => ({
       ...prev,
@@ -373,8 +373,19 @@ const AdminProductModal = ({ showProductModal, setShowProductModal, editingProdu
                                   <td style={{width: '110px'}}>
                                     <Form.Control type="number" placeholder="0" value={vItem.originalPrice || ''} onChange={(e) => handleUpdateVariant(vIdx, 'originalPrice', e.target.value)} className="bg-light border-0 shadow-none fs-7 text-muted" style={{ borderRadius: '8px' }} />
                                   </td>
-                                  <td style={{width: '140px'}}>
-                                    <Form.Control type="text" placeholder="https://..." value={vItem.image || ''} onChange={(e) => handleUpdateVariant(vIdx, 'image', e.target.value)} className="bg-light border-0 shadow-none fs-8 text-primary" style={{ borderRadius: '8px' }} />
+                                  <td style={{width: '200px'}}>
+                                    <div className="d-flex align-items-center gap-2">
+                                      {vItem.image && <img src={vItem.image} alt="variant" className="rounded-3 border" style={{width: '32px', height: '32px', objectFit: 'cover'}} />}
+                                      <Form.Control 
+                                        type="file" 
+                                        size="sm"
+                                        accept="image/*"
+                                        onChange={(e) => handleVariantImageUpload(e, vIdx)} 
+                                        className="bg-light border-0 shadow-none text-muted" 
+                                        style={{ borderRadius: '8px', fontSize: '11px' }} 
+                                        disabled={uploadingImage}
+                                      />
+                                    </div>
                                   </td>
                                   <td className="text-center">
                                     <Button variant="light" className="p-2 rounded-circle text-danger hover-bg-danger hover-text-white transition-all border-0 shadow-sm" onClick={() => handleRemoveVariant(vIdx)} title="حذف">

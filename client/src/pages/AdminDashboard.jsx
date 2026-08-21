@@ -215,10 +215,34 @@ const AdminDashboard = ({ settings, onSettingsUpdated }) => {
       setUploadingImage(true);
       const res = await uploadImage(data);
       setFormData(prev => ({ ...prev, image: res.data.imageUrl }));
-      showSuccess('تم رفع صورة الصنف لسحابة Cloudinary بنجاح!');
+      showSuccess('تم رفع صورة الصنف الأساسية لـ Cloudinary بنجاح!');
     } catch (err) {
       console.error('Upload failed:', err);
       alert('فشل رفع الصورة');
+    } finally {
+      setUploadingImage(false);
+    }
+  };
+
+  const handleVariantImageUpload = async (e, vIdx) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const data = new FormData();
+    data.append('image', file);
+
+    try {
+      setUploadingImage(true);
+      const res = await uploadImage(data);
+      setFormData(prev => {
+        const newVariants = [...prev.variants];
+        newVariants[vIdx].image = res.data.imageUrl;
+        return { ...prev, variants: newVariants };
+      });
+      showSuccess('تم رفع صورة الخيار بنجاح!');
+    } catch (err) {
+      console.error('Variant Upload failed:', err);
+      alert('فشل رفع صورة الخيار');
     } finally {
       setUploadingImage(false);
     }
@@ -551,6 +575,7 @@ const AdminDashboard = ({ settings, onSettingsUpdated }) => {
           uploadingImage={uploadingImage}
           handlePricingChange={handlePricingChange}
           handleImageUpload={handleImageUpload}
+          handleVariantImageUpload={handleVariantImageUpload}
           showProductModal={showProductModal}
         setShowProductModal={setShowProductModal}
         editingProduct={editingProduct}
