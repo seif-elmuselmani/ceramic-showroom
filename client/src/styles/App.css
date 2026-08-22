@@ -29,21 +29,6 @@
   --font-tajawal: 'Tajawal', sans-serif;
 }
 
-[data-theme='dark'] {
-  --bg-light: #0f172a; /* Dark background */
-  --bg-card-light: #1e293b; /* Dark cards */
-  --text-dark: #f8fafc; /* White text on dark bg */
-  --text-muted: #94a3b8; /* Lighter muted text */
-  --shadow-lux: 0 10px 25px -8px rgba(0, 0, 0, 0.4);
-  
-  /* Dynamic Footer Variables in Dark Mode */
-  --footer-bg: #0f172a;
-  --footer-text: #f8fafc;
-  --footer-text-muted: #cbd5e1;
-  --footer-border: rgba(255, 255, 255, 0.1);
-  --footer-card: #1e293b;
-}
-
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;

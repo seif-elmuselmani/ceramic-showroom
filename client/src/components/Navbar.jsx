@@ -1,10 +1,8 @@
 import React from 'react';
 import { Navbar, Container, Nav, Button } from 'react-bootstrap';
-import { Layers, LogOut, LayoutDashboard, UserCheck, Megaphone, Menu, Sun, Moon } from 'lucide-react';
-import { useTheme } from '../context/ThemeContext';
+import { Layers, LogOut, LayoutDashboard, UserCheck, Megaphone, Menu } from 'lucide-react';
 
 const Header = ({ settings, isAdmin, onNavigate, activeTab, onLogout }) => {
-  const { theme, toggleTheme } = useTheme();
   return (
     <header className="sticky-top">
       {/* Announcement Bar */}
@@ -69,15 +67,6 @@ const Header = ({ settings, isAdmin, onNavigate, activeTab, onLogout }) => {
             </Nav>
 
             <div className="d-flex align-items-center gap-2 mt-3 mt-lg-0">
-              <button
-                className="btn btn-luxury-ghost-danger rounded-circle p-2 d-flex align-items-center justify-content-center border"
-                onClick={toggleTheme}
-                title={theme === 'light' ? 'تفعيل الوضع الليلي' : 'تفعيل الوضع النهاري'}
-                style={{ borderColor: 'var(--border-gold)', color: 'var(--primary-gold)' }}
-              >
-                {theme === 'light' ? <Moon size={18} /> : <Sun size={18} />}
-              </button>
-              
               {isAdmin && (
                 <>
                   <button 
