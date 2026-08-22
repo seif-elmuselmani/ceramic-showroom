@@ -363,8 +363,11 @@ const HamourLanding = ({ settings, onNavigate }) => {
       {/* Footer Info */}
       <footer className="py-4 text-center border-top border-warning border-opacity-25" style={{ background: 'rgba(15,23,42,0.6)' }}>
         <Container>
-          <p className="mb-0 small opacity-75">
+          <p className="mb-2 small opacity-75">
             جميع الحقوق محفوظة &copy; {new Date().getFullYear()} - فرع قاع الهامور الترويجي التابع لمعرض السيد الجزار للسيراميك والبورسلين 🏛️
+          </p>
+          <p className="mb-0 small opacity-50 fw-bold" style={{ color: '#facc15' }}>
+            Developed by: Seif 01223817860
           </p>
         </Container>
       </footer>

@@ -184,7 +184,8 @@ const Footer = ({ settings, onNavigate, categories = [] }) => {
           <p className="mb-0">
             جميع الحقوق محفوظة &copy; {new Date().getFullYear()} - {settings?.showroomName || 'معرض السيد الجزار للسيراميك والبورسلين'}
           </p>
-          <span className="footer-credits">كتالوج إلكتروني متكامل لعرض الأصناف والأسعار المحدثة</span>
+          <span className="footer-credits d-block mb-1">كتالوج إلكتروني متكامل لعرض الأصناف والأسعار المحدثة</span>
+          <span className="footer-credits fw-bold" style={{ color: 'var(--brand-primary)' }}>Developed by: Seif 01223817860</span>
         </div>
       </Container>
     </footer>
