@@ -107,24 +107,17 @@ const ProductModal = ({ product, show, onHide, settings, onOpenCalculator, onSel
   };
 
   return (
-    <Modal show={show} onHide={onHide} size="lg" centered className="product-details-modal">
-      <Modal.Header closeButton className="border-0 pb-0">
-        <div className="d-flex align-items-center gap-2">
-          <Badge bg="warning" text="dark" className="px-3 py-1.5 rounded-pill fw-bold">
-            {product.category}
-          </Badge>
-          {product.featured && (
-            <Badge bg="dark" className="px-3 py-1.5 rounded-pill fw-bold">
-              ⭐ صنف مميز
-            </Badge>
-          )}
-        </div>
+    <Modal show={show} onHide={onHide} size="xl" centered className="product-details-modal">
+      <Modal.Header closeButton className="border-0 pb-0 pt-3 pe-4">
+        {/* Only Close Button Here */}
       </Modal.Header>
       
-      <Modal.Body className="p-4 pt-2">
-        <Row className="g-4 align-items-start">
+      <Modal.Body className="p-4 pt-0">
+        <Row className="g-5 align-items-start">
+          
+          {/* Image Gallery Column */}
           <Col lg={6}>
-            <div className="modal-img-container rounded-4 overflow-hidden shadow-sm border bg-light text-center position-relative">
+            <div className="modal-img-container rounded-4 overflow-hidden shadow-sm bg-light text-center position-relative">
               {product.images && product.images.length > 0 ? (
                 <Carousel slide={false} interval={null} className="product-carousel">
                   <Carousel.Item>
@@ -132,7 +125,7 @@ const ProductModal = ({ product, show, onHide, settings, onOpenCalculator, onSel
                       src={effectiveImage || product.image || 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=1000&q=80'}
                       alt={`${product.name} - الرئيسية`}
                       className="img-fluid w-100 style-modal-product-img"
-                      style={{ maxHeight: '420px', objectFit: 'cover' }}
+                      style={{ height: '500px', objectFit: 'cover' }}
                       referrerPolicy="no-referrer"
                       onError={(e) => { e.target.onerror = null; e.target.src = 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=1000&q=80'; }}
                     />
@@ -143,7 +136,7 @@ const ProductModal = ({ product, show, onHide, settings, onOpenCalculator, onSel
                         src={imgUrl}
                         alt={`${product.name} - ${idx + 1}`}
                         className="img-fluid w-100 style-modal-product-img"
-                        style={{ maxHeight: '420px', objectFit: 'cover' }}
+                        style={{ height: '500px', objectFit: 'cover' }}
                         referrerPolicy="no-referrer"
                         onError={(e) => { e.target.onerror = null; e.target.src = 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=1000&q=80'; }}
                       />
@@ -155,7 +148,7 @@ const ProductModal = ({ product, show, onHide, settings, onOpenCalculator, onSel
                   src={effectiveImage || product.image || 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=1000&q=80'} 
                   alt={product.name}
                   className="img-fluid w-100 style-modal-product-img"
-                  style={{ maxHeight: '420px', objectFit: 'cover' }}
+                  style={{ height: '500px', objectFit: 'cover' }}
                   referrerPolicy="no-referrer"
                   onError={(e) => {
                     e.target.onerror = null;
@@ -166,55 +159,93 @@ const ProductModal = ({ product, show, onHide, settings, onOpenCalculator, onSel
             </div>
           </Col>
 
+          {/* Details Column */}
           <Col lg={6}>
-            <div>
-              <div className="d-flex align-items-center justify-content-between mb-2">
-                <span className="badge bg-light text-muted border">كود الصنف: {effectiveCode}</span>
+            <div className="d-flex flex-column h-100 pb-3">
+              
+              {/* Badges Breadcrumb */}
+              <div className="d-flex align-items-center flex-wrap gap-2 mb-3">
+                <Badge bg="light" text="dark" className="px-3 py-1.5 rounded-pill fw-bold border">
+                  {product.category}
+                </Badge>
+                {product.featured && (
+                  <Badge bg="warning" text="dark" className="px-3 py-1.5 rounded-pill fw-bold border border-warning">
+                    ⭐ صنف مميز
+                  </Badge>
+                )}
                 {product.inStock ? (
-                  <Badge bg="success" className="px-3 py-1.5 rounded-pill d-flex align-items-center gap-1">
-                    <CheckCircle2 size={16} /> متوفر بالمعرض
+                  <Badge bg="success" className="bg-opacity-10 text-success px-3 py-1.5 rounded-pill border border-success fw-bold d-flex align-items-center gap-1">
+                    <CheckCircle2 size={14} /> متوفر بالمعرض
                   </Badge>
                 ) : (
-                  <Badge bg="danger" className="px-3 py-1.5 rounded-pill d-flex align-items-center gap-1">
-                    <ShieldAlert size={16} /> غير متوفر
+                  <Badge bg="danger" className="bg-opacity-10 text-danger px-3 py-1.5 rounded-pill border border-danger fw-bold d-flex align-items-center gap-1">
+                    <ShieldAlert size={14} /> غير متوفر
                   </Badge>
                 )}
               </div>
 
-              <h4 className="fw-bold text-dark mt-2 mb-2">{product.name}</h4>
+              {/* Title and Share */}
+              <div className="d-flex justify-content-between align-items-start mb-2">
+                <h2 className="fw-black text-dark lh-sm mb-0" style={{ fontSize: '1.8rem', letterSpacing: '-0.5px' }}>
+                  {product.name}
+                </h2>
+                <button 
+                  onClick={handleShare}
+                  className="btn btn-light rounded-circle p-2 ms-2 flex-shrink-0"
+                  title="مشاركة رابط الصنف"
+                >
+                  <Share2 size={20} className="text-secondary" />
+                </button>
+              </div>
               
-              {product.brand && (
-                <div className="mb-3">
+              {/* Brand and Code */}
+              <div className="d-flex align-items-center flex-wrap gap-3 mb-4 mt-2">
+                {product.brand && (
                   <span 
-                    className="badge bg-light text-dark border px-3 py-2 brand-chip-link cursor-pointer shadow-sm fs-7"
+                    className="text-primary fw-bold cursor-pointer hover-opacity"
                     onClick={() => {
                       if (onSelectBrand) onSelectBrand(product.brand);
                       onHide();
                     }}
-                    title="انقر لعرض جميع أصناف هذه الماركة"
-                    style={{ cursor: 'pointer' }}
                   >
-                    🏷️ الماركة: <strong className="text-primary">{product.brand}</strong> ↗
+                    🏷️ {product.brand}
                   </span>
+                )}
+                <span className="text-muted fw-bold small">كود الصنف: <span className="text-dark">{effectiveCode}</span></span>
+              </div>
+
+              {/* Pricing (Liberated from Box) */}
+              <div className="mb-4">
+                <div className="d-flex align-items-baseline gap-2 flex-wrap mb-1">
+                  <span className="fw-black text-dark" style={{ fontSize: '2.5rem', letterSpacing: '-1px' }}>
+                    {(Number(effectivePrice) || 0).toLocaleString()}
+                  </span>
+                  <span className="fs-5 text-muted fw-bold">جنيه / {product.priceUnit || 'م2'}</span>
                 </div>
-              )}
+                
+                {hasDiscount && (
+                  <div className="d-flex align-items-center gap-3 mt-1">
+                    <del className="text-muted fs-5 text-decoration-line-through">
+                      {(Number(effectiveOriginalPrice) || 0).toLocaleString()} ج.م
+                    </del>
+                    <Badge bg="danger" className="px-2 py-1 fs-6 rounded-pill d-flex align-items-center gap-1 shadow-sm">
+                      وفرت {(Number(savingsAmount) || 0).toLocaleString()} ج
+                    </Badge>
+                  </div>
+                )}
+              </div>
 
-              {/* 7-Star Luxury Variant Selection Box (Exact Match to Customer Request) */}
+              {/* Variants (Colors and Covers) */}
               {hasVariants && (
-                <div className="p-3 mb-3 bg-light rounded-4 border border-slate-200 shadow-sm">
-                  {/* Row 1: Color Selection with Visual Swatches */}
+                <div className="mb-4">
+                  
+                  {/* Colors */}
                   {availableColors.length > 0 && (
-                    <div className="mb-3">
-                      <div className="fs-7 fw-bold text-dark mb-2 d-flex align-items-center justify-content-between">
-                        <span className="d-flex align-items-center gap-1.5">
-                          🎨 اللون المختار: <strong className="text-primary">{selectedColor}</strong>
-                        </span>
-                        <span className="badge bg-white text-muted border rounded-pill px-2.5 py-1 fs-8">
-                          {availableColors.length} ألوان متوفرة
-                        </span>
+                    <div className="mb-4">
+                      <div className="fs-7 fw-bold text-secondary mb-3 d-flex align-items-center justify-content-between">
+                        <span>اللون: <strong className="text-dark fs-6">{selectedColor}</strong></span>
                       </div>
-
-                      <div className="d-flex flex-wrap gap-2">
+                      <div className="d-flex flex-wrap gap-3">
                         {availableColors.map((colorName) => {
                           const isSelected = selectedColor === colorName;
                           const variantForColor = product.variants.find(v => (v.color || '').trim() === colorName);
@@ -230,45 +261,28 @@ const ProductModal = ({ product, show, onHide, settings, onOpenCalculator, onSel
                             colorName.includes('خشب') || colorName.includes('بني') ? '#8b5a2b' : '#334155';
 
                           return (
-                            <button
+                            <div
                               key={colorName}
-                              type="button"
+                              title={colorName}
                               onClick={() => handleColorClick(colorName)}
-                              className={`btn rounded-3 px-3 py-2 fs-7 fw-bold transition-all d-flex align-items-center gap-2 ${
-                                isSelected 
-                                  ? 'bg-dark text-warning border-dark shadow-sm' 
-                                  : 'bg-white text-dark border-slate-300 hover-bg-light'
-                              }`}
-                            >
-                              <span 
-                                className="rounded-circle border d-inline-block flex-shrink-0"
-                                style={{
-                                  width: swatchImage ? '24px' : '16px',
-                                  height: swatchImage ? '24px' : '16px',
-                                  backgroundColor: swatchImage ? 'transparent' : colorHex,
-                                  backgroundImage: swatchImage ? `url(${swatchImage})` : 'none',
-                                  backgroundSize: 'cover',
-                                  backgroundPosition: 'center',
-                                  border: isSelected ? '1px solid #d4af37' : '1px solid #94a3b8'
-                                }}
-                              />
-                              {colorName}
-                            </button>
+                              className={`color-swatch-luxury ${isSelected ? 'active' : ''}`}
+                              style={{
+                                backgroundColor: swatchImage ? 'transparent' : colorHex,
+                                backgroundImage: swatchImage ? `url(${swatchImage})` : 'none',
+                                backgroundSize: 'cover',
+                                backgroundPosition: 'center',
+                              }}
+                            />
                           );
                         })}
                       </div>
                     </div>
                   )}
 
-                  {/* Row 2: Cover Type Selection */}
+                  {/* Cover Types */}
                   {availableCoverTypes.length > 0 && (
-                    <div>
-                      <div className="fs-7 fw-bold text-dark mb-2 d-flex align-items-center justify-content-between">
-                        <span className="d-flex align-items-center gap-1.5">
-                          🚽 نوع الغطاء / المواصفة: <strong className="text-primary">{selectedCoverType}</strong>
-                        </span>
-                      </div>
-
+                    <div className="mb-4">
+                      <div className="fs-7 fw-bold text-secondary mb-3">المواصفة / نوع الغطاء:</div>
                       <div className="d-flex flex-wrap gap-2">
                         {availableCoverTypes.map((coverName) => {
                           const isSelected = selectedCoverType === coverName;
@@ -286,14 +300,9 @@ const ProductModal = ({ product, show, onHide, settings, onOpenCalculator, onSel
                               key={coverName}
                               type="button"
                               onClick={() => handleCoverClick(coverName)}
-                              className={`btn rounded-3 px-3 py-2 fs-7 transition-all d-flex align-items-center gap-2 ${
-                                isSelected 
-                                  ? 'bg-primary text-white border-primary shadow-sm fw-bold' 
-                                  : 'bg-white text-secondary border-slate-300 hover-bg-light'
-                              }`}
+                              className={`variant-pill-luxury ${isSelected ? 'active' : ''}`}
                             >
-                              {isSelected ? <CheckCircle2 size={16} /> : <div style={{width:'16px'}}/>}
-                              <span>{coverName} <small className={diff > 0 ? 'text-warning' : ''}>{priceBadge}</small></span>
+                              {coverName} <small className={diff > 0 ? 'text-warning' : ''}>{priceBadge}</small>
                             </button>
                           );
                         })}
@@ -303,125 +312,72 @@ const ProductModal = ({ product, show, onHide, settings, onOpenCalculator, onSel
                 </div>
               )}
 
-              <div className="p-3 bg-white rounded-4 border mb-3 shadow-sm">
-                <div className="d-flex align-items-baseline gap-2 flex-wrap mb-2">
-                  <span className="fs-1 fw-black text-dark">{(Number(effectivePrice) || 0).toLocaleString()}</span>
-                  <span className="fs-5 text-muted fw-bold">جنيه / {product.priceUnit || 'م2'}</span>
-                  {hasDiscount && (
-                    <del className="text-muted fs-6 text-decoration-line-through me-1">
-                      {(Number(effectiveOriginalPrice) || 0).toLocaleString()} ج.م
-                    </del>
-                  )}
-                  {hasDiscount && (
-                    <span className="badge-pink-discount fs-6">-{discountPercent}%</span>
-                  )}
-                </div>
-
-                <div className="d-flex align-items-center gap-2 flex-wrap">
-                  {hasDiscount && (
-                    <span className="pill-savings-green fs-6 px-3 py-1.5">
-                      وفرت {(Number(savingsAmount) || 0).toLocaleString()} جنيه
-                    </span>
-                  )}
-                  {product.inStock ? (
-                    <span className="pill-stock-available fs-6 px-3 py-1.5">
-                      <span className="stock-dot-green"></span> متوفر
-                    </span>
-                  ) : (
-                    <span className="pill-stock-unavailable fs-6 px-3 py-1.5">
-                      غير متوفر حالياً
-                    </span>
-                  )}
-                  {durationText && (
-                    <span className="pill-duration-yellow fs-6 px-3 py-1.5">
-                      ⏰ {durationText}
-                    </span>
-                  )}
-                </div>
-              </div>
-
-              <ul className="list-group list-group-flush mb-3">
+              {/* Specs Grid */}
+              <div className="specs-grid-luxury mb-4">
                 {product.dimensions && (
-                  <li className="list-group-item d-flex justify-content-between px-0">
-                    <span className="text-muted">الأبعاد والمقاس:</span>
-                    <strong className="text-dark">{product.dimensions}</strong>
-                  </li>
+                  <div className="spec-item">
+                    <span className="spec-item-label">المقاس والأبعاد</span>
+                    <span className="spec-item-value">{product.dimensions}</span>
+                  </div>
                 )}
                 {product.finish && (
-                  <li className="list-group-item d-flex justify-content-between px-0">
-                    <span className="text-muted">نوع التشطيب / اللمعة:</span>
-                    <strong className="text-dark">{product.finish}</strong>
-                  </li>
+                  <div className="spec-item">
+                    <span className="spec-item-label">نوع التشطيب</span>
+                    <span className="spec-item-value">{product.finish}</span>
+                  </div>
                 )}
                 {product.grade && (
-                  <li className="list-group-item d-flex justify-content-between px-0">
-                    <span className="text-muted">درجة الفرز:</span>
-                    <strong className="text-dark">{product.grade}</strong>
-                  </li>
+                  <div className="spec-item">
+                    <span className="spec-item-label">درجة الفرز</span>
+                    <span className="spec-item-value">{product.grade}</span>
+                  </div>
                 )}
                 {product.origin && (
-                  <li className="list-group-item d-flex justify-content-between px-0">
-                    <span className="text-muted">بلد المنشأ / الشركة:</span>
-                    <strong className="text-dark">{product.origin}</strong>
-                  </li>
+                  <div className="spec-item">
+                    <span className="spec-item-label">بلد المنشأ</span>
+                    <span className="spec-item-value">{product.origin}</span>
+                  </div>
                 )}
-                {product.usage && (
-                  <li className="list-group-item d-flex justify-content-between px-0">
-                    <span className="text-muted">الاستخدام المقترح:</span>
-                    <strong className="text-dark">{product.usage}</strong>
-                  </li>
-                )}
-              </ul>
+              </div>
 
+              {/* Description */}
               {product.description && (
-                <div className="mb-3">
-                  <div className="fw-bold text-dark mb-1">وصف الصنف:</div>
-                  <p className="text-muted small">{product.description}</p>
+                <div className="mb-4">
+                  <h6 className="fw-bold text-dark mb-2">وصف المنتج</h6>
+                  <p className="text-muted" style={{ fontSize: '0.95rem', lineHeight: '1.6' }}>{product.description}</p>
                 </div>
               )}
+
+              {/* Action Buttons (Footer moved up to avoid weird standard footer) */}
+              <div className="mt-auto d-flex flex-column gap-3 pt-4 border-top">
+                <a 
+                  href={whatsappUrl} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="whatsapp-btn-luxury"
+                >
+                  <MessageCircle size={24} />
+                  استفسر أو اطلب معاينة عبر الواتساب مباشرة
+                </a>
+
+                {onOpenCalculator && (
+                  <button
+                    onClick={() => {
+                      onHide();
+                      onOpenCalculator(product);
+                    }}
+                    className="btn btn-outline-dark rounded-4 py-3 fw-bold d-flex align-items-center justify-content-center gap-2"
+                    title={product.priceUnit && (product.priceUnit.includes('قطعة') || product.priceUnit.includes('طقم') || product.priceUnit.includes('وحدة') || product.category?.includes('أطقم')) ? "حساب الكمية والقطع المطلوبة" : "احسب الأمتار والكراتين المطلوبة"}
+                  >
+                    <Calculator size={20} />
+                    {product.priceUnit && (product.priceUnit.includes('قطعة') || product.priceUnit.includes('طقم') || product.priceUnit.includes('وحدة') || product.category?.includes('أطقم')) ? "حاسبة الكمية والقطع" : "حاسبة الأمتار والكراتين"}
+                  </button>
+                )}
+              </div>
             </div>
           </Col>
         </Row>
       </Modal.Body>
-
-      <Modal.Footer className="bg-light p-3 d-flex flex-wrap justify-content-between align-items-center gap-2">
-        <a 
-          href={whatsappUrl} 
-          target="_blank" 
-          rel="noopener noreferrer"
-          className="btn-whatsapp py-2 px-3 fs-6 d-flex align-items-center gap-1"
-        >
-          <MessageCircle size={20} />
-          استفسر أو اطلب معاينة عبر الواتساب مباشرة
-        </a>
-
-        {onOpenCalculator && (
-          <Button
-            variant="outline-warning"
-            onClick={() => {
-              onHide();
-              onOpenCalculator(product);
-            }}
-            className="d-flex align-items-center gap-1 py-2 px-3 fw-bold text-dark border-warning"
-            title={product.priceUnit && (product.priceUnit.includes('قطعة') || product.priceUnit.includes('طقم') || product.priceUnit.includes('وحدة') || product.category?.includes('أطقم')) ? "حساب الكمية والقطع المطلوبة" : "احسب الأمتار والكراتين المطلوبة"}
-          >
-            <Calculator size={18} />
-            {product.priceUnit && (product.priceUnit.includes('قطعة') || product.priceUnit.includes('طقم') || product.priceUnit.includes('وحدة') || product.category?.includes('أطقم')) ? "حاسبة الكمية والقطع" : "حاسبة الأمتار والكراتين"}
-          </Button>
-        )}
-
-        <Button
-          variant="outline-secondary"
-          onClick={handleShare}
-          className="d-flex align-items-center gap-1 py-2 px-3 fw-bold text-dark border-secondary"
-          title="مشاركة رابط الصنف المباشر"
-        >
-          <Share2 size={18} />
-          مشاركة الصنف
-        </Button>
-
-        <Button variant="secondary" onClick={onHide}>إغلاق</Button>
-      </Modal.Footer>
     </Modal>
   );
 };
