@@ -474,19 +474,19 @@ const AdminDashboard = ({ settings, onSettingsUpdated }) => {
       <div className="admin-header">
         <Container>
           <div className="d-flex flex-wrap justify-content-between align-items-center gap-3">
-              <div>
-                <h3 className="fw-bold mb-1 d-flex align-items-center gap-2 text-dark">
-                  <Layers className="text-warning" size={26} />
-                  إدارة النظام والمنتجات
-                </h3>
-                <p className="text-muted small mb-0">تحكم كامل في منتجات المعرض والتصنيفات والأسعار</p>
-              </div>
-              <div className="d-flex flex-wrap gap-2 w-100 w-md-auto">
-                <Button 
-                  variant="dark"
-                  className="d-flex align-items-center justify-content-center gap-2 px-4 py-2.5 fw-bold rounded-pill shadow-sm flex-grow-1"
-                  onClick={() => handleOpenProductModal()}
-                >
+            <div>
+              <h3 className="fw-bold mb-1 d-flex align-items-center gap-2 text-white">
+                <Layers className="text-warning" size={26} />
+                إدارة النظام والمنتجات
+              </h3>
+              <p className="text-light opacity-75 small mb-0">تحكم كامل في منتجات المعرض والتصنيفات والأسعار</p>
+            </div>
+            <div className="d-flex flex-wrap gap-2 w-100 w-md-auto">
+              <Button 
+                variant="light"
+                className="d-flex align-items-center justify-content-center gap-2 px-4 py-2.5 fw-bold text-dark rounded-pill shadow-sm flex-grow-1"
+                onClick={() => handleOpenProductModal()}
+              >
                 <PlusCircle size={20} className="text-primary" />
                 <span>إضافة صنف جديد للمعرض</span>
               </Button>

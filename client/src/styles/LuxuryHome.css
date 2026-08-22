@@ -209,9 +209,9 @@
 
 /* --- Luxury Navbar & Announcement Bar --- */
 .luxury-announcement-bar {
-  background: linear-gradient(90deg, #f8fafc 0%, #ffffff 50%, #f8fafc 100%);
-  color: #1e293b;
-  border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+  background: linear-gradient(90deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+  color: #fbbf24;
+  border-bottom: 1px solid rgba(251, 191, 36, 0.2);
   padding: 10px 20px;
   font-size: 0.95rem;
   font-weight: 700;
@@ -221,7 +221,7 @@
 }
 
 .luxury-announcement-bar .announcement-text {
-  text-shadow: none;
+  text-shadow: 0 0 10px rgba(251, 191, 36, 0.4);
   letter-spacing: 0.5px;
 }
 
@@ -271,23 +271,23 @@
 }
 
 .btn-luxury-dark {
-  background: #ffffff;
-  color: #1e293b;
-  border: 1.5px solid #d4af37;
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  color: #fbbf24;
+  border: 1px solid rgba(251, 191, 36, 0.3);
   font-weight: 700;
   padding: 8px 24px;
   border-radius: 50px;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(212, 175, 55, 0.1);
+  box-shadow: 0 4px 15px rgba(15, 23, 42, 0.2);
   white-space: nowrap;
 }
 
 .btn-luxury-dark:hover {
-  background: #f8fafc;
-  color: #d4af37;
-  border-color: #c5a059;
+  background: #0f172a;
+  color: #fff;
+  border-color: #fbbf24;
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(212, 175, 55, 0.2);
+  box-shadow: 0 6px 20px rgba(15, 23, 42, 0.3), 0 0 15px rgba(251, 191, 36, 0.2);
 }
 
 .btn-luxury-ghost-danger {
