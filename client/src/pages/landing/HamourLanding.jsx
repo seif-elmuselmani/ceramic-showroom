@@ -44,13 +44,13 @@ const HamourLanding = ({ settings, onNavigate }) => {
       title: 'بانيو مقرمشات سلطع',
       desc: 'بانيو علشان مستر سلطع ميزعلش مننا، مريح جداً لعد الفلوس بعد يوم طويل.',
       price: 'عرض حصري',
-      img: '/hamour_prod_3.jpg'
+      img: '/hamour_prod_4.jpg'
     },
     {
       title: 'طقم حمام سبونج بوب',
       desc: 'حمام كامل بالشاور والقاعده علشان سبونش بوب عايز يتجوز وبنساعدو 😂🍍.',
       price: 'عرض حصري',
-      img: '/hamour_prod_4.jpg'
+      img: '/hamour_prod_3.jpg'
     }
   ];
 
