@@ -15,6 +15,7 @@ import OwnerAnalytics from './pages/OwnerAnalytics';
 import ErrorBoundary from './components/ErrorBoundary';
 import ToastNotification from './components/ToastNotification';
 import PromoLanding from './pages/landing/PromoLanding';
+import HamourLanding from './pages/landing/HamourLanding';
 
 import { getSettings, getCategories, verifyAdminSession, adminLogout } from './services/api';
 import { initAnalyticsTracker, trackWhatsAppClick } from './services/analytics';
@@ -36,6 +37,9 @@ function App() {
       }
       if (q.get('promo') === 'true' || hash === '#promo' || pathname.includes('/promo')) {
         return 'promo';
+      }
+      if (q.get('promo') === 'hamour' || q.get('hamour') === 'true' || hash === '#hamour' || pathname.includes('/hamour')) {
+        return 'hamour';
       }
     }
     return 'catalog';
@@ -136,7 +140,7 @@ function App() {
       <div className="d-flex flex-column min-vh-100 position-relative">
         <ToastNotification />
         
-        {activeTab !== 'promo' && (
+        {activeTab !== 'promo' && activeTab !== 'hamour' && (
           <Navbar 
             settings={settings}
             isAdmin={isAdmin}
@@ -204,10 +208,17 @@ function App() {
               onNavigate={handleNavigate}
             />
           )}
+
+          {activeTab === 'hamour' && (
+            <HamourLanding 
+              settings={settings}
+              onNavigate={handleNavigate}
+            />
+          )}
         </main>
 
         {/* Floating Luxury Showroom WhatsApp Concierge Badge (General Showroom Inquiry) */}
-        {activeTab !== 'promo' && (
+        {activeTab !== 'promo' && activeTab !== 'hamour' && (
           <a 
             href={`https://wa.me/${settings?.whatsappNumber || '201001366499'}?text=${encodeURIComponent('السلام عليكم ورحمة الله وبركاته 💐\nمرحباً معرض السيد الجزار للسيراميك والبورسلين 🏛️\n\nأود الاستفسار عن كشف الأسعار والعروض المتاحة حالياً، ومواعيد إمكانية زيارة المعرض لمعاينة العينات. 🙏✨')}`}
             target="_blank"
@@ -226,7 +237,7 @@ function App() {
           </a>
         )}
 
-        {activeTab !== 'promo' && (
+        {activeTab !== 'promo' && activeTab !== 'hamour' && (
           <Footer settings={settings} onNavigate={handleNavigate} categories={categories} />
         )}
       </div>
