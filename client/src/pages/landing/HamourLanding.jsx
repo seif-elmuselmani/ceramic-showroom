@@ -325,10 +325,10 @@ const HamourLanding = ({ settings, onNavigate }) => {
                           value={formData.interestedIn}
                           onChange={(e) => setFormData({...formData, interestedIn: e.target.value})}
                         >
-                          <option value="سيراميك الأنّاناسة الإسفنجي 🍍">سيراميك الأنّاناسة الإسفنجي 🍍</option>
-                          <option value="بلاط دير السلطعون الذهبي 💰">بلاط دير السلطعون الذهبي 💰</option>
-                          <option value="سيراميك الحبار الكلاسيكي 🦑">سيراميك الحبار الكلاسيكي 🦑</option>
-                          <option value="بلاط صخرة بسيط المتين 🪨">بلاط صخرة بسيط المتين 🪨</option>
+                          <option value="بورسلين اردني 60*120">بورسلين اردني 60*120</option>
+                          <option value="وحدة حمام بروديوم">وحدة حمام بروديوم</option>
+                          <option value="بانيو مقرمشات سلطع">بانيو مقرمشات سلطع</option>
+                          <option value="طقم حمام سبونج بوب">طقم حمام سبونج بوب</option>
                         </Form.Select>
                       </Form.Group>
                     </Col>
