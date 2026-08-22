@@ -508,58 +508,57 @@ p, h1, h2, h3, h4, h5, h6, span, div, a {
   display: flex;
   align-items: center;
   gap: 12px;
-  background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 41, 59, 0.95) 100%);
-  border: 1.5px solid rgba(251, 191, 36, 0.6);
-  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.5), 0 0 20px rgba(251, 191, 36, 0.2);
+  background: linear-gradient(135deg, #25d366 0%, #128c7e 100%);
+  border: none;
   border-radius: 50px;
-  padding: 8px 20px 8px 8px;
-  text-decoration: none !important;
-  transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  padding: 6px;
+  padding-left: 20px;
+  text-decoration: none;
+  box-shadow: 0 10px 25px rgba(37, 211, 102, 0.3);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .floating-whatsapp-luxury:hover {
-  transform: translateY(-5px) scale(1.03);
-  box-shadow: 0 18px 40px rgba(37, 211, 102, 0.4), 0 0 25px rgba(251, 191, 36, 0.45);
-  border-color: #25d366;
+  transform: translateY(-5px) scale(1.02);
+  box-shadow: 0 15px 35px rgba(37, 211, 102, 0.4);
 }
 
 .whatsapp-badge-icon {
-  background: linear-gradient(135deg, #25d366 0%, #059669 100%);
-  color: #ffffff;
-  width: 48px;
-  height: 48px;
+  background: #ffffff;
+  color: #128c7e;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
-  box-shadow: 0 6px 16px rgba(37, 211, 102, 0.45);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
 .gold-ping-dot {
   position: absolute;
-  top: 0px;
-  right: 0px;
-  width: 13px;
-  height: 13px;
-  background-color: #fbbf24;
-  border: 2px solid #0f172a;
+  top: 0;
+  right: 0;
+  width: 12px;
+  height: 12px;
+  background-color: #ef4444; /* Red dot for notification */
   border-radius: 50%;
-  animation: goldPulse 2s infinite;
+  border: 2px solid #ffffff;
+  animation: pulse-ping 2s infinite;
 }
 
-@keyframes goldPulse {
-  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(251, 191, 36, 0.8); }
-  70% { transform: scale(1.2); box-shadow: 0 0 0 10px rgba(251, 191, 36, 0); }
-  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(251, 191, 36, 0); }
+@keyframes pulse-ping {
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+  70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
 }
 
 .whatsapp-badge-text {
-  color: #fbbf24;
-  font-size: 0.92rem;
-  letter-spacing: -0.2px;
+  color: #ffffff;
+  font-size: 0.95rem;
+  letter-spacing: 0;
+  font-weight: 700;
 }
 
 /* Interactive Clickable Brand Badge on Product Cards */
@@ -844,7 +843,7 @@ p, h1, h2, h3, h4, h5, h6, span, div, a {
 
 .footer-desc {
   font-size: 0.88rem;
-  color: var(--text-muted);
+  color: #cbd5e1;
   line-height: 1.6;
 }
 
@@ -912,7 +911,7 @@ p, h1, h2, h3, h4, h5, h6, span, div, a {
 }
 
 .footer-links a {
-  color: var(--text-muted);
+  color: #cbd5e1;
   text-decoration: none;
   font-size: 0.88rem;
   transition: all 0.25s ease;
@@ -957,7 +956,7 @@ p, h1, h2, h3, h4, h5, h6, span, div, a {
 }
 
 .branch-link {
-  color: var(--text-muted);
+  color: #cbd5e1;
   text-decoration: none;
   font-size: 0.78rem;
   line-height: 1.4;
@@ -971,7 +970,7 @@ p, h1, h2, h3, h4, h5, h6, span, div, a {
 }
 
 .branch-text {
-  color: var(--text-muted);
+  color: #cbd5e1;
   font-size: 0.78rem;
   line-height: 1.4;
 }
@@ -1002,7 +1001,7 @@ p, h1, h2, h3, h4, h5, h6, span, div, a {
 }
 
 .contact-value-text {
-  color: var(--text-muted);
+  color: #cbd5e1;
   font-weight: 600;
   font-size: 0.85rem;
 }
@@ -1016,7 +1015,7 @@ p, h1, h2, h3, h4, h5, h6, span, div, a {
   gap: 10px;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
   padding-top: 20px;
-  color: var(--text-muted);
+  color: #cbd5e1;
   font-size: 0.8rem;
   text-align: center;
 }
