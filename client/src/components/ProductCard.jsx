@@ -279,7 +279,7 @@ const ProductCard = ({ product, onSelectProduct, onOpenCalculator, settings, onS
           {/* Price & Offer Block matching Client Screenshot */}
           <div className="price-tag-luxury mb-3">
             <div className="d-flex align-items-center gap-2 flex-wrap mb-1">
-              <span className="fs-4 fw-black text-dark" style={{ color: '#0f172a' }}>{(Number(effectivePrice) || 0).toLocaleString()}</span>
+              <span className="fs-4 fw-black text-dark">{(Number(effectivePrice) || 0).toLocaleString()}</span>
               <span className="small fw-bold text-muted" style={{ fontSize: '0.8rem' }}>ج.م / {product.priceUnit || 'م2'}</span>
               
               {hasDiscount && (
