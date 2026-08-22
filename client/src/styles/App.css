@@ -1,17 +1,17 @@
 :root {
-  --primary-gold: #c5a059;
-  --primary-gold-hover: #b38b46;
-  --gold-glow: rgba(197, 160, 89, 0.25);
-  --bg-dark: #2c2520; /* deep espresso */
-  --bg-card-dark: #3a332d;
-  --bg-light: #fcfbfa; /* soft warm linen */
-  --bg-card-light: #f4f0e6; /* cashmere/linen */
-  --text-dark: #2c2520; /* deep cocoa text */
-  --text-muted: #7c7267; /* muted cashmere */
-  --text-light: #fbfaf8;
-  --border-gold: rgba(197, 160, 89, 0.35);
-  --shadow-lux: 0 10px 25px -8px rgba(44, 37, 32, 0.08);
-  --shadow-gold: 0 8px 20px -4px rgba(197, 160, 89, 0.25);
+  --primary-gold: #fbbf24;
+  --primary-gold-hover: #f59e0b;
+  --gold-glow: rgba(251, 191, 36, 0.25);
+  --bg-dark: #0f172a; /* midnight slate */
+  --bg-card-dark: #1e293b;
+  --bg-light: #f8fafc; /* pearl white */
+  --bg-card-light: #f1f5f9; /* soft slate */
+  --text-dark: #0f172a; /* slate text */
+  --text-muted: #64748b; /* muted slate */
+  --text-light: #ffffff;
+  --border-gold: rgba(251, 191, 36, 0.35);
+  --shadow-lux: 0 10px 25px -8px rgba(15, 23, 42, 0.1);
+  --shadow-gold: 0 8px 20px -4px rgba(251, 191, 36, 0.25);
   --font-cairo: 'Cairo', sans-serif;
   --font-tajawal: 'Tajawal', sans-serif;
 }
@@ -807,8 +807,8 @@ p, h1, h2, h3, h4, h5, h6, span, div, a {
 
 /* Footer Redesign */
 .luxury-footer {
-  background: #eae3d2; /* Warm sand off-white background */
-  color: #4a3e3d;
+  background: var(--bg-dark);
+  color: var(--text-light);
   padding: 60px 0 25px;
   margin-top: 60px;
   border-top: 2px solid var(--primary-gold);
@@ -826,11 +826,11 @@ p, h1, h2, h3, h4, h5, h6, span, div, a {
   object-fit: cover;
   border-radius: 50%;
   border: 2px solid var(--primary-gold);
-  background-color: #000;
+  background-color: var(--bg-light);
 }
 
 .footer-title {
-  color: var(--text-dark);
+  color: var(--text-light);
   font-weight: 800;
   font-size: 1.15rem;
 }
@@ -844,7 +844,7 @@ p, h1, h2, h3, h4, h5, h6, span, div, a {
 
 .footer-desc {
   font-size: 0.88rem;
-  color: #5c5247;
+  color: var(--text-muted);
   line-height: 1.6;
 }
 
@@ -889,7 +889,7 @@ p, h1, h2, h3, h4, h5, h6, span, div, a {
 
 /* Footer Navigation Links */
 .footer-title-sec {
-  color: var(--text-dark);
+  color: var(--text-light);
   font-weight: 800;
   font-size: 1rem;
   margin-bottom: 20px;
@@ -912,7 +912,7 @@ p, h1, h2, h3, h4, h5, h6, span, div, a {
 }
 
 .footer-links a {
-  color: #475569;
+  color: var(--text-muted);
   text-decoration: none;
   font-size: 0.88rem;
   transition: all 0.25s ease;
@@ -939,8 +939,8 @@ p, h1, h2, h3, h4, h5, h6, span, div, a {
 .footer-branch-item {
   display: flex;
   gap: 10px;
-  background: var(--bg-light);
-  border: 1px solid #d9d2c5;
+  background: var(--bg-card-dark);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 10px;
   padding: 10px 12px;
   transition: border-color 0.25s ease;
@@ -951,13 +951,13 @@ p, h1, h2, h3, h4, h5, h6, span, div, a {
 }
 
 .branch-name {
-  color: var(--text-dark);
+  color: var(--text-light);
   font-size: 0.85rem;
   font-weight: 800;
 }
 
 .branch-link {
-  color: #4a3e3d;
+  color: var(--text-muted);
   text-decoration: none;
   font-size: 0.78rem;
   line-height: 1.4;
@@ -971,7 +971,7 @@ p, h1, h2, h3, h4, h5, h6, span, div, a {
 }
 
 .branch-text {
-  color: #5c5247;
+  color: var(--text-muted);
   font-size: 0.78rem;
   line-height: 1.4;
 }
@@ -990,7 +990,7 @@ p, h1, h2, h3, h4, h5, h6, span, div, a {
 }
 
 .contact-value {
-  color: var(--text-dark);
+  color: var(--text-light);
   text-decoration: none;
   font-weight: 800;
   font-size: 0.9rem;
@@ -1002,8 +1002,8 @@ p, h1, h2, h3, h4, h5, h6, span, div, a {
 }
 
 .contact-value-text {
-  color: #4a3e3d;
-  font-weight: 800;
+  color: var(--text-muted);
+  font-weight: 600;
   font-size: 0.85rem;
 }
 
@@ -1014,9 +1014,9 @@ p, h1, h2, h3, h4, h5, h6, span, div, a {
   justify-content: space-between;
   align-items: center;
   gap: 10px;
-  border-top: 1px solid #d9d2c5;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
   padding-top: 20px;
-  color: #64748b;
+  color: var(--text-muted);
   font-size: 0.8rem;
   text-align: center;
 }
