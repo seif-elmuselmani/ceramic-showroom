@@ -226,15 +226,17 @@ const ProductCard = ({ product, onSelectProduct, onOpenCalculator, settings, onS
                     {availableColors.map((colorName) => {
                       const isSelected = selectedColor === colorName;
                       const variantForColor = product.variants.find(v => (v.color || '').trim() === colorName);
-                      const swatchImage = variantForColor?.image;
                       const colorHex = 
                         colorName.includes('أبيض') ? '#ffffff' :
-                        colorName.includes('برجامون') || colorName.includes('بيج') ? '#f5e6d3' :
+                        colorName.includes('برجامون') || colorName.includes('بيج') || colorName.includes('عاجي') ? '#f5e6d3' :
                         colorName.includes('أسود') ? '#1e293b' :
                         colorName.includes('ذهب') ? '#d4af37' :
                         colorName.includes('فض') || colorName.includes('كروم') ? '#cbd5e1' :
                         colorName.includes('رمادي') ? '#64748b' :
-                        colorName.includes('خشب') || colorName.includes('بني') ? '#8b5a2b' : '#334155';
+                        colorName.includes('خشب') || colorName.includes('بني') ? '#8b5a2b' : 
+                        colorName.includes('أزرق') || colorName.includes('كحلي') ? '#1d4ed8' :
+                        colorName.includes('أخضر') ? '#15803d' :
+                        colorName.includes('أحمر') ? '#b91c1c' : '#334155';
 
                       return (
                         <button
@@ -249,10 +251,7 @@ const ProductCard = ({ product, onSelectProduct, onOpenCalculator, settings, onS
                           style={{
                             width: '22px',
                             height: '22px',
-                            backgroundColor: swatchImage ? 'transparent' : colorHex,
-                            backgroundImage: swatchImage ? `url(${swatchImage})` : 'none',
-                            backgroundSize: 'cover',
-                            backgroundPosition: 'center',
+                            backgroundColor: colorHex,
                             border: isSelected ? '2px solid #0f172a' : '1px solid #cbd5e1',
                             boxShadow: isSelected ? '0 0 0 2px #d4af37' : 'none',
                             transform: isSelected ? 'scale(1.1)' : 'scale(1)'

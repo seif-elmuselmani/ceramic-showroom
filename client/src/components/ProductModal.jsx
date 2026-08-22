@@ -248,17 +248,18 @@ const ProductModal = ({ product, show, onHide, settings, onOpenCalculator, onSel
                       <div className="d-flex flex-wrap gap-3">
                         {availableColors.map((colorName) => {
                           const isSelected = selectedColor === colorName;
-                          const variantForColor = product.variants.find(v => (v.color || '').trim() === colorName);
-                          const swatchImage = variantForColor?.image;
                           
                           const colorHex = 
                             colorName.includes('أبيض') ? '#ffffff' :
-                            colorName.includes('برجامون') || colorName.includes('بيج') ? '#f5e6d3' :
+                            colorName.includes('برجامون') || colorName.includes('بيج') || colorName.includes('عاجي') ? '#f5e6d3' :
                             colorName.includes('أسود') ? '#1e293b' :
                             colorName.includes('ذهب') ? '#d4af37' :
                             colorName.includes('فض') || colorName.includes('كروم') ? '#cbd5e1' :
                             colorName.includes('رمادي') ? '#64748b' :
-                            colorName.includes('خشب') || colorName.includes('بني') ? '#8b5a2b' : '#334155';
+                            colorName.includes('خشب') || colorName.includes('بني') ? '#8b5a2b' : 
+                            colorName.includes('أزرق') || colorName.includes('كحلي') ? '#1d4ed8' :
+                            colorName.includes('أخضر') ? '#15803d' :
+                            colorName.includes('أحمر') ? '#b91c1c' : '#334155';
 
                           return (
                             <div
@@ -267,10 +268,7 @@ const ProductModal = ({ product, show, onHide, settings, onOpenCalculator, onSel
                               onClick={() => handleColorClick(colorName)}
                               className={`color-swatch-luxury ${isSelected ? 'active' : ''}`}
                               style={{
-                                backgroundColor: swatchImage ? 'transparent' : colorHex,
-                                backgroundImage: swatchImage ? `url(${swatchImage})` : 'none',
-                                backgroundSize: 'cover',
-                                backgroundPosition: 'center',
+                                backgroundColor: colorHex,
                               }}
                             />
                           );
