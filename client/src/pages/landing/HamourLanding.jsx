@@ -243,7 +243,7 @@ const HamourLanding = ({ settings, onNavigate }) => {
           <Row className="g-4">
             {hamourProducts.map((prod, idx) => (
               <Col lg={3} md={6} key={idx}>
-                <div className="hamour-glass-card">
+                <div className="hamour-glass-card d-flex flex-column h-100">
                   <div className="porthole-window">
                     <img 
                       src={prod.img} 
@@ -253,8 +253,8 @@ const HamourLanding = ({ settings, onNavigate }) => {
                     />
                   </div>
                   <h4 className="hamour-card-title">{prod.title}</h4>
-                  <p className="hamour-card-desc">{prod.desc}</p>
-                  <div className="hamour-card-price">{prod.price}</div>
+                  <p className="hamour-card-desc flex-grow-1">{prod.desc}</p>
+                  <div className="hamour-card-price mt-auto">{prod.price}</div>
                 </div>
               </Col>
             ))}
