@@ -234,6 +234,11 @@
   transition: all 0.3s ease;
 }
 
+[data-theme='dark'] .glass-navbar {
+  background: rgba(30, 41, 59, 0.85) !important; /* #1e293b */
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
 .luxury-nav-link {
   color: #475569 !important;
   font-weight: 700;

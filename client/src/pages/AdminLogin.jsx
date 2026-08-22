@@ -34,23 +34,23 @@ const AdminLogin = ({ onLoginSuccess, onCancel }) => {
   return (
     <div className="py-5" style={{ minHeight: '80vh', display: 'flex', alignItems: 'center' }}>
       <Container style={{ maxWidth: '440px' }}>
-        <Card className="border-0 shadow-lg rounded-4 overflow-hidden">
-          <div className="bg-dark text-white p-4 text-center border-bottom border-warning border-3">
+        <Card className="border-0 shadow-lg rounded-4 overflow-hidden" style={{ background: 'var(--bg-card-light)' }}>
+          <div className="p-4 text-center border-bottom border-3" style={{ background: 'var(--footer-bg)', borderColor: 'var(--primary-gold) !important' }}>
             <div className="d-inline-flex p-3 bg-warning text-dark rounded-circle mb-3 shadow-sm">
               <ShieldCheck size={32} />
             </div>
-            <h4 className="fw-bold mb-1">تسجيل دخول الأدمن</h4>
-            <p className="text-light opacity-75 small mb-0">لوحة إدارة أصناف وأسعار المعرض</p>
+            <h4 className="fw-bold mb-1" style={{ color: 'var(--footer-text)' }}>تسجيل دخول الأدمن</h4>
+            <p className="small mb-0" style={{ color: 'var(--footer-text-muted)' }}>لوحة إدارة أصناف وأسعار المعرض</p>
           </div>
 
-          <Card.Body className="p-4 p-md-5 bg-white">
+          <Card.Body className="p-4 p-md-5">
             {error && <Alert variant="danger" className="rounded-3 fs-6 py-2.5">{error}</Alert>}
 
             <Form onSubmit={handleSubmit}>
               <Form.Group className="mb-4">
-                <Form.Label className="fw-bold text-dark">اسم المستخدم</Form.Label>
+                <Form.Label className="fw-bold" style={{ color: 'var(--text-dark)' }}>اسم المستخدم</Form.Label>
                 <div className="input-group">
-                  <span className="input-group-text bg-light border-end-0">
+                  <span className="input-group-text border-end-0" style={{ background: 'var(--bg-light)', borderColor: '#cbd5e1' }}>
                     <User size={18} className="text-muted" />
                   </span>
                   <Form.Control
@@ -61,14 +61,15 @@ const AdminLogin = ({ onLoginSuccess, onCancel }) => {
                     onChange={(e) => setUsername(e.target.value)}
                     className="custom-input border-start-0"
                     placeholder="ادخل اسم المستخدم المحمي..."
+                    style={{ background: 'var(--bg-light)', color: 'var(--text-dark)' }}
                   />
                 </div>
               </Form.Group>
 
               <Form.Group className="mb-4">
-                <Form.Label className="fw-bold text-dark">كلمة المرور</Form.Label>
+                <Form.Label className="fw-bold" style={{ color: 'var(--text-dark)' }}>كلمة المرور</Form.Label>
                 <div className="input-group">
-                  <span className="input-group-text bg-light border-end-0">
+                  <span className="input-group-text border-end-0" style={{ background: 'var(--bg-light)', borderColor: '#cbd5e1' }}>
                     <Lock size={18} className="text-muted" />
                   </span>
                   <Form.Control
@@ -78,13 +79,15 @@ const AdminLogin = ({ onLoginSuccess, onCancel }) => {
                     onChange={(e) => setPassword(e.target.value)}
                     className="custom-input border-start-0 border-end-0"
                     placeholder="ادخل كلمة المرور السريّة..."
+                    style={{ background: 'var(--bg-light)', color: 'var(--text-dark)' }}
                   />
                   <Button 
                     variant="outline-secondary" 
-                    className="bg-light border-start-0 border text-muted"
+                    className="border-start-0 border text-muted"
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
                     title={showPassword ? "إخفاء كلمة المرور" : "إظهار كلمة المرور"}
+                    style={{ background: 'var(--bg-light)', borderColor: '#cbd5e1' }}
                   >
                     {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                   </Button>

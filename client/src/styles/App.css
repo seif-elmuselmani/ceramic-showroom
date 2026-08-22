@@ -14,6 +14,13 @@
   --text-muted: #64748b; /* muted slate */
   --text-light: #ffffff;
   
+  /* Dynamic Footer Variables (Light in Light Mode, Dark in Dark Mode) */
+  --footer-bg: #f8fafc;
+  --footer-text: #1e293b;
+  --footer-text-muted: #64748b;
+  --footer-border: #e2e8f0;
+  --footer-card: #ffffff;
+  
   --border-gold: rgba(251, 191, 36, 0.35);
   --shadow-lux: 0 10px 25px -8px rgba(15, 23, 42, 0.1);
   --shadow-gold: 0 8px 20px -4px rgba(251, 191, 36, 0.25);
@@ -25,6 +32,13 @@
   --text-dark: #f8fafc; /* White text on dark bg */
   --text-muted: #94a3b8; /* Lighter muted text */
   --shadow-lux: 0 10px 25px -8px rgba(0, 0, 0, 0.4);
+  
+  /* Dynamic Footer Variables in Dark Mode */
+  --footer-bg: #0f172a;
+  --footer-text: #f8fafc;
+  --footer-text-muted: #cbd5e1;
+  --footer-border: rgba(255, 255, 255, 0.1);
+  --footer-card: #1e293b;
 }
   --font-cairo: 'Cairo', sans-serif;
   --font-tajawal: 'Tajawal', sans-serif;
@@ -827,8 +841,8 @@ p, h1, h2, h3, h4, h5, h6, span, div, a {
 
 /* Footer Redesign */
 .luxury-footer {
-  background: var(--bg-dark);
-  color: var(--text-light);
+  background: var(--footer-bg);
+  color: var(--footer-text);
   padding: 60px 0 25px;
   margin-top: 60px;
   border-top: 2px solid var(--primary-gold);
@@ -850,7 +864,7 @@ p, h1, h2, h3, h4, h5, h6, span, div, a {
 }
 
 .footer-title {
-  color: var(--text-light);
+  color: var(--footer-text);
   font-weight: 800;
   font-size: 1.15rem;
 }
@@ -864,7 +878,7 @@ p, h1, h2, h3, h4, h5, h6, span, div, a {
 
 .footer-desc {
   font-size: 0.88rem;
-  color: #cbd5e1;
+  color: var(--footer-text-muted);
   line-height: 1.6;
 }
 
@@ -909,7 +923,7 @@ p, h1, h2, h3, h4, h5, h6, span, div, a {
 
 /* Footer Navigation Links */
 .footer-title-sec {
-  color: var(--text-light);
+  color: var(--footer-text);
   font-weight: 800;
   font-size: 1rem;
   margin-bottom: 20px;
@@ -923,7 +937,7 @@ p, h1, h2, h3, h4, h5, h6, span, div, a {
   bottom: 0;
   right: 0;
   width: 35px;
-  height: 2px;
+  height: 3px;
   background-color: var(--primary-gold);
 }
 
@@ -932,7 +946,7 @@ p, h1, h2, h3, h4, h5, h6, span, div, a {
 }
 
 .footer-links a {
-  color: #cbd5e1;
+  color: var(--footer-text-muted);
   text-decoration: none;
   font-size: 0.88rem;
   transition: all 0.25s ease;
@@ -959,10 +973,10 @@ p, h1, h2, h3, h4, h5, h6, span, div, a {
 .footer-branch-item {
   display: flex;
   gap: 10px;
-  background: var(--bg-card-dark);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 12px;
+  background: var(--footer-card);
+  border: 1px solid var(--footer-border);
   border-radius: 10px;
-  padding: 10px 12px;
   transition: border-color 0.25s ease;
 }
 
@@ -971,29 +985,24 @@ p, h1, h2, h3, h4, h5, h6, span, div, a {
 }
 
 .branch-name {
-  color: var(--text-light);
-  font-size: 0.85rem;
-  font-weight: 800;
+  color: var(--footer-text);
+  font-weight: bold;
 }
 
 .branch-link {
-  color: #cbd5e1;
+  color: var(--footer-text-muted);
   text-decoration: none;
-  font-size: 0.78rem;
-  line-height: 1.4;
-  display: inline-block;
-  transition: color 0.25s ease;
+  font-size: 0.85rem;
+  transition: color 0.2s;
 }
 
 .branch-link:hover {
-  color: var(--primary-gold) !important;
-  text-decoration: underline !important;
+  color: var(--primary-gold);
 }
 
 .branch-text {
-  color: #cbd5e1;
-  font-size: 0.78rem;
-  line-height: 1.4;
+  color: var(--footer-text-muted);
+  font-size: 0.85rem;
 }
 
 /* Contact Info & Details */
@@ -1010,11 +1019,10 @@ p, h1, h2, h3, h4, h5, h6, span, div, a {
 }
 
 .contact-value {
-  color: var(--text-light);
+  color: var(--footer-text-muted);
   text-decoration: none;
-  font-weight: 800;
-  font-size: 0.9rem;
-  transition: color 0.25s ease;
+  font-weight: 600;
+  transition: color 0.2s;
 }
 
 .contact-value:hover {
@@ -1022,7 +1030,7 @@ p, h1, h2, h3, h4, h5, h6, span, div, a {
 }
 
 .contact-value-text {
-  color: #cbd5e1;
+  color: var(--footer-text-muted);
   font-weight: 600;
   font-size: 0.85rem;
 }
@@ -1034,11 +1042,9 @@ p, h1, h2, h3, h4, h5, h6, span, div, a {
   justify-content: space-between;
   align-items: center;
   gap: 10px;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  padding-top: 20px;
-  color: #cbd5e1;
-  font-size: 0.8rem;
   text-align: center;
+  padding-top: 20px;
+  border-top: 1px solid var(--footer-border);
 }
 
 @media (min-width: 768px) {
@@ -1050,7 +1056,7 @@ p, h1, h2, h3, h4, h5, h6, span, div, a {
 
 .footer-credits {
   font-size: 0.75rem;
-  color: #94a3b8;
+  color: var(--footer-text-muted);
 }
 
 /* Contact Page Styling - Clean Light AD SAMY Theme */
