@@ -233,6 +233,18 @@ const PromoLanding = ({ settings, onNavigate }) => {
           </Row>
         </Container>
       </section>
+
+      {/* Footer Info */}
+      <footer className="py-4 text-center border-top border-warning border-opacity-25 mt-5" style={{ background: 'rgba(15,23,42,0.6)' }}>
+        <Container>
+          <p className="mb-2 small opacity-75 text-white">
+            جميع الحقوق محفوظة &copy; {new Date().getFullYear()} - الحملة الترويجية لمعرض السيد الجزار للسيراميك والبورسلين 🏛️
+          </p>
+          <p className="mb-0 small opacity-50 fw-bold" style={{ color: '#facc15' }}>
+            Developed by: Seif 01223817860
+          </p>
+        </Container>
+      </footer>
     </div>
   );
 };
