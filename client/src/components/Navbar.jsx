@@ -7,16 +7,16 @@ const Header = ({ settings, isAdmin, onNavigate, activeTab, onLogout }) => {
     <header className="sticky-top">
       {/* Announcement Bar */}
       {settings?.announcement && (
-        <div className="announcement-bar d-flex justify-content-center align-items-center px-3 py-3 text-center">
+        <div className="luxury-announcement-bar d-flex justify-content-center align-items-center">
           <div className="d-flex align-items-center gap-2 justify-content-center">
-            <Megaphone size={20} className="animate-pulse flex-shrink-0" style={{ color: '#1e150b' }} />
-            <span className="announcement-text" style={{ fontSize: '0.98rem' }}>{settings.announcement}</span>
+            <Megaphone size={18} className="animate-pulse flex-shrink-0" />
+            <span className="announcement-text">{settings.announcement}</span>
           </div>
         </div>
       )}
 
       {/* Main Navbar */}
-      <Navbar bg="white" variant="light" expand="lg" className="luxury-navbar">
+      <Navbar expand="lg" className="glass-navbar">
         <Container>
           <Navbar.Brand 
             href="#" 
@@ -47,19 +47,19 @@ const Header = ({ settings, isAdmin, onNavigate, activeTab, onLogout }) => {
           <Navbar.Collapse id="luxury-nav" className="navbar-collapse-custom">
             <Nav className="mx-auto my-2 my-lg-0">
               <Nav.Link 
-                className={`nav-link-custom ${activeTab === 'catalog' ? 'active' : ''}`}
+                className={`luxury-nav-link ${activeTab === 'catalog' ? 'active' : ''}`}
                 onClick={() => onNavigate('catalog')}
               >
                 كتالوج المنتجات
               </Nav.Link>
               <Nav.Link 
-                className={`nav-link-custom ${activeTab === 'featured' ? 'active' : ''}`}
+                className={`luxury-nav-link ${activeTab === 'featured' ? 'active' : ''}`}
                 onClick={() => onNavigate('featured')}
               >
                 أحدث الأصناف
               </Nav.Link>
               <Nav.Link 
-                className={`nav-link-custom ${activeTab === 'contact' ? 'active' : ''}`}
+                className={`luxury-nav-link ${activeTab === 'contact' ? 'active' : ''}`}
                 onClick={() => onNavigate('contact')}
               >
                 العنوان والتواصل
@@ -69,22 +69,20 @@ const Header = ({ settings, isAdmin, onNavigate, activeTab, onLogout }) => {
             <div className="d-flex align-items-center gap-2 mt-3 mt-lg-0">
               {isAdmin && (
                 <>
-                  <Button 
-                    variant="warning" 
-                    className="d-flex align-items-center justify-content-center gap-2 rounded-pill px-3 py-2 fw-bold text-dark shadow-sm w-100 w-lg-auto"
+                  <button 
+                    className="btn btn-luxury-dark d-flex align-items-center justify-content-center gap-2"
                     onClick={() => onNavigate('admin')}
                   >
                     <LayoutDashboard size={18} />
                     <span>لوحة التحكم</span>
-                  </Button>
-                  <Button 
-                    variant="outline-danger" 
-                    className="rounded-circle p-2"
+                  </button>
+                  <button 
+                    className="btn btn-luxury-ghost-danger rounded-circle p-2 d-flex align-items-center justify-content-center"
                     title="تسجيل الخروج"
                     onClick={onLogout}
                   >
                     <LogOut size={18} />
-                  </Button>
+                  </button>
                 </>
               )}
             </div>
