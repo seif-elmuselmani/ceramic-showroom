@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles/App.css';
+import './styles/LuxuryHome.css';
 import { MessageCircle } from 'lucide-react';
 
 import Navbar from './components/Navbar';

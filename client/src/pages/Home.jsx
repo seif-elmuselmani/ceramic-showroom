@@ -218,7 +218,7 @@ const Home = ({ settings, categoryFilter = 'الكل', setCategoryFilter, mode =
                   : '✨ الوكيل المعتمد لأحدث ماركات السيراميك والبورسلين العالمية والمحلية'
                 }
               </Badge>
-              <h1 className="hero-title">
+              <h1 className="hero-title glow-text-primary">
                 {mode === 'featured' ? (
                   <>أحدث <span>تصاميم وموديلات 2026</span> الواصلة حديثاً</>
                 ) : (
@@ -234,7 +234,7 @@ const Home = ({ settings, categoryFilter = 'الكل', setCategoryFilter, mode =
               
               <div className="d-flex flex-wrap gap-3 mt-4">
                 <Button 
-                  className="admin-btn py-3 px-4 fs-6"
+                  className="hero-btn-gradient rounded-pill py-3 px-4 fs-6 fw-bold"
                   onClick={() => {
                     const el = document.getElementById('catalog-grid');
                     if (el) el.scrollIntoView({ behavior: 'smooth' });
@@ -259,29 +259,29 @@ const Home = ({ settings, categoryFilter = 'الكل', setCategoryFilter, mode =
             <Col lg={5} className="mt-4 mt-lg-0">
               <Row className="g-3">
                 <Col xs={6} sm={6}>
-                  <div className="stat-badge">
-                    <Sparkles size={24} className="text-warning mb-1 opacity-90" />
+                  <div className="glass-stat-card">
+                    <Sparkles size={28} className="text-warning mb-2 opacity-90" />
                     <div className="stat-number">+1000</div>
-                    <div className="stat-label">تصميم صنف فريد بالمعرض</div>
+                    <div className="stat-label">تصميم فريد بالمعرض</div>
                   </div>
                 </Col>
                 <Col xs={6} sm={6}>
-                  <div className="stat-badge">
-                    <CheckCircle2 size={24} className="text-warning mb-1 opacity-90" />
+                  <div className="glass-stat-card">
+                    <CheckCircle2 size={28} className="text-warning mb-2 opacity-90" />
                     <div className="stat-number">100%</div>
                     <div className="stat-label">فرز أول ممتاز مضمون</div>
                   </div>
                 </Col>
                 <Col xs={6} sm={6}>
-                  <div className="stat-badge">
-                    <Award size={24} className="text-warning mb-1 opacity-90" />
+                  <div className="glass-stat-card">
+                    <Award size={28} className="text-warning mb-2 opacity-90" />
                     <div className="stat-number">60x120</div>
                     <div className="stat-label">أحجام بورسلين عملاقة</div>
                   </div>
                 </Col>
                 <Col xs={6} sm={6}>
-                  <div className="stat-badge">
-                    <Calculator size={24} className="text-warning mb-1 opacity-90" />
+                  <div className="glass-stat-card">
+                    <Calculator size={28} className="text-warning mb-2 opacity-90" />
                     <div className="stat-number">حاسبة</div>
                     <div className="stat-label">حساب الكراتين تلقائياً</div>
                   </div>
@@ -292,205 +292,154 @@ const Home = ({ settings, categoryFilter = 'الكل', setCategoryFilter, mode =
         </Container>
       </section>
 
-      {/* Filter and Search Container */}
-      <Container className="mb-5" id="catalog-grid">
-        <div className="filter-card">
-          {/* Mobile Filter Toggle */}
-          <div className="d-md-none mb-3">
-            <Button 
-              variant="dark" 
-              className="w-100 rounded-pill d-flex align-items-center justify-content-center gap-2 py-3 fw-bold shadow-sm"
-              onClick={() => setShowMobileFilters(!showMobileFilters)}
+      {/* Filter and Search Container - LUXURY REDESIGN */}
+      <Container className="position-relative" style={{ zIndex: 10, marginTop: '-30px', marginBottom: '60px' }} id="catalog-grid">
+        
+        {/* TOP LEVEL: Luxury Category Tabs */}
+        <div className="luxury-tabs-container mb-3 px-2">
+          <button 
+            className={`luxury-tab ${selectedCategory === 'الكل' ? 'active' : ''}`}
+            onClick={() => { setSelectedCategory('الكل'); setSelectedSubcategory('الكل'); if (setCategoryFilter) setCategoryFilter('الكل'); }}
+          >
+            الكل
+          </button>
+          {categories.filter(c => c.name !== 'الكل').map((cat) => (
+            <button
+              key={cat.id}
+              className={`luxury-tab ${selectedCategory === cat.name ? 'active' : ''}`}
+              onClick={() => { 
+                setSelectedCategory(cat.name); 
+                setSelectedSubcategory('الكل'); 
+                if (setCategoryFilter) setCategoryFilter(cat.name);
+              }}
             >
-              <SlidersHorizontal size={20} />
-              {showMobileFilters ? 'إخفاء أدوات التصفية ✖️' : 'تصفية المنتجات والبحث 🔍'}
-            </Button>
-          </div>
+              {cat.name}
+            </button>
+          ))}
+        </div>
 
-          {/* Filter Content Container (Hidden on mobile by default) */}
-          <div className={showMobileFilters ? 'd-block' : 'd-none d-md-block'}>
-            {/* Brand Filter Bar Header */}
-            {availableBrands.length > 0 && (
-            <div className="mb-4 pb-3 border-bottom">
-              <div className="d-flex justify-content-between align-items-center mb-2.5 flex-wrap gap-2">
-                <span className="fw-bold text-dark small d-flex align-items-center gap-1.5">
-                  <Award size={18} className="text-warning" />
-                  <span>🏛️ التصفح حسب الماركة والعلامة التجارية:</span>
-                </span>
-                {selectedBrand !== 'الكل' && (
-                  <Button 
-                    size="sm" 
-                    variant="outline-danger" 
-                    className="rounded-pill px-3 py-1 text-nowrap small fw-bold"
-                    onClick={() => setSelectedBrand('الكل')}
+        {/* Subcategories (if active) */}
+        {showSubcategories && (
+          <div className="luxury-tabs-container mb-3 px-2 animate-fade-in" style={{ opacity: 0.9 }}>
+            <span className="text-muted fw-bold d-flex align-items-center gap-1 me-2 flex-shrink-0" style={{ fontSize: '0.85rem' }}>
+              <Sparkles size={14} className="text-warning" /> الأنواع:
+            </span>
+            <button
+              className={`luxury-tab ${selectedSubcategory === 'الكل' ? 'active' : ''}`}
+              style={{ padding: '6px 16px', fontSize: '0.85rem' }}
+              onClick={() => setSelectedSubcategory('الكل')}
+            >
+              الكل
+            </button>
+            {activeCategoryObj.subcategories.map((sub, sIdx) => (
+              <button
+                key={sIdx}
+                className={`luxury-tab ${selectedSubcategory === sub ? 'active' : ''}`}
+                style={{ padding: '6px 16px', fontSize: '0.85rem' }}
+                onClick={() => setSelectedSubcategory(sub)}
+              >
+                {sub}
+              </button>
+            ))}
+          </div>
+        )}
+
+        {/* The Floating Search Engine */}
+        <div className="floating-search-wrapper d-flex flex-column flex-md-row align-items-md-center">
+          
+          {/* Main Search Input */}
+          <div className="flex-grow-1 position-relative d-flex align-items-center">
+            <Search size={22} className="text-muted ms-3" />
+            <input 
+              type="text" 
+              className="form-control luxury-search-input w-100"
+              placeholder="ابحث بالاسم، الكود، المقاس، أو بلد المنشأ..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+            {/* Live Search Dropdown */}
+            {searchTerm && searchTerm.trim().length > 0 && (
+              <div 
+                className="position-absolute w-100 bg-white border rounded-4 shadow-lg z-index-dropdown"
+                style={{ top: '100%', left: 0, marginTop: '15px', zIndex: 1050, maxHeight: '350px', overflowY: 'auto' }}
+              >
+                {filteredProducts.slice(0, 5).map((prod) => (
+                  <div 
+                    key={prod.id} 
+                    className="d-flex align-items-center gap-3 p-3 border-bottom cursor-pointer hover-bg-light transition-all"
+                    style={{ cursor: 'pointer' }}
+                    onClick={() => {
+                      setSelectedProduct(prod);
+                      setSearchTerm('');
+                    }}
                   >
-                    إلغاء فلتر الماركة (عرض الجميع)
-                  </Button>
+                    <img 
+                      src={(prod.images && prod.images.length > 0) ? prod.images[0] : (prod.image || 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=100&q=80')} 
+                      alt={prod.name} 
+                      className="rounded-3 shadow-sm"
+                      style={{ width: '48px', height: '48px', objectFit: 'cover' }}
+                    />
+                    <div>
+                      <div className="fw-bold text-dark fs-7 lh-sm mb-1">{prod.name}</div>
+                      <div className="text-muted small fs-8">الكود: {prod.code}</div>
+                    </div>
+                  </div>
+                ))}
+                {filteredProducts.length === 0 && (
+                  <div className="p-4 text-center text-muted small fw-bold">
+                    لا يوجد نتائج مطابقة للبحث
+                  </div>
+                )}
+                {filteredProducts.length > 5 && (
+                  <div className="p-3 text-center text-primary small fw-bold bg-light">
+                    عرض باقي النتائج ({filteredProducts.length - 5}+) في الشبكة بالأسفل 👇
+                  </div>
                 )}
               </div>
-              
-              <div className="d-flex gap-2 flex-wrap align-items-center">
-                <button 
-                  type="button"
-                  className={`brand-chip-pill ${selectedBrand === 'الكل' ? 'active' : ''}`}
-                  onClick={() => setSelectedBrand('الكل')}
-                >
-                  جميع الماركات
-                </button>
+            )}
+          </div>
 
-                {availableBrands.map((b, idx) => (
-                  <button
-                    type="button"
-                    key={idx}
-                    className={`brand-chip-pill ${selectedBrand === b ? 'active' : ''}`}
-                    onClick={() => setSelectedBrand(b)}
-                  >
-                    🏷️ {b}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
+          <div className="search-divider d-none d-md-block"></div>
 
-          <Row className="g-3 align-items-center">
-            {/* Search Input */}
-            {/* Search Input with Live Dropdown */}
-            <Col md={4} className="position-relative">
-              <InputGroup>
-                <InputGroup.Text className="bg-light border-end-0">
-                  <Search size={20} className="text-muted" />
-                </InputGroup.Text>
-                <Form.Control
-                  type="text"
-                  placeholder="ابحث بالاسم، الكود، المقاس، أو بلد المنشأ..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="custom-input border-start-0"
-                />
-              </InputGroup>
-              
-              {searchTerm && searchTerm.trim().length > 0 && (
-                <div 
-                  className="position-absolute w-100 bg-white border rounded-3 shadow-lg z-index-dropdown"
-                  style={{ top: '100%', left: 0, marginTop: '5px', zIndex: 1050, maxHeight: '300px', overflowY: 'auto' }}
-                >
-                  {filteredProducts.slice(0, 5).map((prod) => (
-                    <div 
-                      key={prod.id} 
-                      className="d-flex align-items-center gap-3 p-2 border-bottom cursor-pointer hover-bg-light"
-                      style={{ cursor: 'pointer' }}
-                      onClick={() => {
-                        setSelectedProduct(prod);
-                        setSearchTerm('');
-                        const el = document.getElementById('catalog-grid');
-                        if (el) el.scrollIntoView({ behavior: 'smooth' });
-                      }}
-                    >
-                      <img 
-                        src={(prod.images && prod.images.length > 0) ? prod.images[0] : (prod.image || 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=100&q=80')} 
-                        alt={prod.name} 
-                        className="rounded"
-                        style={{ width: '40px', height: '40px', objectFit: 'cover' }}
-                      />
-                      <div>
-                        <div className="fw-bold text-dark fs-7 lh-sm mb-1">{prod.name}</div>
-                        <div className="text-muted small fs-8">الكود: {prod.code}</div>
-                      </div>
-                    </div>
-                  ))}
-                  {filteredProducts.length === 0 && (
-                    <div className="p-3 text-center text-muted small fw-bold">
-                      لا يوجد نتائج مطابقة للبحث
-                    </div>
-                  )}
-                  {filteredProducts.length > 5 && (
-                    <div className="p-2 text-center text-primary small fw-bold bg-light">
-                      عرض باقي النتائج ({filteredProducts.length - 5}+) في الشبكة بالأسفل 👇
-                    </div>
-                  )}
-                </div>
+          {/* Brand Dropdown (Integrated) */}
+          <div className="d-flex align-items-center mt-3 mt-md-0 px-2 px-md-0">
+            <Award size={20} className="text-warning ms-2" />
+            <select 
+              className="form-select search-brand-select"
+              value={selectedBrand}
+              onChange={(e) => setSelectedBrand(e.target.value)}
+            >
+              <option value="الكل">جميع الماركات العالمية والمحلية</option>
+              {availableBrands.map((b, idx) => (
+                <option key={idx} value={b}>{b}</option>
+              ))}
+            </select>
+          </div>
+
+          <div className="search-divider d-none d-md-block"></div>
+
+          {/* Advanced Filters Toggle Button */}
+          <div className="mt-3 mt-md-0 ms-md-2 d-flex justify-content-between align-items-center gap-2">
+            <button 
+              className={`advanced-filters-btn d-flex align-items-center gap-2 ${showMobileFilters ? 'active' : ''}`}
+              onClick={() => setShowMobileFilters(!showMobileFilters)}
+            >
+              <SlidersHorizontal size={18} />
+              فلاتر متقدمة
+              {/* Badge for active advanced filters */}
+              {[selectedFinish !== 'الكل', selectedGrade !== 'الكل', inStockOnly, onSaleOnly].filter(Boolean).length > 0 && (
+                <span className="badge bg-danger rounded-circle ms-1">
+                  {[selectedFinish !== 'الكل', selectedGrade !== 'الكل', inStockOnly, onSaleOnly].filter(Boolean).length}
+                </span>
               )}
-            </Col>
-
-            {/* Finish Filter (Dynamic) */}
-            <Col sm={6} md={3}>
-              <Form.Select 
-                value={selectedFinish}
-                onChange={(e) => setSelectedFinish(e.target.value)}
-                className="custom-input"
-              >
-                <option value="الكل">جميع اللمعات والتشطيبات</option>
-                {availableFinishes.map((f, idx) => (
-                  <option key={idx} value={f}>{f}</option>
-                ))}
-              </Form.Select>
-            </Col>
-
-            {/* Grade Filter (Dynamic) */}
-            <Col sm={6} md={2}>
-              <Form.Select 
-                value={selectedGrade}
-                onChange={(e) => setSelectedGrade(e.target.value)}
-                className="custom-input"
-              >
-                <option value="الكل">جميع درجات الفرز</option>
-                {availableGrades.map((g, idx) => (
-                  <option key={idx} value={g}>{g}</option>
-                ))}
-              </Form.Select>
-            </Col>
-
-            {/* Sort Dropdown */}
-            <Col sm={6} md={3}>
-              <Form.Select 
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-                className="custom-input"
-              >
-                <option value="newest">الترتيب: الأحدث مبيعا بالمعرض</option>
-                <option value="priceAsc">الترتيب: الأقل سعراً للمتر أولاً</option>
-                <option value="priceDesc">الترتيب: الأعلى سعراً (الفخامة الفائقة)</option>
-              </Form.Select>
-            </Col>
-          </Row>
-
-          {/* Active Filters Summary, In-Stock Toggle, & Reset Button */}
-          <div className="d-flex flex-wrap justify-content-between align-items-center mt-3 pt-3 border-top gap-3">
-            {/* Left side: Live results badge & In-stock Toggle */}
-            <div className="d-flex align-items-center gap-3 flex-wrap">
-              {/* Live Results Count Badge */}
-              <Badge bg="warning" text="dark" className="px-3 py-2 rounded-pill fw-bold fs-7 shadow-sm d-flex align-items-center gap-1">
-                <span>🔍</span>
-                <span>تم العثور على {filteredProducts.length} صنف</span>
-              </Badge>
-
-              {/* In-Stock Only Toggle Switch */}
-              <Form.Check 
-                type="switch"
-                id="instock-toggle"
-                label="الأصناف المتوفرة بالمخزن فقط"
-                checked={inStockOnly}
-                onChange={(e) => setInStockOnly(e.target.checked)}
-                className="fw-bold text-dark cursor-pointer mb-0 me-2"
-              />
-
-              {/* On-Sale Only Toggle Switch */}
-              <Form.Check 
-                type="switch"
-                id="onsale-toggle"
-                label="🔥 عروض وخصومات حصرياً"
-                checked={onSaleOnly}
-                onChange={(e) => setOnSaleOnly(e.target.checked)}
-                className="fw-bold text-danger cursor-pointer mb-0"
-              />
-            </div>
-
-            {/* Right side: Reset Filters Button (Appears dynamically if any filter is set) */}
+            </button>
+            
+            {/* Reset All Button */}
             {(selectedCategory !== 'الكل' || selectedSubcategory !== 'الكل' || selectedBrand !== 'الكل' || selectedFinish !== 'الكل' || selectedGrade !== 'الكل' || searchTerm !== '' || inStockOnly || onSaleOnly) && (
               <Button 
-                variant="outline-danger" 
-                size="sm" 
-                className="d-flex align-items-center gap-1 fw-bold px-3 py-1.5 rounded-pill shadow-sm"
+                variant="light" 
+                className="rounded-circle p-2 text-danger border shadow-sm"
+                title="إعادة تعيين جميع الفلاتر"
                 onClick={() => {
                   setSelectedCategory('الكل');
                   setSelectedSubcategory('الكل');
@@ -503,64 +452,85 @@ const Home = ({ settings, categoryFilter = 'الكل', setCategoryFilter, mode =
                   if (setCategoryFilter) setCategoryFilter('الكل');
                 }}
               >
-                <XCircle size={16} />
-                <span>إعادة تعيين جميع الفلاتر</span>
-                <span className="badge bg-danger text-white rounded-circle ms-1">
-                  {[selectedCategory !== 'الكل', selectedSubcategory !== 'الكل', selectedBrand !== 'الكل', selectedFinish !== 'الكل', selectedGrade !== 'الكل', searchTerm !== '', inStockOnly, onSaleOnly].filter(Boolean).length}
-                </span>
+                <XCircle size={20} />
               </Button>
             )}
           </div>
-
-          {/* Category Chips (Horizontally scrollable on mobile for better space usage) */}
-          <div className="d-flex align-items-center mt-4 pt-3 border-top overflow-hidden">
-            <span className="text-muted fw-bold d-flex align-items-center gap-1 me-3 flex-shrink-0">
-              <Layers size={18} /> الفئات:
-            </span>
-            <div className="category-scroll-container flex-grow-1">
-              {categories.map((cat) => (
-                <button
-                  key={cat.id}
-                  className={`category-chip ${selectedCategory === cat.name ? 'active' : ''}`}
-                  onClick={() => { 
-                    setSelectedCategory(cat.name); 
-                    setSelectedSubcategory('الكل'); 
-                    if (setCategoryFilter) setCategoryFilter(cat.name);
-                  }}
-                >
-                  {cat.name}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Subcategory Chips */}
-          {showSubcategories && (
-            <div className="d-flex align-items-center mt-3 pt-3 border-top overflow-hidden animate-fade-in">
-              <span className="text-muted fw-bold d-flex align-items-center gap-1 me-3 flex-shrink-0" style={{ fontSize: '0.9rem' }}>
-                <Sparkles size={16} className="text-warning" /> الأنواع:
-              </span>
-              <div className="category-scroll-container flex-grow-1">
-                <button
-                  className={`category-chip ${selectedSubcategory === 'الكل' ? 'active' : ''}`}
-                  onClick={() => setSelectedSubcategory('الكل')}
-                >
-                  الكل
-                </button>
-                {activeCategoryObj.subcategories.map((sub, sIdx) => (
-                  <button
-                    key={sIdx}
-                    className={`category-chip ${selectedSubcategory === sub ? 'active' : ''}`}
-                    onClick={() => setSelectedSubcategory(sub)}
-                  >
-                    {sub}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-          </div>
         </div>
+
+        {/* Collapsible Advanced Filters Panel */}
+        {showMobileFilters && (
+          <div className="advanced-filters-panel mt-4 position-relative" style={{ zIndex: 9 }}>
+            <Row className="g-4 align-items-center">
+              {/* Finish Filter */}
+              <Col md={3}>
+                <Form.Label className="fw-bold small text-muted mb-2">اللمعة والتشطيب</Form.Label>
+                <Form.Select 
+                  value={selectedFinish}
+                  onChange={(e) => setSelectedFinish(e.target.value)}
+                  className="custom-input bg-light border-0"
+                >
+                  <option value="الكل">جميع اللمعات والتشطيبات</option>
+                  {availableFinishes.map((f, idx) => (
+                    <option key={idx} value={f}>{f}</option>
+                  ))}
+                </Form.Select>
+              </Col>
+
+              {/* Grade Filter */}
+              <Col md={3}>
+                <Form.Label className="fw-bold small text-muted mb-2">درجة الفرز</Form.Label>
+                <Form.Select 
+                  value={selectedGrade}
+                  onChange={(e) => setSelectedGrade(e.target.value)}
+                  className="custom-input bg-light border-0"
+                >
+                  <option value="الكل">جميع درجات الفرز</option>
+                  {availableGrades.map((g, idx) => (
+                    <option key={idx} value={g}>{g}</option>
+                  ))}
+                </Form.Select>
+              </Col>
+
+              {/* Sort Dropdown */}
+              <Col md={3}>
+                <Form.Label className="fw-bold small text-muted mb-2">ترتيب عرض المنتجات</Form.Label>
+                <Form.Select 
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                  className="custom-input bg-light border-0"
+                >
+                  <option value="newest">الأحدث مبيعا بالمعرض</option>
+                  <option value="priceAsc">الأقل سعراً للمتر أولاً</option>
+                  <option value="priceDesc">الأعلى سعراً (الفخامة الفائقة)</option>
+                </Form.Select>
+              </Col>
+
+              {/* Toggles */}
+              <Col md={3}>
+                <Form.Label className="fw-bold small text-muted mb-2">تصفية سريعة</Form.Label>
+                <div className="d-flex flex-column gap-2">
+                  <Form.Check 
+                    type="switch"
+                    id="instock-toggle"
+                    label="الأصناف المتوفرة بالمخزن"
+                    checked={inStockOnly}
+                    onChange={(e) => setInStockOnly(e.target.checked)}
+                    className="fw-bold text-dark modern-toggle"
+                  />
+                  <Form.Check 
+                    type="switch"
+                    id="onsale-toggle"
+                    label="🔥 عروض وخصومات حصرياً"
+                    checked={onSaleOnly}
+                    onChange={(e) => setOnSaleOnly(e.target.checked)}
+                    className="fw-bold text-danger modern-toggle sale-toggle"
+                  />
+                </div>
+              </Col>
+            </Row>
+          </div>
+        )}
       </Container>
 
       {/* Main Catalog Grid Section */}

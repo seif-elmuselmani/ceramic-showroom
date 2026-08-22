@@ -1,0 +1,208 @@
+/* LuxuryHome.css - Ultra-Premium UX Enhancements */
+
+/* --- Hero Section Glassmorphism --- */
+.glass-stat-card {
+  background: rgba(15, 23, 42, 0.4);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(251, 191, 36, 0.3);
+  border-radius: 24px;
+  padding: 24px 16px;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.glass-stat-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  background: rgba(15, 23, 42, 0.6);
+  border-color: rgba(251, 191, 36, 0.8);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4), 0 0 20px rgba(251, 191, 36, 0.2);
+}
+
+.glass-stat-card .stat-number {
+  font-size: 2.2rem;
+  font-weight: 900;
+  color: #fff;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+  margin-bottom: 8px;
+}
+
+.glass-stat-card .stat-label {
+  font-size: 0.9rem;
+  color: #cbd5e1;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.glow-text-primary {
+  text-shadow: 0 0 20px rgba(251, 191, 36, 0.4);
+  color: #fff;
+}
+
+.glow-text-primary span {
+  background: linear-gradient(to right, #fbbf24, #f59e0b);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: none;
+}
+
+.hero-btn-gradient {
+  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+  border: none;
+  color: #0f172a;
+  box-shadow: 0 8px 20px rgba(245, 158, 11, 0.3);
+  transition: all 0.3s ease;
+}
+
+.hero-btn-gradient:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 25px rgba(245, 158, 11, 0.5);
+  color: #0f172a;
+}
+
+/* --- Floating Search Engine --- */
+.floating-search-wrapper {
+  background: #ffffff;
+  border-radius: 100px;
+  padding: 8px 12px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  margin-bottom: -40px;
+  position: relative;
+  z-index: 10;
+}
+
+@media (max-width: 768px) {
+  .floating-search-wrapper {
+    border-radius: 24px;
+    padding: 16px;
+    margin-bottom: 0;
+  }
+}
+
+.luxury-search-input {
+  border: none !important;
+  box-shadow: none !important;
+  font-size: 1.1rem;
+  padding: 12px 20px;
+  background: transparent !important;
+}
+
+.luxury-search-input::placeholder {
+  color: #94a3b8;
+  font-weight: 500;
+}
+
+.search-brand-select {
+  border: none !important;
+  box-shadow: none !important;
+  background-color: #f8fafc !important;
+  border-radius: 50px !important;
+  padding: 12px 24px !important;
+  font-weight: 700 !important;
+  color: #0f172a !important;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.search-brand-select:hover {
+  background-color: #f1f5f9 !important;
+}
+
+.search-divider {
+  width: 1px;
+  height: 40px;
+  background-color: #e2e8f0;
+  margin: 0 16px;
+}
+
+/* --- Luxury Category Tabs --- */
+.luxury-tabs-container {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+  scrollbar-width: none;
+}
+
+.luxury-tabs-container::-webkit-scrollbar {
+  display: none;
+}
+
+.luxury-tab {
+  background: #ffffff;
+  border: 1.5px solid #e2e8f0;
+  color: #64748b;
+  padding: 10px 24px;
+  border-radius: 50px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+}
+
+.luxury-tab:hover {
+  background: #f8fafc;
+  color: #0f172a;
+  border-color: #cbd5e1;
+  transform: translateY(-2px);
+}
+
+.luxury-tab.active {
+  background: #0f172a;
+  color: #fbbf24;
+  border-color: #0f172a;
+  box-shadow: 0 8px 16px rgba(15, 23, 42, 0.2);
+}
+
+/* --- Advanced Filters Accordion --- */
+.advanced-filters-btn {
+  background: transparent;
+  border: 1.5px solid #e2e8f0;
+  color: #475569;
+  border-radius: 50px;
+  padding: 10px 24px;
+  font-weight: 700;
+  transition: all 0.3s;
+}
+
+.advanced-filters-btn:hover, .advanced-filters-btn.active {
+  background: #f8fafc;
+  border-color: #94a3b8;
+  color: #0f172a;
+}
+
+.advanced-filters-panel {
+  background: #ffffff;
+  border-radius: 24px;
+  border: 1px solid #f1f5f9;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+  padding: 24px;
+  margin-top: 16px;
+  animation: slideDown 0.3s ease-out forwards;
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- Toggles Modern --- */
+.modern-toggle .form-check-input {
+  width: 3em;
+  height: 1.5em;
+  border-color: #cbd5e1;
+  cursor: pointer;
+}
+
+.modern-toggle .form-check-input:checked {
+  background-color: #0f172a;
+  border-color: #0f172a;
+}
+
+.modern-toggle.sale-toggle .form-check-input:checked {
+  background-color: #ef4444;
+  border-color: #ef4444;
+}
