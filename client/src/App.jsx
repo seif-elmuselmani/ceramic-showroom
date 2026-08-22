@@ -14,6 +14,7 @@ import NotFound from './pages/NotFound';
 import OwnerAnalytics from './pages/OwnerAnalytics';
 import ErrorBoundary from './components/ErrorBoundary';
 import ToastNotification from './components/ToastNotification';
+import PromoLanding from './pages/landing/PromoLanding';
 
 import { getSettings, getCategories, verifyAdminSession, adminLogout } from './services/api';
 import { initAnalyticsTracker, trackWhatsAppClick } from './services/analytics';
@@ -32,6 +33,9 @@ function App() {
       }
       if (q.get('manage') === 'true' || hash === '#admin-login') {
         return 'login';
+      }
+      if (q.get('promo') === 'true' || hash === '#promo' || pathname.includes('/promo')) {
+        return 'promo';
       }
     }
     return 'catalog';
@@ -132,13 +136,15 @@ function App() {
       <div className="d-flex flex-column min-vh-100 position-relative">
         <ToastNotification />
         
-        <Navbar 
-          settings={settings}
-          isAdmin={isAdmin}
-          activeTab={activeTab}
-          onNavigate={handleNavigate}
-          onLogout={handleLogout}
-        />
+        {activeTab !== 'promo' && (
+          <Navbar 
+            settings={settings}
+            isAdmin={isAdmin}
+            activeTab={activeTab}
+            onNavigate={handleNavigate}
+            onLogout={handleLogout}
+          />
+        )}
 
         <main className="flex-grow-1">
           {activeTab === 'catalog' && (
@@ -191,27 +197,38 @@ function App() {
               />
             )
           )}
+
+          {activeTab === 'promo' && (
+            <PromoLanding 
+              settings={settings}
+              onNavigate={handleNavigate}
+            />
+          )}
         </main>
 
         {/* Floating Luxury Showroom WhatsApp Concierge Badge (General Showroom Inquiry) */}
-        <a 
-          href={`https://wa.me/${settings?.whatsappNumber || '201001366499'}?text=${encodeURIComponent('السلام عليكم ورحمة الله وبركاته 💐\nمرحباً معرض السيد الجزار للسيراميك والبورسلين 🏛️\n\nأود الاستفسار عن كشف الأسعار والعروض المتاحة حالياً، ومواعيد إمكانية زيارة المعرض لمعاينة العينات. 🙏✨')}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          onClick={() => trackWhatsAppClick('floating_badge')}
-          className="floating-whatsapp-luxury"
-          title="تواصل مباشر واستفسار عام مع المعرض عبر الواتساب"
-        >
-          <div className="whatsapp-badge-icon shadow-lg">
-            <MessageCircle size={26} />
-            <span className="gold-ping-dot"></span>
-          </div>
-          <span className="whatsapp-badge-text fw-bold text-nowrap d-none d-md-inline">
-            💬 استفسار عام مع المعرض
-          </span>
-        </a>
+        {activeTab !== 'promo' && (
+          <a 
+            href={`https://wa.me/${settings?.whatsappNumber || '201001366499'}?text=${encodeURIComponent('السلام عليكم ورحمة الله وبركاته 💐\nمرحباً معرض السيد الجزار للسيراميك والبورسلين 🏛️\n\nأود الاستفسار عن كشف الأسعار والعروض المتاحة حالياً، ومواعيد إمكانية زيارة المعرض لمعاينة العينات. 🙏✨')}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => trackWhatsAppClick('floating_badge')}
+            className="floating-whatsapp-luxury"
+            title="تواصل مباشر واستفسار عام مع المعرض عبر الواتساب"
+          >
+            <div className="whatsapp-badge-icon shadow-lg">
+              <MessageCircle size={26} />
+              <span className="gold-ping-dot"></span>
+            </div>
+            <span className="whatsapp-badge-text fw-bold text-nowrap d-none d-md-inline">
+              💬 استفسار عام مع المعرض
+            </span>
+          </a>
+        )}
 
-        <Footer settings={settings} onNavigate={handleNavigate} categories={categories} />
+        {activeTab !== 'promo' && (
+          <Footer settings={settings} onNavigate={handleNavigate} categories={categories} />
+        )}
       </div>
     </ErrorBoundary>
   );

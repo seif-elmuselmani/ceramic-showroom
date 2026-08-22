@@ -1,0 +1,243 @@
+/* Promo Landing Page Styling - Premium Luxury Design */
+
+.promo-landing-wrapper {
+  background-color: var(--bg-light);
+  color: var(--text-dark);
+  font-family: var(--font-cairo);
+  min-height: 100vh;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Hero Banner Section */
+.promo-hero-section {
+  position: relative;
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(30, 41, 59, 0.95) 100%), 
+              url('https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=1920&q=80');
+  background-size: cover;
+  background-position: center;
+  padding: 120px 0 80px;
+  color: #ffffff;
+  border-bottom: 4px solid var(--primary-gold);
+  text-align: center;
+}
+
+.promo-hero-tag {
+  background: rgba(251, 191, 36, 0.15);
+  color: var(--primary-gold);
+  border: 1px solid var(--border-gold);
+  padding: 8px 20px;
+  border-radius: 100px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  display: inline-block;
+  margin-bottom: 20px;
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 15px rgba(251, 191, 36, 0.1);
+}
+
+.promo-hero-title {
+  font-size: 3rem;
+  font-weight: 900;
+  line-height: 1.3;
+  margin-bottom: 20px;
+}
+
+.promo-hero-title span {
+  background: linear-gradient(to left, #fbbf24, #f59e0b);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.promo-hero-desc {
+  font-size: 1.2rem;
+  opacity: 0.85;
+  max-width: 700px;
+  margin: 0 auto 35px;
+  line-height: 1.8;
+}
+
+/* Call to action buttons */
+.promo-cta-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.btn-promo-primary {
+  background: linear-gradient(135deg, #fbbf24 0%, #d97706 100%);
+  color: #0f172a;
+  border: none;
+  font-weight: 800;
+  padding: 14px 35px;
+  border-radius: 50px;
+  transition: all 0.3s ease;
+  box-shadow: 0 10px 20px rgba(251, 191, 36, 0.2);
+}
+
+.btn-promo-primary:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-gold);
+  color: #0f172a;
+}
+
+.btn-promo-secondary {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  border: 1.5px solid rgba(255, 255, 255, 0.2);
+  font-weight: 700;
+  padding: 14px 35px;
+  border-radius: 50px;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(5px);
+}
+
+.btn-promo-secondary:hover {
+  background: #ffffff;
+  color: #0f172a;
+  transform: translateY(-3px);
+}
+
+/* Active Promo Card (Highlights) */
+.promo-offers-section {
+  padding: 80px 0;
+}
+
+.promo-offer-card {
+  background: var(--bg-card-light);
+  border: 1.5px solid var(--border-gold);
+  border-radius: 24px;
+  padding: 40px;
+  box-shadow: var(--shadow-lux);
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s ease;
+}
+
+.promo-offer-card:hover {
+  transform: translateY(-5px);
+}
+
+.promo-badge-corner {
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: #dc2626;
+  color: #ffffff;
+  padding: 8px 30px;
+  font-weight: 800;
+  transform: rotate(-45deg) translate(-25px, -5px);
+  font-size: 0.85rem;
+  box-shadow: 0 4px 10px rgba(220, 38, 38, 0.25);
+}
+
+/* Categories Circle Section */
+.promo-showcase-section {
+  background-color: var(--bg-card-light);
+  padding: 80px 0;
+  border-top: 1px solid var(--footer-border);
+  border-bottom: 1px solid var(--footer-border);
+}
+
+.promo-showcase-title {
+  text-align: center;
+  font-weight: 900;
+  margin-bottom: 50px;
+  position: relative;
+}
+
+.promo-showcase-title::after {
+  content: '';
+  position: absolute;
+  bottom: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 4px;
+  background-color: var(--primary-gold);
+  border-radius: 10px;
+}
+
+.promo-category-item {
+  text-align: center;
+  margin-bottom: 30px;
+  transition: all 0.3s ease;
+}
+
+.promo-category-item:hover {
+  transform: translateY(-8px);
+}
+
+.promo-category-img-wrapper {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin: 0 auto 15px;
+  border: 3px solid var(--primary-gold);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+}
+
+.promo-category-img-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.promo-category-item:hover .promo-category-img-wrapper img {
+  transform: scale(1.15);
+}
+
+.promo-category-title {
+  font-weight: 800;
+  color: var(--text-dark);
+  font-size: 1.1rem;
+}
+
+/* Inquiry form on landing page */
+.promo-inquiry-section {
+  padding: 80px 0;
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 41, 59, 0.98) 100%),
+              url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1920&q=80');
+  background-size: cover;
+  background-position: center;
+  color: #ffffff;
+  border-top: 4px solid var(--primary-gold);
+}
+
+.promo-inquiry-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1.5px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 24px;
+  padding: 40px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+}
+
+.promo-input-custom {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.15) !important;
+  color: #ffffff !important;
+  border-radius: 12px !important;
+  padding: 12px 18px !important;
+}
+
+.promo-input-custom:focus {
+  border-color: var(--primary-gold) !important;
+  box-shadow: 0 0 0 3px rgba(251, 191, 36, 0.25) !important;
+}
+
+.promo-input-custom::placeholder {
+  color: rgba(255,255,255,0.4) !important;
+}
+
+@media (max-width: 768px) {
+  .promo-hero-title {
+    font-size: 2.2rem;
+  }
+  .promo-hero-desc {
+    font-size: 1.05rem;
+  }
+}
