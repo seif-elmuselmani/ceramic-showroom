@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Container, Row, Col, Form, Button, Alert } from 'react-bootstrap';
-import { MessageSquare, Phone, MapPin, Sparkles, Send, Anchor, Compass } from 'lucide-react';
+import { MessageSquare, Compass, Send, Sparkles, Anchor, Info, AlertTriangle } from 'lucide-react';
 import './HamourLanding.css';
 
 const HamourLanding = ({ settings, onNavigate }) => {
@@ -17,7 +17,7 @@ const HamourLanding = ({ settings, onNavigate }) => {
     e.preventDefault();
     if (!formData.name.trim() || !formData.phone.trim()) return;
 
-    // Creative Bikini Bottom WhatsApp message format
+    // Direct WhatsApp message formatting for high conversion
     const message = `🌊🐚 أهلاً بك في قاع الهامور! 🌊\n\nأنا مواطن من قاع الهامور وأريد تشطيب منزلي بسيراميك الجزار المقاوم لملوحة مياه المحيط.\n\n*الاسم:* ${formData.name}\n*الهاتف:* ${formData.phone}\n*محل الإقامة:* ${formData.location}\n*القسم المطلوب للتشطيب:* ${formData.interestedIn}\n*ملاحظات إضافية:* ${formData.notes || 'لا يوجد'}`;
     const encodedText = encodeURIComponent(message);
     const whatsappNum = settings?.whatsappNumber || '201001366499';
@@ -53,12 +53,21 @@ const HamourLanding = ({ settings, onNavigate }) => {
     }
   ];
 
-  // Generate 12 interactive bubbles with random positions and animation delays
-  const bubbles = Array.from({ length: 12 }, (_, i) => {
-    const size = Math.floor(Math.random() * 45) + 15;
+  // SVG representation of seaweed to create premium sways in corners
+  const SeaweedSVG = () => (
+    <svg width="120" height="350" viewBox="0 0 120 350" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path className="seaweed-stem" d="M30 350C30 300 10 250 20 200C30 150 70 120 50 70C30 20 60 0 60 0C60 0 80 30 70 80C60 130 90 160 80 210C70 260 90 300 90 350H30Z" fill="#14532d" opacity="0.8"/>
+      <path className="seaweed-stem" d="M10 350C20 310 30 280 25 240C20 200 45 170 35 130C25 90 50 50 45 10C45 10 55 35 48 80C41 125 60 150 52 190C44 230 55 270 50 350H10Z" fill="#166534" opacity="0.6"/>
+      <path className="seaweed-stem" d="M60 350C70 320 85 290 80 260C75 230 95 200 88 170C81 140 100 110 95 70C95 70 105 90 98 130C91 170 108 190 101 220C94 250 105 285 100 350H60Z" fill="#15803d" opacity="0.5"/>
+    </svg>
+  );
+
+  // Generate 15 interactive bubble items
+  const bubbles = Array.from({ length: 15 }, (_, i) => {
+    const size = Math.floor(Math.random() * 35) + 12;
     const left = Math.floor(Math.random() * 95);
-    const delay = Math.random() * 8;
-    const duration = Math.floor(Math.random() * 6) + 8;
+    const delay = Math.random() * 10;
+    const duration = Math.floor(Math.random() * 5) + 7;
     return (
       <div 
         key={i} 
@@ -76,44 +85,59 @@ const HamourLanding = ({ settings, onNavigate }) => {
 
   return (
     <div className="hamour-wrapper">
-      {/* Floating Bubbles */}
+      {/* Light Rays & Bubbles */}
+      <div className="underwater-rays"></div>
       <div className="bubbles-container">{bubbles}</div>
 
-      {/* Hero Banner */}
+      {/* Floating Jellyfish Glow */}
+      <div className="jellyfish-glow" style={{ top: '20%', left: '10%' }}></div>
+      <div className="jellyfish-glow" style={{ top: '55%', right: '12%', animationDelay: '3s' }}></div>
+
+      {/* Swaying Seaweeds in corners */}
+      <div className="seaweed-container seaweed-left"><SeaweedSVG /></div>
+      <div className="seaweed-container seaweed-right"><SeaweedSVG /></div>
+
+      {/* Hero Header */}
       <section className="hamour-hero">
         <Container>
-          <div className="hamour-badge-promo">
-            <Anchor size={18} />
-            <span>حصرياً لأهالي قاع الهامور!</span>
+          <div className="nautical-plaque animate-pulse">
+            <div className="hamour-badge-promo mb-3">
+              <Anchor size={18} />
+              <span>فرع قاع الهامور الترويجي</span>
+            </div>
+            <h1 className="hamour-title mb-1">السيد الجزار للسيراميك والبورسلين</h1>
+            <p className="hamour-subtitle mb-0">أول مقايسة سيراميك معتمدة لمقاومة المياه والملوحة وضغط المحيط 🌊</p>
           </div>
-          <h1 className="hamour-title">معرض السيد الجزار للسيراميك والبورسلين</h1>
-          <p className="hamour-subtitle">أقوى تشكيلات التشطيب المقاومة لملوحة البحر وضغط المحيط 🌊🍍</p>
-          <p className="lead max-w-2xl mx-auto mb-4 opacity-90 fs-5 text-warning fw-bold">
-            "شطب بيتك البطيخي أو الصخري بأقل الأسعار في السوق!"
+          
+          <p className="lead max-w-2xl mx-auto mb-4 opacity-90 fs-5 text-warning fw-black">
+             "شطب بيتك البطيخي 🍍 أو الصخري 🪨 بأقوى الخصومات الهامورية!"
           </p>
 
           <div className="d-flex justify-content-center gap-3 flex-wrap mt-4">
             <button className="btn btn-hamour-primary d-flex align-items-center gap-2" onClick={handleSubmit}>
               <MessageSquare size={20} />
-              <span>تواصل مع ساندي لطلب خصم فوري 🐿️</span>
+              <span>اطلب الخصم من ساندي أمور عبر واتساب 🐿️</span>
             </button>
             <button className="btn btn-hamour-secondary d-flex align-items-center gap-2" onClick={() => onNavigate('catalog')}>
               <Compass size={18} />
-              <span>الذهاب للمعرض البشري الرئيسي</span>
+              <span>تصفح الكتالوج البشري الكامل 🏛️</span>
             </button>
           </div>
         </Container>
       </section>
 
-      {/* Funny Product Cards */}
+      {/* Premium Products Display */}
       <section className="py-5">
         <Container>
-          <h2 className="text-center fw-black mb-5 text-warning">أقوى الموديلات المعتمدة من أهالي القاع</h2>
+          <div className="nautical-plaque d-block mx-auto text-center mb-5" style={{ maxWidth: '400px' }}>
+            <h3 className="fw-black mb-0 text-warning">أقوى تشكيلات القاع 🐚</h3>
+          </div>
+          
           <Row className="g-4">
             {hamourProducts.map((prod, idx) => (
               <Col lg={3} md={6} key={idx}>
-                <div className="hamour-card">
-                  <div className="porthole-frame">
+                <div className="hamour-glass-card">
+                  <div className="porthole-window">
                     <img src={prod.img} alt={prod.title} />
                   </div>
                   <h4 className="hamour-card-title">{prod.title}</h4>
@@ -133,14 +157,14 @@ const HamourLanding = ({ settings, onNavigate }) => {
             <Col lg={8} md={10}>
               <div className="hamour-form-card">
                 <div className="text-center mb-4">
-                  <Sparkles size={40} className="text-warning mb-2" />
-                  <h3 className="fw-black text-warning">طلب مقايسة قاع الهامور المجانية 🐚</h3>
-                  <p className="opacity-75">املأ طلبك وسيقوم سريعاً أحد مسؤولي المبيعات بالتواصل معك فوراً</p>
+                  <Anchor size={40} className="text-warning mb-2 animate-bounce" />
+                  <h3 className="fw-black text-warning">حساب المقايسة وتحديد الشحن 🚀</h3>
+                  <p className="opacity-75">املأ بياناتك وسيتم شحن عينات السيراميك المقاوم للمياه فوراً</p>
                 </div>
 
                 {success && (
-                  <Alert variant="success" className="rounded-3 text-dark fw-bold">
-                    تم تجهيز بياناتك! جاري فتح الواتساب للتواصل مع وكلاء قاع الهامور 📲
+                  <Alert variant="success" className="rounded-4 text-dark fw-bold">
+                    تمت المقايسة بنجاح! جاري تحويلك لواتساب ساندي لإنهاء الحجز 📲
                   </Alert>
                 )}
 
@@ -152,7 +176,7 @@ const HamourLanding = ({ settings, onNavigate }) => {
                         <Form.Control
                           type="text"
                           required
-                          placeholder="اكتب اسمك الكريم..."
+                          placeholder="اكتب اسمك الكريم هنا..."
                           className="hamour-input"
                           value={formData.name}
                           onChange={(e) => setFormData({...formData, name: e.target.value})}
@@ -177,7 +201,7 @@ const HamourLanding = ({ settings, onNavigate }) => {
                   <Row className="g-3">
                     <Col md={6}>
                       <Form.Group className="mb-3">
-                        <Form.Label className="fw-bold">موقع عقارك للتسليم</Form.Label>
+                        <Form.Label className="fw-bold">مكان الاستلام</Form.Label>
                         <Form.Select
                           className="hamour-input text-white"
                           value={formData.location}
@@ -193,7 +217,7 @@ const HamourLanding = ({ settings, onNavigate }) => {
                     </Col>
                     <Col md={6}>
                       <Form.Group className="mb-3">
-                        <Form.Label className="fw-bold">المنتج المراد الاستفسار عنه</Form.Label>
+                        <Form.Label className="fw-bold">الموديل المستهدف للتشطيب</Form.Label>
                         <Form.Select
                           className="hamour-input text-white"
                           value={formData.interestedIn}
@@ -210,11 +234,11 @@ const HamourLanding = ({ settings, onNavigate }) => {
                   </Row>
 
                   <Form.Group className="mb-4">
-                    <Form.Label className="fw-bold">تفاصيل أو ملاحظات مقاس الشقة</Form.Label>
+                    <Form.Label className="fw-bold">ملاحظات المقايسة والمساحة</Form.Label>
                     <Form.Control
                       as="textarea"
                       rows={3}
-                      placeholder="مثال: أريد شحن 150 متر لحي دير السلطعون، مع خلاطات مياه غير قابلة للصدأ..."
+                      placeholder="مثال: مساحة شقتي 150 متر أريد شحنها لحي دير السلطعون..."
                       className="hamour-input"
                       value={formData.notes}
                       onChange={(e) => setFormData({...formData, notes: e.target.value})}
@@ -236,7 +260,7 @@ const HamourLanding = ({ settings, onNavigate }) => {
       </section>
 
       {/* Footer Info */}
-      <footer className="py-4 text-center border-top border-warning border-opacity-25" style={{ background: 'rgba(15,23,42,0.4)' }}>
+      <footer className="py-4 text-center border-top border-warning border-opacity-25" style={{ background: 'rgba(15,23,42,0.6)' }}>
         <Container>
           <p className="mb-0 small opacity-75">
             جميع الحقوق محفوظة &copy; {new Date().getFullYear()} - فرع قاع الهامور الترويجي التابع لمعرض السيد الجزار للسيراميك والبورسلين 🏛️
