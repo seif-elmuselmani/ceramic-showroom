@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Container, Row, Col, Form, Button, Alert } from 'react-bootstrap';
-import { MessageSquare, Compass, Send, Sparkles, Anchor, MapPin, Award } from 'lucide-react';
+import { Container, Row, Col, Form, Button, Alert, Modal, Image } from 'react-bootstrap';
+import { MessageSquare, Compass, Send, Sparkles, Anchor, MapPin, Award, X } from 'lucide-react';
 import './HamourLanding.css';
 
 const HamourLanding = ({ settings, onNavigate }) => {
@@ -8,10 +8,11 @@ const HamourLanding = ({ settings, onNavigate }) => {
     name: '',
     phone: '',
     notes: '',
-    interestedIn: 'سيراميك الأنّاناسة الإسفنجي 🍍',
+    interestedIn: 'بورسلين اردني 60*120',
     location: 'حي دير السلطعون'
   });
   const [success, setSuccess] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -145,7 +146,8 @@ const HamourLanding = ({ settings, onNavigate }) => {
                   src="/spongebob_pineapple_marble.jpg" 
                   alt="SpongeBob Pineapple Marble Pathway" 
                   className="img-fluid rounded-4 shadow-lg border border-warning"
-                  style={{ borderWidth: '3px' }}
+                  style={{ borderWidth: '3px', cursor: 'pointer' }}
+                  onClick={() => setSelectedImage('/spongebob_pineapple_marble.jpg')}
                 />
               </div>
             </Col>
@@ -175,7 +177,8 @@ const HamourLanding = ({ settings, onNavigate }) => {
                   src="/krusty_krab_luxury_tiles.jpg" 
                   alt="Krusty Krab Luxury Gold Tiles" 
                   className="img-fluid rounded-4 shadow-lg border border-warning"
-                  style={{ borderWidth: '3px' }}
+                  style={{ borderWidth: '3px', cursor: 'pointer' }}
+                  onClick={() => setSelectedImage('/krusty_krab_luxury_tiles.jpg')}
                 />
               </div>
             </Col>
@@ -205,7 +208,8 @@ const HamourLanding = ({ settings, onNavigate }) => {
                   src="/squidward_house_grey_tiles.jpg" 
                   alt="Squidward Easter Island Marble" 
                   className="img-fluid rounded-4 shadow-lg border border-warning"
-                  style={{ borderWidth: '3px' }}
+                  style={{ borderWidth: '3px', cursor: 'pointer' }}
+                  onClick={() => setSelectedImage('/squidward_house_grey_tiles.jpg')}
                 />
               </div>
             </Col>
@@ -241,7 +245,12 @@ const HamourLanding = ({ settings, onNavigate }) => {
               <Col lg={3} md={6} key={idx}>
                 <div className="hamour-glass-card">
                   <div className="porthole-window">
-                    <img src={prod.img} alt={prod.title} />
+                    <img 
+                      src={prod.img} 
+                      alt={prod.title} 
+                      onClick={() => setSelectedImage(prod.img)}
+                      style={{ cursor: 'pointer' }}
+                    />
                   </div>
                   <h4 className="hamour-card-title">{prod.title}</h4>
                   <p className="hamour-card-desc">{prod.desc}</p>
@@ -371,6 +380,34 @@ const HamourLanding = ({ settings, onNavigate }) => {
           </p>
         </Container>
       </footer>
+
+      {/* Image Lightbox Modal */}
+      <Modal 
+        show={!!selectedImage} 
+        onHide={() => setSelectedImage(null)} 
+        centered 
+        size="lg"
+        contentClassName="bg-transparent border-0"
+      >
+        <Modal.Body className="p-0 position-relative text-center">
+          <Button 
+            variant="dark" 
+            className="position-absolute top-0 end-0 m-2 rounded-circle shadow-lg"
+            onClick={() => setSelectedImage(null)}
+            style={{ zIndex: 1050 }}
+          >
+            <X size={24} />
+          </Button>
+          {selectedImage && (
+            <Image 
+              src={selectedImage} 
+              alt="Enlarged product" 
+              className="img-fluid rounded-4 shadow-lg border border-3 border-warning" 
+              style={{ maxHeight: '90vh', objectFit: 'contain', backgroundColor: 'rgba(15,23,42,0.8)' }}
+            />
+          )}
+        </Modal.Body>
+      </Modal>
     </div>
   );
 };
