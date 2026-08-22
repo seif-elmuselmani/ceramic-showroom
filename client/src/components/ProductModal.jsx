@@ -107,7 +107,7 @@ const ProductModal = ({ product, show, onHide, settings, onOpenCalculator, onSel
   };
 
   return (
-    <Modal show={show} onHide={onHide} size="xl" centered className="product-details-modal">
+    <Modal show={show} onHide={onHide} size="xl" centered className="product-details-modal" dir="rtl">
       <Modal.Header closeButton className="border-0 pb-0 pt-3 pe-4">
         {/* Only Close Button Here */}
       </Modal.Header>
