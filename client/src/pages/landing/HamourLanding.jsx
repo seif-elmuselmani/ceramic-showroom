@@ -106,7 +106,7 @@ const HamourLanding = ({ settings, onNavigate }) => {
       {/* Hero Header Plaque */}
       <section className="hamour-hero">
         <Container>
-          <div className="nautical-plaque animate-pulse mb-4">
+          <div className="nautical-plaque mb-4">
             <div className="hamour-badge-promo mb-3">
               <Anchor size={18} className="animate-spin" />
               <span>خبر عاجل في قاع الهامور 📢</span>
@@ -306,10 +306,9 @@ const HamourLanding = ({ settings, onNavigate }) => {
                       <Form.Group className="mb-3">
                         <Form.Label className="fw-bold">مكان الاستلام</Form.Label>
                         <Form.Select
-                          className="hamour-input text-white"
+                          className="hamour-input"
                           value={formData.location}
                           onChange={(e) => setFormData({...formData, location: e.target.value})}
-                          style={{ background: 'rgba(7, 89, 133, 0.4)' }}
                         >
                           <option value="حي دير السلطعون">حي دير السلطعون 🦀</option>
                           <option value="بجوار منزل الأنّاناسة">بجوار منزل الأنّاناسة 🍍</option>
@@ -322,10 +321,9 @@ const HamourLanding = ({ settings, onNavigate }) => {
                       <Form.Group className="mb-3">
                         <Form.Label className="fw-bold">الموديل المستهدف للتشطيب</Form.Label>
                         <Form.Select
-                          className="hamour-input text-white"
+                          className="hamour-input"
                           value={formData.interestedIn}
                           onChange={(e) => setFormData({...formData, interestedIn: e.target.value})}
-                          style={{ background: 'rgba(7, 89, 133, 0.4)' }}
                         >
                           <option value="سيراميك الأنّاناسة الإسفنجي 🍍">سيراميك الأنّاناسة الإسفنجي 🍍</option>
                           <option value="بلاط دير السلطعون الذهبي 💰">بلاط دير السلطعون الذهبي 💰</option>
