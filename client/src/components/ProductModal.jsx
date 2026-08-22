@@ -2,6 +2,7 @@ import React from 'react';
 import { Modal, Button, Badge, Row, Col, Carousel } from 'react-bootstrap';
 import { MessageCircle, CheckCircle2, ShieldAlert, Share2, Calculator, Sparkles } from 'lucide-react';
 import { getProductDiscount } from '../utils/discount';
+import { getColorHexFromName } from '../utils/colorMapper';
 
 const ProductModal = ({ product, show, onHide, settings, onOpenCalculator, onSelectBrand }) => {
   if (!product) return null;
@@ -249,17 +250,7 @@ const ProductModal = ({ product, show, onHide, settings, onOpenCalculator, onSel
                         {availableColors.map((colorName) => {
                           const isSelected = selectedColor === colorName;
                           
-                          const colorHex = 
-                            colorName.includes('أبيض') ? '#ffffff' :
-                            colorName.includes('برجامون') || colorName.includes('بيج') || colorName.includes('عاجي') ? '#f5e6d3' :
-                            colorName.includes('أسود') ? '#1e293b' :
-                            colorName.includes('ذهب') ? '#d4af37' :
-                            colorName.includes('فض') || colorName.includes('كروم') ? '#cbd5e1' :
-                            colorName.includes('رمادي') ? '#64748b' :
-                            colorName.includes('خشب') || colorName.includes('بني') ? '#8b5a2b' : 
-                            colorName.includes('أزرق') || colorName.includes('كحلي') ? '#1d4ed8' :
-                            colorName.includes('أخضر') ? '#15803d' :
-                            colorName.includes('أحمر') ? '#b91c1c' : '#334155';
+                          const colorHex = getColorHexFromName(colorName);
 
                           return (
                             <div

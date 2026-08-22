@@ -2,6 +2,7 @@ import React from 'react';
 import { Button } from 'react-bootstrap';
 import { MessageCircle, Eye } from 'lucide-react';
 import { getProductDiscount } from '../utils/discount';
+import { getColorHexFromName } from '../utils/colorMapper';
 
 const ProductCard = ({ product, onSelectProduct, onOpenCalculator, settings, onSelectBrand }) => {
   if (!product) return null;
@@ -226,17 +227,7 @@ const ProductCard = ({ product, onSelectProduct, onOpenCalculator, settings, onS
                     {availableColors.map((colorName) => {
                       const isSelected = selectedColor === colorName;
                       const variantForColor = product.variants.find(v => (v.color || '').trim() === colorName);
-                      const colorHex = 
-                        colorName.includes('أبيض') ? '#ffffff' :
-                        colorName.includes('برجامون') || colorName.includes('بيج') || colorName.includes('عاجي') ? '#f5e6d3' :
-                        colorName.includes('أسود') ? '#1e293b' :
-                        colorName.includes('ذهب') ? '#d4af37' :
-                        colorName.includes('فض') || colorName.includes('كروم') ? '#cbd5e1' :
-                        colorName.includes('رمادي') ? '#64748b' :
-                        colorName.includes('خشب') || colorName.includes('بني') ? '#8b5a2b' : 
-                        colorName.includes('أزرق') || colorName.includes('كحلي') ? '#1d4ed8' :
-                        colorName.includes('أخضر') ? '#15803d' :
-                        colorName.includes('أحمر') ? '#b91c1c' : '#334155';
+                      const colorHex = getColorHexFromName(colorName);
 
                       return (
                         <button
