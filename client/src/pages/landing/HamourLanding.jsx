@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Container, Row, Col, Form, Button, Alert } from 'react-bootstrap';
-import { MessageSquare, Compass, Send, Sparkles, Anchor, Info, AlertTriangle } from 'lucide-react';
+import { Container, Row, Col, Form, Button, Alert, Card } from 'react-bootstrap';
+import { MessageSquare, Compass, Send, Sparkles, Anchor, MapPin, Award } from 'lucide-react';
 import './HamourLanding.css';
 
 const HamourLanding = ({ settings, onNavigate }) => {
@@ -17,7 +17,6 @@ const HamourLanding = ({ settings, onNavigate }) => {
     e.preventDefault();
     if (!formData.name.trim() || !formData.phone.trim()) return;
 
-    // Direct WhatsApp message formatting for high conversion
     const message = `🌊🐚 أهلاً بك في قاع الهامور! 🌊\n\nأنا مواطن من قاع الهامور وأريد تشطيب منزلي بسيراميك الجزار المقاوم لملوحة مياه المحيط.\n\n*الاسم:* ${formData.name}\n*الهاتف:* ${formData.phone}\n*محل الإقامة:* ${formData.location}\n*القسم المطلوب للتشطيب:* ${formData.interestedIn}\n*ملاحظات إضافية:* ${formData.notes || 'لا يوجد'}`;
     const encodedText = encodeURIComponent(message);
     const whatsappNum = settings?.whatsappNumber || '201001366499';
@@ -53,7 +52,6 @@ const HamourLanding = ({ settings, onNavigate }) => {
     }
   ];
 
-  // SVG representation of seaweed to create premium sways in corners
   const SeaweedSVG = () => (
     <svg width="120" height="350" viewBox="0 0 120 350" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path className="seaweed-stem" d="M30 350C30 300 10 250 20 200C30 150 70 120 50 70C30 20 60 0 60 0C60 0 80 30 70 80C60 130 90 160 80 210C70 260 90 300 90 350H30Z" fill="#14532d" opacity="0.8"/>
@@ -62,7 +60,6 @@ const HamourLanding = ({ settings, onNavigate }) => {
     </svg>
   );
 
-  // Generate 15 interactive bubble items
   const bubbles = Array.from({ length: 15 }, (_, i) => {
     const size = Math.floor(Math.random() * 35) + 12;
     const left = Math.floor(Math.random() * 95);
@@ -84,7 +81,7 @@ const HamourLanding = ({ settings, onNavigate }) => {
   });
 
   return (
-    <div className="hamour-wrapper">
+    <div className="hamour-wrapper pb-5">
       {/* Light Rays & Bubbles */}
       <div className="underwater-rays"></div>
       <div className="bubbles-container">{bubbles}</div>
@@ -97,40 +94,129 @@ const HamourLanding = ({ settings, onNavigate }) => {
       <div className="seaweed-container seaweed-left"><SeaweedSVG /></div>
       <div className="seaweed-container seaweed-right"><SeaweedSVG /></div>
 
-      {/* Hero Header */}
+      {/* Hero Header Plaque */}
       <section className="hamour-hero">
         <Container>
-          <div className="nautical-plaque animate-pulse">
+          <div className="nautical-plaque animate-pulse mb-4">
             <div className="hamour-badge-promo mb-3">
-              <Anchor size={18} />
-              <span>فرع قاع الهامور الترويجي</span>
+              <Anchor size={18} className="animate-spin" />
+              <span>خبر عاجل في قاع الهامور 📢</span>
             </div>
-            <h1 className="hamour-title mb-1">السيد الجزار للسيراميك والبورسلين</h1>
-            <p className="hamour-subtitle mb-0">أول مقايسة سيراميك معتمدة لمقاومة المياه والملوحة وضغط المحيط 🌊</p>
+            <h1 className="hamour-title mb-1">تم افتتاح فرع السيراميك الأول تحت الماء!</h1>
+            <p className="hamour-subtitle mb-0">بالتعاون مع معرض السيد الجزار لتوفير بورسلين مقاوم للضغط والملوحة 🏛️🌊</p>
           </div>
           
           <p className="lead max-w-2xl mx-auto mb-4 opacity-90 fs-5 text-warning fw-black">
-             "شطب بيتك البطيخي 🍍 أو الصخري 🪨 بأقوى الخصومات الهامورية!"
+             "الفرع الجديد يقع رسمياً بجوار منزل الأنّاناسة وبين بيت بسيط وشفيق!"
           </p>
 
           <div className="d-flex justify-content-center gap-3 flex-wrap mt-4">
             <button className="btn btn-hamour-primary d-flex align-items-center gap-2" onClick={handleSubmit}>
               <MessageSquare size={20} />
-              <span>اطلب الخصم من ساندي أمور عبر واتساب 🐿️</span>
+              <span>احجز معاينتك مع ساندي أمور عبر واتساب 🐿️</span>
             </button>
             <button className="btn btn-hamour-secondary d-flex align-items-center gap-2" onClick={() => onNavigate('catalog')}>
               <Compass size={18} />
-              <span>تصفح الكتالوج البشري الكامل 🏛️</span>
+              <span>الذهاب للمعرض البشري الرئيسي 🏛️</span>
             </button>
           </div>
         </Container>
       </section>
 
-      {/* Premium Products Display */}
-      <section className="py-5">
+      {/* Immersive Story Visual Showcase */}
+      <section className="py-5" style={{ position: 'relative', zIndex: 3 }}>
+        <Container>
+          {/* Item 1: SpongeBob's Pineapple House with Marble Pathway */}
+          <Row className="align-items-center mb-5 g-5">
+            <Col lg={6}>
+              <div className="hamour-glass-card p-2 border-0">
+                <img 
+                  src="/spongebob_pineapple_marble.jpg" 
+                  alt="SpongeBob Pineapple Marble Pathway" 
+                  className="img-fluid rounded-4 shadow-lg border border-warning"
+                  style={{ borderWidth: '3px' }}
+                />
+              </div>
+            </Col>
+            <Col lg={6}>
+              <h2 className="fw-black text-warning mb-3">
+                <Sparkles className="d-inline-block me-2" />
+                مدخل بيت سبونج بوب الجديد!
+              </h2>
+              <p className="fs-5 leading-relaxed text-light">
+                سبونج بوب قرر يغير واجهة بيته البطيخي! شطبنا الممشى الرئيسي بالكامل باستخدام **أرقى أنواع البورسلين الأبيض المعرق بالذهب** ليليق باستقبال الأصدقاء. 
+              </p>
+              <ul className="list-unstyled mt-3 fs-6 text-warning">
+                <li>✔️ مقاوم للرطوبة وتراكم الطحالب البحرية.</li>
+                <li>✔️ يمنح لمعاناً فريداً تحت أشعة الشمس الذهبية.</li>
+                <li>✔️ مضاد للانزلاق ومناسب لخطوات سريع البطيئة.</li>
+              </ul>
+            </Col>
+          </Row>
+
+          {/* Item 2: Krusty Krab with Luxury Ceramic Floor */}
+          <Row className="align-items-center mb-5 g-5 flex-lg-row-reverse">
+            <Col lg={6}>
+              <div className="hamour-glass-card p-2 border-0">
+                <img 
+                  src="/krusty_krab_luxury_tiles.jpg" 
+                  alt="Krusty Krab Luxury Gold Tiles" 
+                  className="img-fluid rounded-4 shadow-lg border border-warning"
+                  style={{ borderWidth: '3px' }}
+                />
+              </div>
+            </Col>
+            <Col lg={6}>
+              <h2 className="fw-black text-warning mb-3">
+                <Award className="d-inline-block me-2" />
+                مطعم سلطع برجر بالبلاط الملكي!
+              </h2>
+              <p className="fs-5 leading-relaxed text-light">
+                مستر سلطع وافق أخيراً على صرف بعض الأموال لتجديد مطعمه! اخترنا له **سيراميك ملكي بنقوش زرقاء ملكية وإطارات ذهبية فاخرة** لتجذب زبائن قاع الهامور وتزيد من الأرباح.
+              </p>
+              <ul className="list-unstyled mt-3 fs-6 text-warning">
+                <li>✔️ يتحمل الاستخدام الشاق والضغط اليومي للزبائن.</li>
+                <li>✔️ يعطي طابعاً ملوكياً يبرز حب مستر سلطع للذهب.</li>
+                <li>✔️ سهل التنظيف ومقاوم للصدأ وتراكم المياه.</li>
+              </ul>
+            </Col>
+          </Row>
+
+          {/* Item 3: Squidward's Easter Island Head with Grey Marble */}
+          <Row className="align-items-center g-5">
+            <Col lg={6}>
+              <div className="hamour-glass-card p-2 border-0">
+                <img 
+                  src="/squidward_house_grey_tiles.jpg" 
+                  alt="Squidward Easter Island Marble" 
+                  className="img-fluid rounded-4 shadow-lg border border-warning"
+                  style={{ borderWidth: '3px' }}
+                />
+              </div>
+            </Col>
+            <Col lg={6}>
+              <h2 className="fw-black text-warning mb-3">
+                <MapPin className="d-inline-block me-2" />
+                صومعة شفيق الكلاسيكية الفخمة!
+              </h2>
+              <p className="fs-5 leading-relaxed text-light">
+                شفيق حبار طلب واجهة كلاسيكية فاخرة تناسب ذوقه الموسيقي الرفيع. قمنا بكساء واجهة منزله الصخري بـ **الرخام الرمادي الطبيعي الفاخر** ليعزل الصوت ويوفر الهدوء أثناء عزف الكلارينيت.
+              </p>
+              <ul className="list-unstyled mt-3 fs-6 text-warning">
+                <li>✔️ عازل طبيعي ومقاوم لعوامل التعرية والضغط.</li>
+                <li>✔️ تصميم كلاسيكي راقٍ وخالٍ من أي بهرجة مزعجة.</li>
+                <li>✔️ يعبر عن شخصية شفيق الأنيقة والهادئة.</li>
+              </ul>
+            </Col>
+          </Row>
+        </Container>
+      </section>
+
+      {/* Bikini Bottom Products Grid */}
+      <section className="py-5" style={{ position: 'relative', zIndex: 3 }}>
         <Container>
           <div className="nautical-plaque d-block mx-auto text-center mb-5" style={{ maxWidth: '400px' }}>
-            <h3 className="fw-black mb-0 text-warning">أقوى تشكيلات القاع 🐚</h3>
+            <h3 className="fw-black mb-0 text-warning">أصناف فرع قاع الهامور المتاحة 🐚</h3>
           </div>
           
           <Row className="g-4">
@@ -158,8 +244,8 @@ const HamourLanding = ({ settings, onNavigate }) => {
               <div className="hamour-form-card">
                 <div className="text-center mb-4">
                   <Anchor size={40} className="text-warning mb-2 animate-bounce" />
-                  <h3 className="fw-black text-warning">حساب المقايسة وتحديد الشحن 🚀</h3>
-                  <p className="opacity-75">املأ بياناتك وسيتم شحن عينات السيراميك المقاوم للمياه فوراً</p>
+                  <h3 className="fw-black text-warning">طلب معاينة ومقايسة من ساندي 🐿️</h3>
+                  <p className="opacity-75">املأ بياناتك وسيتم توجيه مندوبنا في قاع الهامور لتحديد الشحن المناسب</p>
                 </div>
 
                 {success && (
