@@ -124,9 +124,9 @@ const HamourLanding = ({ settings, onNavigate }) => {
               <MessageSquare size={20} />
               <span>احجز معاينتك مع ساندي أمور عبر واتساب 🐿️</span>
             </button>
-            <button className="btn btn-hamour-secondary d-flex align-items-center gap-2" onClick={() => onNavigate('catalog')}>
-              <Compass size={18} />
-              <span>الذهاب للمعرض البشري الرئيسي 🏛️</span>
+            <button className="btn btn-hamour-secondary d-flex align-items-center gap-2" onClick={() => window.open(settings?.mapUrl1 || 'https://www.google.com/maps/search/?api=1&query=%D8%A8%D8%B1%D8%AC+%D8%A7%D9%84%D8%B9%D8%B7%D8%A7%D8%B1+%D9%85%D8%AF%D8%AE%D9%84+%D8%A8%D9%86%D9%87%D8%A7+%D8%A7%D9%84%D9%82%D8%A8%D9%84%D9%8A', '_blank')}>
+              <MapPin size={18} />
+              <span>الذهاب لوكيشن المعرض البشري 📍</span>
             </button>
           </div>
         </Container>
