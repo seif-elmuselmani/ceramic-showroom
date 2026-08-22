@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Container, Row, Col, Form, Button, Alert, Card } from 'react-bootstrap';
+import { Container, Row, Col, Form, Button, Alert } from 'react-bootstrap';
 import { MessageSquare, Compass, Send, Sparkles, Anchor, MapPin, Award } from 'lucide-react';
 import './HamourLanding.css';
 
@@ -17,6 +17,7 @@ const HamourLanding = ({ settings, onNavigate }) => {
     e.preventDefault();
     if (!formData.name.trim() || !formData.phone.trim()) return;
 
+    // Direct WhatsApp message formatting for high conversion
     const message = `🌊🐚 أهلاً بك في قاع الهامور! 🌊\n\nأنا مواطن من قاع الهامور وأريد تشطيب منزلي بسيراميك الجزار المقاوم لملوحة مياه المحيط.\n\n*الاسم:* ${formData.name}\n*الهاتف:* ${formData.phone}\n*محل الإقامة:* ${formData.location}\n*القسم المطلوب للتشطيب:* ${formData.interestedIn}\n*ملاحظات إضافية:* ${formData.notes || 'لا يوجد'}`;
     const encodedText = encodeURIComponent(message);
     const whatsappNum = settings?.whatsappNumber || '201001366499';
@@ -58,6 +59,14 @@ const HamourLanding = ({ settings, onNavigate }) => {
       <path className="seaweed-stem" d="M10 350C20 310 30 280 25 240C20 200 45 170 35 130C25 90 50 50 45 10C45 10 55 35 48 80C41 125 60 150 52 190C44 230 55 270 50 350H10Z" fill="#166534" opacity="0.6"/>
       <path className="seaweed-stem" d="M60 350C70 320 85 290 80 260C75 230 95 200 88 170C81 140 100 110 95 70C95 70 105 90 98 130C91 170 108 190 101 220C94 250 105 285 100 350H60Z" fill="#15803d" opacity="0.5"/>
     </svg>
+  );
+
+  const WaveDivider = () => (
+    <div className="wave-divider">
+      <svg className="wave-svg" viewBox="0 0 1440 74" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M0,32L120,42.7C240,53,480,75,720,74.7C960,75,1200,53,1320,42.7L1440,32L1440,74L1320,74C1200,74,960,74,720,74C480,74,240,74,120,74L0,74Z" />
+      </svg>
+    </div>
   );
 
   const bubbles = Array.from({ length: 15 }, (_, i) => {
@@ -102,8 +111,8 @@ const HamourLanding = ({ settings, onNavigate }) => {
               <Anchor size={18} className="animate-spin" />
               <span>خبر عاجل في قاع الهامور 📢</span>
             </div>
-            <h1 className="hamour-title mb-1">تم افتتاح فرع السيراميك الأول تحت الماء!</h1>
-            <p className="hamour-subtitle mb-0">بالتعاون مع معرض السيد الجزار لتوفير بورسلين مقاوم للضغط والملوحة 🏛️🌊</p>
+            <h1 className="hamour-title cartoon-stroke mb-1">تم افتتاح فرع السيراميك الأول تحت الماء!</h1>
+            <p className="hamour-subtitle cartoon-stroke-sub mb-0">بالتعاون مع معرض السيد الجزار لتوفير بورسلين مقاوم للضغط والملوحة 🏛️🌊</p>
           </div>
           
           <p className="lead max-w-2xl mx-auto mb-4 opacity-90 fs-5 text-warning fw-black">
@@ -123,13 +132,15 @@ const HamourLanding = ({ settings, onNavigate }) => {
         </Container>
       </section>
 
+      <WaveDivider />
+
       {/* Immersive Story Visual Showcase */}
       <section className="py-5" style={{ position: 'relative', zIndex: 3 }}>
         <Container>
           {/* Item 1: SpongeBob's Pineapple House with Marble Pathway */}
           <Row className="align-items-center mb-5 g-5">
             <Col lg={6}>
-              <div className="hamour-glass-card p-2 border-0">
+              <div className="hamour-glass-card spongebob-theme p-2">
                 <img 
                   src="/spongebob_pineapple_marble.jpg" 
                   alt="SpongeBob Pineapple Marble Pathway" 
@@ -139,14 +150,14 @@ const HamourLanding = ({ settings, onNavigate }) => {
               </div>
             </Col>
             <Col lg={6}>
-              <h2 className="fw-black text-warning mb-3">
+              <h2 className="fw-black cartoon-stroke mb-3">
                 <Sparkles className="d-inline-block me-2" />
                 مدخل بيت سبونج بوب الجديد!
               </h2>
               <p className="fs-5 leading-relaxed text-light">
                 سبونج بوب قرر يغير واجهة بيته البطيخي! شطبنا الممشى الرئيسي بالكامل باستخدام **أرقى أنواع البورسلين الأبيض المعرق بالذهب** ليليق باستقبال الأصدقاء. 
               </p>
-              <ul className="list-unstyled mt-3 fs-6 text-warning">
+              <ul className="list-unstyled mt-3 fs-6 text-warning fw-bold">
                 <li>✔️ مقاوم للرطوبة وتراكم الطحالب البحرية.</li>
                 <li>✔️ يمنح لمعاناً فريداً تحت أشعة الشمس الذهبية.</li>
                 <li>✔️ مضاد للانزلاق ومناسب لخطوات سريع البطيئة.</li>
@@ -154,10 +165,12 @@ const HamourLanding = ({ settings, onNavigate }) => {
             </Col>
           </Row>
 
+          <WaveDivider />
+
           {/* Item 2: Krusty Krab with Luxury Ceramic Floor */}
           <Row className="align-items-center mb-5 g-5 flex-lg-row-reverse">
             <Col lg={6}>
-              <div className="hamour-glass-card p-2 border-0">
+              <div className="hamour-glass-card mrkrabs-theme p-2">
                 <img 
                   src="/krusty_krab_luxury_tiles.jpg" 
                   alt="Krusty Krab Luxury Gold Tiles" 
@@ -167,14 +180,14 @@ const HamourLanding = ({ settings, onNavigate }) => {
               </div>
             </Col>
             <Col lg={6}>
-              <h2 className="fw-black text-warning mb-3">
+              <h2 className="fw-black cartoon-stroke mb-3">
                 <Award className="d-inline-block me-2" />
                 مطعم سلطع برجر بالبلاط الملكي!
               </h2>
               <p className="fs-5 leading-relaxed text-light">
                 مستر سلطع وافق أخيراً على صرف بعض الأموال لتجديد مطعمه! اخترنا له **سيراميك ملكي بنقوش زرقاء ملكية وإطارات ذهبية فاخرة** لتجذب زبائن قاع الهامور وتزيد من الأرباح.
               </p>
-              <ul className="list-unstyled mt-3 fs-6 text-warning">
+              <ul className="list-unstyled mt-3 fs-6 text-warning fw-bold">
                 <li>✔️ يتحمل الاستخدام الشاق والضغط اليومي للزبائن.</li>
                 <li>✔️ يعطي طابعاً ملوكياً يبرز حب مستر سلطع للذهب.</li>
                 <li>✔️ سهل التنظيف ومقاوم للصدأ وتراكم المياه.</li>
@@ -182,10 +195,12 @@ const HamourLanding = ({ settings, onNavigate }) => {
             </Col>
           </Row>
 
+          <WaveDivider />
+
           {/* Item 3: Squidward's Easter Island Head with Grey Marble */}
           <Row className="align-items-center g-5">
             <Col lg={6}>
-              <div className="hamour-glass-card p-2 border-0">
+              <div className="hamour-glass-card squidward-theme p-2">
                 <img 
                   src="/squidward_house_grey_tiles.jpg" 
                   alt="Squidward Easter Island Marble" 
@@ -195,14 +210,14 @@ const HamourLanding = ({ settings, onNavigate }) => {
               </div>
             </Col>
             <Col lg={6}>
-              <h2 className="fw-black text-warning mb-3">
+              <h2 className="fw-black cartoon-stroke mb-3">
                 <MapPin className="d-inline-block me-2" />
                 صومعة شفيق الكلاسيكية الفخمة!
               </h2>
               <p className="fs-5 leading-relaxed text-light">
                 شفيق حبار طلب واجهة كلاسيكية فاخرة تناسب ذوقه الموسيقي الرفيع. قمنا بكساء واجهة منزله الصخري بـ **الرخام الرمادي الطبيعي الفاخر** ليعزل الصوت ويوفر الهدوء أثناء عزف الكلارينيت.
               </p>
-              <ul className="list-unstyled mt-3 fs-6 text-warning">
+              <ul className="list-unstyled mt-3 fs-6 text-warning fw-bold">
                 <li>✔️ عازل طبيعي ومقاوم لعوامل التعرية والضغط.</li>
                 <li>✔️ تصميم كلاسيكي راقٍ وخالٍ من أي بهرجة مزعجة.</li>
                 <li>✔️ يعبر عن شخصية شفيق الأنيقة والهادئة.</li>
@@ -212,11 +227,13 @@ const HamourLanding = ({ settings, onNavigate }) => {
         </Container>
       </section>
 
+      <WaveDivider />
+
       {/* Bikini Bottom Products Grid */}
       <section className="py-5" style={{ position: 'relative', zIndex: 3 }}>
         <Container>
           <div className="nautical-plaque d-block mx-auto text-center mb-5" style={{ maxWidth: '400px' }}>
-            <h3 className="fw-black mb-0 text-warning">أصناف فرع قاع الهامور المتاحة 🐚</h3>
+            <h3 className="fw-black cartoon-stroke mb-0">أصناف فرع قاع الهامور 🐚</h3>
           </div>
           
           <Row className="g-4">
@@ -244,7 +261,7 @@ const HamourLanding = ({ settings, onNavigate }) => {
               <div className="hamour-form-card">
                 <div className="text-center mb-4">
                   <Anchor size={40} className="text-warning mb-2 animate-bounce" />
-                  <h3 className="fw-black text-warning">طلب معاينة ومقايسة من ساندي 🐿️</h3>
+                  <h3 className="fw-black cartoon-stroke mb-2">طلب معاينة ومقايسة من ساندي 🐿️</h3>
                   <p className="opacity-75">املأ بياناتك وسيتم توجيه مندوبنا في قاع الهامور لتحديد الشحن المناسب</p>
                 </div>
 

@@ -10,6 +10,27 @@
   direction: rtl;
 }
 
+/* --- Cartoon Outline Text Effect --- */
+.cartoon-stroke {
+  color: #facc15 !important;
+  text-shadow: 
+    -2.5px -2.5px 0 #000,  
+     2.5px -2.5px 0 #000,
+    -2.5px  2.5px 0 #000,
+     2.5px  2.5px 0 #000,
+     5px 5px 0px rgba(0,0,0,0.65) !important;
+}
+
+.cartoon-stroke-sub {
+  color: #38bdf8 !important;
+  text-shadow: 
+    -1.5px -1.5px 0 #000,  
+     1.5px -1.5px 0 #000,
+    -1.5px  1.5px 0 #000,
+     1.5px  1.5px 0 #000,
+     3px 3px 0px rgba(0,0,0,0.5) !important;
+}
+
 /* --- Underwater Sunrays/Lightbeams Effect --- */
 .underwater-rays {
   position: absolute;
@@ -129,16 +150,12 @@
 .hamour-title {
   font-size: 3.8rem;
   font-weight: 900;
-  color: #facc15;
-  text-shadow: 0 4px 15px rgba(0, 0, 0, 0.6), 0 0 30px rgba(250, 204, 21, 0.2);
   letter-spacing: -0.5px;
 }
 
 .hamour-subtitle {
   font-size: 1.6rem;
-  color: #38bdf8;
   font-weight: 700;
-  text-shadow: 0 2px 8px rgba(0,0,0,0.5);
   margin-top: 10px;
 }
 
@@ -212,6 +229,25 @@
   pointer-events: none;
 }
 
+/* --- Wave Divider --- */
+.wave-divider {
+  position: relative;
+  width: 100%;
+  height: 60px;
+  background: transparent;
+  z-index: 2;
+  margin: 30px 0;
+}
+
+.wave-svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  fill: rgba(234, 179, 8, 0.25);
+}
+
 /* --- Premium Undersea Glassmorphism Card --- */
 .hamour-glass-card {
   background: rgba(15, 23, 42, 0.45);
@@ -247,6 +283,34 @@
   box-shadow: 
     0 30px 60px rgba(0, 0, 0, 0.5), 
     0 0 25px rgba(234, 179, 8, 0.25);
+}
+
+/* --- Custom Glowing Character Themes --- */
+.spongebob-theme {
+  border: 3px solid rgba(234, 179, 8, 0.5) !important;
+  box-shadow: 0 15px 35px rgba(234, 179, 8, 0.15);
+}
+.spongebob-theme:hover {
+  box-shadow: 0 20px 50px rgba(234, 179, 8, 0.35) !important;
+  border-color: #facc15 !important;
+}
+
+.mrkrabs-theme {
+  border: 3px solid rgba(239, 68, 68, 0.5) !important;
+  box-shadow: 0 15px 35px rgba(239, 68, 68, 0.15);
+}
+.mrkrabs-theme:hover {
+  box-shadow: 0 20px 50px rgba(239, 68, 68, 0.35) !important;
+  border-color: #ef4444 !important;
+}
+
+.squidward-theme {
+  border: 3px solid rgba(56, 189, 248, 0.5) !important;
+  box-shadow: 0 15px 35px rgba(56, 189, 248, 0.15);
+}
+.squidward-theme:hover {
+  box-shadow: 0 20px 50px rgba(56, 189, 248, 0.35) !important;
+  border-color: #38bdf8 !important;
 }
 
 .hamour-card-title {
@@ -304,6 +368,17 @@
   border-color: #facc15 !important;
   background: rgba(12, 74, 110, 0.6) !important;
   box-shadow: 0 0 15px rgba(250, 204, 21, 0.35) !important;
+}
+
+/* Fix option values visibility on mobile/desktop browsers */
+.hamour-input option {
+  background-color: #0c4a6e !important;
+  color: #ffffff !important;
+}
+
+.hamour-input::placeholder {
+  color: #7dd3fc !important;
+  opacity: 0.6;
 }
 
 /* --- Buttons --- */
