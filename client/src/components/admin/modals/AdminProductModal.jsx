@@ -190,6 +190,23 @@ const AdminProductModal = ({ showProductModal, setShowProductModal, editingProdu
 
                     <Col xs={12} md={6} className="mt-2">
                       <Form.Group>
+                        <Form.Label className="small fw-bold text-dark">وحدة القياس/البيع <span className="text-danger">*</span></Form.Label>
+                        <Form.Select
+                          required
+                          value={formData.priceUnit || 'متر مربع'}
+                          onChange={(e) => setFormData({ ...formData, priceUnit: e.target.value })}
+                          className="custom-input bg-white"
+                        >
+                          <option value="متر مربع">متر مربع (سيراميك/بورسلين)</option>
+                          <option value="قطعة">قطعة (أحواض/خلاطات/بانيو)</option>
+                          <option value="طقم كامل">طقم كامل (أطقم حمام)</option>
+                          <option value="متر طولي">متر طولي (وزرات/ديكور)</option>
+                        </Form.Select>
+                      </Form.Group>
+                    </Col>
+
+                    <Col xs={12} md={6} className="mt-2">
+                      <Form.Group>
                         <Form.Label className="small fw-bold text-dark">ملاحظة/سبب العرض (اختياري)</Form.Label>
                         <Form.Control
                           type="text"
@@ -205,7 +222,7 @@ const AdminProductModal = ({ showProductModal, setShowProductModal, editingProdu
                   {/* Auto Calculated Live Preview */}
                   {formData.originalPrice && formData.price && Number(formData.originalPrice) > Number(formData.price) && (
                     <div className="mt-2 p-2 bg-success bg-opacity-10 border border-success border-opacity-25 rounded-3 d-flex align-items-center justify-content-between text-success small fw-bold">
-                      <span>✨ وفرت للعميل: {(Number(formData.originalPrice) - Number(formData.price)).toLocaleString()} ج.م في المتر/الوحدة</span>
+                      <span>✨ وفرت للعميل: {(Number(formData.originalPrice) - Number(formData.price)).toLocaleString()} ج.م في ({formData.priceUnit || 'متر مربع'})</span>
                       <span>نسبة الخصم: {Math.round(((Number(formData.originalPrice) - Number(formData.price)) / Number(formData.originalPrice)) * 100)}%-</span>
                     </div>
                   )}
