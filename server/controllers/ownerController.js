@@ -84,9 +84,12 @@ exports.exportCsv = async (req, res) => {
     const products = await db.getProducts(true); // Include soft-deleted products
     const headers = [
       'ID', 'كود الصنف', 'اسم الصنف', 'الفئة الرئيسية', 'الفئة الفرعية', 
-      'الماركة', 'السعر الحالي', 'السعر قبل الخصم', 'الخصم %', 
-      'تغطية الكرتونة م2', 'المقاس', 'اللمعة', 'الفرز', 'بلد المنشأ', 
-      'حالة المخزن', 'حالة الحذف', 'صنف مميز', 'تاريخ التحديث', 'رابط الصورة'
+      'الماركة', 'السعر الحالي', 'السعر قبل الخصم', 'الخصم %', 'وحدة القياس / البيع',
+      'تغطية الكرتونة م2', 'المقاس', 'اللمعة', 'الفرز', 'بلد المنشأ', 'الاستخدام',
+      'خيارات الألوان وأنواع الغطاء والأسعار', 'روابط صور الألوان',
+      'ملاحظة العرض', 'تاريخ نهاية العرض',
+      'حالة المخزن', 'حالة الحذف', 'صنف مميز', 'تاريخ التحديث', 
+      'رابط الصورة الرئيسية', 'معرض الصور الإضافية', 'الوصف'
     ];
 
     const escapeCsv = (val) => {
@@ -102,6 +105,26 @@ exports.exportCsv = async (req, res) => {
       const curr = Number(p.price) || 0;
       const discPercent = orig > curr ? Math.round(((orig - curr) / orig) * 100) : 0;
 
+      // Format variants (colors, cover type, prices)
+      let variantsText = '';
+      let variantImagesText = '';
+      if (Array.isArray(p.variants) && p.variants.length > 0) {
+        variantsText = p.variants.map((v, idx) => {
+          const parts = [];
+          if (v.color && v.color.trim()) parts.push(`لون: ${v.color.trim()}`);
+          if (v.coverType && v.coverType.trim()) parts.push(`غطاء: ${v.coverType.trim()}`);
+          if (v.price !== undefined && v.price !== '') parts.push(`السعر: ${v.price} ج`);
+          if (v.originalPrice && Number(v.originalPrice) > Number(v.price)) parts.push(`قبل الخصم: ${v.originalPrice} ج`);
+          return `[خيار ${idx + 1}: ${parts.join(' | ')}]`;
+        }).join(' - ');
+
+        const vImages = p.variants.filter(v => v.image && v.image.trim()).map(v => `${v.color || 'خيار'}: ${v.image}`);
+        variantImagesText = vImages.join(' | ');
+      }
+
+      // Format additional gallery images
+      const additionalImagesText = Array.isArray(p.images) ? p.images.filter(img => img && img.trim()).join(' | ') : '';
+
       const row = [
         p.id || p._id,
         p.code || '',
@@ -112,16 +135,24 @@ exports.exportCsv = async (req, res) => {
         curr,
         orig,
         discPercent + '%',
+        p.priceUnit || 'متر مربع',
         p.boxCoverage || 1.44,
         p.dimensions || '',
         p.finish || '',
         p.grade || '',
         p.origin || '',
+        p.usage || '',
+        variantsText,
+        variantImagesText,
+        p.offerNote || '',
+        p.offerEndDate || '',
         p.inStock ? 'متوفر بالمخزن' : 'غير متوفر',
         p.isDeleted ? 'ممسوح' : 'نشط',
         p.featured ? 'مميز' : 'عادي',
         p.updatedAt || new Date().toISOString(),
-        p.image || ''
+        p.image || '',
+        additionalImagesText,
+        p.description || ''
       ];
       csvRows.push(row.map(escapeCsv).join(','));
     });

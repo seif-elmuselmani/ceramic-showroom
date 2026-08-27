@@ -17,24 +17,24 @@
 ## 🔑 2. المفاتيح السرية وروابط التصدير المباشرة للمالك (Owner Secret Endpoints)
 
 - **مفتاح السر الخاص بالمالك (Secret Owner Key):**
-  `elgazar_owner_super_secret_backup_2026`
+  `Elgazar_VIP_Owner_8899_Secure`
 
 - **روابط التحميل المباشرة بنقرة واحدة (تحدث البيانات حياً 24/7):**
 
-1. 📊 **تحميل كشف إكسيل Mined CSV المحدث:**
-   [https://ceramic-showroom.vercel.app/api/owner/export-csv?secret=elgazar_owner_super_secret_backup_2026](https://ceramic-showroom.vercel.app/api/owner/export-csv?secret=elgazar_owner_super_secret_backup_2026)
+1. 📊 **تحميل كشف إكسيل Mined CSV المحدث (شامل الألوان ووحدة القياس وأنواع الغطاء والصور):**
+   [https://ceramic-showroom.vercel.app/api/owner/export-csv?secret=Elgazar_VIP_Owner_8899_Secure](https://ceramic-showroom.vercel.app/api/owner/export-csv?secret=Elgazar_VIP_Owner_8899_Secure)
 
 2. 📦 **تحميل جميع صور المنتجات في ملف ZIP بنقرة واحدة:**
-   [https://ceramic-showroom.vercel.app/api/owner/download-images-zip?secret=elgazar_owner_super_secret_backup_2026](https://ceramic-showroom.vercel.app/api/owner/download-images-zip?secret=elgazar_owner_super_secret_backup_2026)
+   [https://ceramic-showroom.vercel.app/api/owner/download-images-zip?secret=Elgazar_VIP_Owner_8899_Secure](https://ceramic-showroom.vercel.app/api/owner/download-images-zip?secret=Elgazar_VIP_Owner_8899_Secure)
 
 3. 🖼️ **معرض الصور المباشر (Media Gallery Archive):**
-   [https://ceramic-showroom.vercel.app/api/owner/export-media-archive?secret=elgazar_owner_super_secret_backup_2026](https://ceramic-showroom.vercel.app/api/owner/export-media-archive?secret=elgazar_owner_super_secret_backup_2026)
+   [https://ceramic-showroom.vercel.app/api/owner/export-media-archive?secret=Elgazar_VIP_Owner_8899_Secure](https://ceramic-showroom.vercel.app/api/owner/export-media-archive?secret=Elgazar_VIP_Owner_8899_Secure)
 
 4. 💾 **النسخة الاحتياطية الشاملة (Full JSON Backup):**
-   [https://ceramic-showroom.vercel.app/api/owner/export-json?secret=elgazar_owner_super_secret_backup_2026](https://ceramic-showroom.vercel.app/api/owner/export-json?secret=elgazar_owner_super_secret_backup_2026)
+   [https://ceramic-showroom.vercel.app/api/owner/export-json?secret=Elgazar_VIP_Owner_8899_Secure](https://ceramic-showroom.vercel.app/api/owner/export-json?secret=Elgazar_VIP_Owner_8899_Secure)
 
 5. 🌱 **إعادة زرع البيانات التجريبية على السيرفر السحابي:**
-   [https://ceramic-showroom.vercel.app/api/owner/seed-test-data?secret=elgazar_owner_super_secret_backup_2026](https://ceramic-showroom.vercel.app/api/owner/seed-test-data?secret=elgazar_owner_super_secret_backup_2026)
+   [https://ceramic-showroom.vercel.app/api/owner/seed-test-data?secret=Elgazar_VIP_Owner_8899_Secure](https://ceramic-showroom.vercel.app/api/owner/seed-test-data?secret=Elgazar_VIP_Owner_8899_Secure)
 
 ---
 
