@@ -1,6 +1,6 @@
 import React from 'react';
 import { Modal, Button, Badge, Row, Col, Carousel } from 'react-bootstrap';
-import { MessageCircle, CheckCircle2, ShieldAlert, Share2, Calculator, Sparkles } from 'lucide-react';
+import { MessageCircle, CheckCircle2, ShieldAlert, Share2, Calculator, Sparkles, X } from 'lucide-react';
 import { getProductDiscount } from '../utils/discount';
 import { getColorHexFromName } from '../utils/colorMapper';
 
@@ -90,13 +90,13 @@ const ProductModal = ({ product, show, onHide, settings, onOpenCalculator, onSel
     if (e) e.preventDefault();
     const shareUrl = `${window.location.origin}${window.location.pathname}?product=${product.id || product._id}`;
     const shareData = {
-      title: product.name,
-      text: `شاهد سيراميك/بورسلين: ${product.name} (كود: ${effectiveCode}) - في معرض السيد الجزار`,
-      url: shareUrl
+      title: `${product.name} | معرض السيد الجزار`,
+      text: `شاهد ${product.name} من معرض السيد الجزار للسيراميك والبورسلين:\n`,
+      url: shareUrl,
     };
 
     try {
-      if (navigator.share) {
+      if (navigator.share && navigator.canShare && navigator.canShare(shareData)) {
         await navigator.share(shareData);
       } else {
         await navigator.clipboard.writeText(shareUrl);
@@ -109,11 +109,36 @@ const ProductModal = ({ product, show, onHide, settings, onOpenCalculator, onSel
 
   return (
     <Modal show={show} onHide={onHide} size="xl" centered className="product-details-modal" dir="rtl">
-      <Modal.Header closeButton className="border-0 pb-0 pt-3 pe-4">
-        {/* Only Close Button Here */}
-      </Modal.Header>
+      {/* Explicit Luxury Close Button */}
+      <button
+        type="button"
+        onClick={onHide}
+        className="btn position-absolute top-0 end-0 m-3 rounded-circle shadow-sm d-flex align-items-center justify-content-center p-0"
+        style={{
+          width: '38px',
+          height: '38px',
+          zIndex: 1090,
+          backgroundColor: '#f8fafc',
+          border: '1px solid #e2e8f0',
+          cursor: 'pointer',
+          transition: 'all 0.2s ease'
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.backgroundColor = '#ef4444';
+          e.currentTarget.style.borderColor = '#ef4444';
+          e.currentTarget.style.color = '#ffffff';
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.backgroundColor = '#f8fafc';
+          e.currentTarget.style.borderColor = '#e2e8f0';
+          e.currentTarget.style.color = '#1e293b';
+        }}
+        aria-label="إغلاق النافذة"
+      >
+        <X size={20} />
+      </button>
       
-      <Modal.Body className="p-4 pt-0">
+      <Modal.Body className="p-4 pt-4">
         <Row className="g-5 align-items-start">
           
           {/* Image Gallery Column */}
