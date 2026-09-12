@@ -115,6 +115,8 @@ exports.exportCsv = async (req, res) => {
           if (v.coverType && v.coverType.trim()) parts.push(`غطاء: ${v.coverType.trim()}`);
           if (v.price !== undefined && v.price !== '') parts.push(`السعر: ${v.price} ج`);
           if (v.originalPrice && Number(v.originalPrice) > Number(v.price)) parts.push(`قبل الخصم: ${v.originalPrice} ج`);
+          if (v.inStock === false) parts.push(`الحالة: غير متوفر / نفذ`);
+          else parts.push(`الحالة: متوفر`);
           return `[خيار ${idx + 1}: ${parts.join(' | ')}]`;
         }).join(' - ');
 

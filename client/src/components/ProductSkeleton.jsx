@@ -1,34 +1,64 @@
 import React from 'react';
 import { Card } from 'react-bootstrap';
+import { LayoutGrid } from 'lucide-react';
 
-const ProductSkeleton = () => {
+const ProductSkeleton = ({ index = 0 }) => {
+  const delayClass = `skeleton-delay-${index % 8}`;
+
   return (
-    <Card className="h-100 product-card border-0 shadow-sm rounded-4 overflow-hidden" style={{ animation: 'pulse 1.5s infinite ease-in-out' }}>
-      <div 
-        className="bg-secondary bg-opacity-25" 
-        style={{ height: '280px', width: '100%' }}
-      ></div>
-      <Card.Body className="p-4 d-flex flex-column bg-white">
-        <div className="d-flex justify-content-between align-items-center mb-3">
-          <div className="bg-secondary bg-opacity-25 rounded-pill" style={{ height: '24px', width: '80px' }}></div>
-          <div className="bg-secondary bg-opacity-25 rounded-pill" style={{ height: '24px', width: '60px' }}></div>
+    <Card className={`h-100 luxury-skeleton-card border-0 ${delayClass}`}>
+      {/* 1. Tile Image Skeleton with Showroom Tile Watermark & Badges */}
+      <div className="skeleton-img-box skeleton-shimmer">
+        <div className="skeleton-watermark-icon" title="جاري تحميل أصناف المعرض...">
+          <LayoutGrid size={26} />
         </div>
         
-        <div className="bg-secondary bg-opacity-25 rounded mb-2" style={{ height: '20px', width: '100%' }}></div>
-        <div className="bg-secondary bg-opacity-25 rounded mb-4" style={{ height: '20px', width: '70%' }}></div>
-        
+        {/* Top Badges Simulation */}
+        <div className="position-absolute top-0 start-0 end-0 p-3 d-flex justify-content-between align-items-center">
+          <div className="skeleton-badge skeleton-shimmer" style={{ width: '65px', height: '26px' }}></div>
+          <div className="skeleton-badge skeleton-shimmer" style={{ width: '80px', height: '26px' }}></div>
+        </div>
+      </div>
+
+      {/* 2. Card Content Skeleton */}
+      <Card.Body className="p-3 d-flex flex-column bg-white">
+        {/* Color Swatches Row Placeholder */}
+        <div className="d-flex align-items-center gap-1.5 mb-3">
+          <div className="skeleton-dot skeleton-shimmer" style={{ width: '18px', height: '18px' }}></div>
+          <div className="skeleton-dot skeleton-shimmer" style={{ width: '18px', height: '18px' }}></div>
+          <div className="skeleton-dot skeleton-shimmer" style={{ width: '18px', height: '18px' }}></div>
+          <div className="skeleton-text skeleton-shimmer ms-auto" style={{ width: '70px', height: '14px' }}></div>
+        </div>
+
+        {/* Brand & Category Pill */}
+        <div className="d-flex align-items-center gap-2 mb-2">
+          <div className="skeleton-text skeleton-shimmer" style={{ width: '60px', height: '16px' }}></div>
+          <div className="skeleton-text skeleton-shimmer" style={{ width: '80px', height: '16px' }}></div>
+        </div>
+
+        {/* Product Title (2 lines) */}
+        <div className="skeleton-text skeleton-shimmer mb-2" style={{ width: '92%', height: '22px' }}></div>
+        <div className="skeleton-text skeleton-shimmer mb-3" style={{ width: '65%', height: '18px' }}></div>
+
+        {/* Dimensions & Grade Tag */}
+        <div className="d-flex align-items-center gap-2 mb-3">
+          <div className="skeleton-badge skeleton-shimmer" style={{ width: '75px', height: '22px' }}></div>
+          <div className="skeleton-badge skeleton-shimmer" style={{ width: '90px', height: '22px' }}></div>
+        </div>
+
+        {/* Price & Action Row */}
         <div className="mt-auto pt-3 border-top d-flex justify-content-between align-items-center">
-          <div className="bg-secondary bg-opacity-25 rounded" style={{ height: '28px', width: '100px' }}></div>
-          <div className="bg-secondary bg-opacity-25 rounded-circle" style={{ height: '40px', width: '40px' }}></div>
+          <div>
+            <div className="skeleton-text skeleton-shimmer mb-1" style={{ width: '45px', height: '12px' }}></div>
+            <div className="skeleton-text skeleton-shimmer" style={{ width: '110px', height: '26px' }}></div>
+          </div>
+          
+          <div className="d-flex align-items-center gap-1.5">
+            <div className="skeleton-btn skeleton-shimmer" style={{ width: '38px', height: '38px', borderRadius: '50%' }}></div>
+            <div className="skeleton-btn skeleton-shimmer" style={{ width: '42px', height: '38px', borderRadius: '12px' }}></div>
+          </div>
         </div>
       </Card.Body>
-      <style jsx="true">{`
-        @keyframes pulse {
-          0% { opacity: 0.6; }
-          50% { opacity: 1; }
-          100% { opacity: 0.6; }
-        }
-      `}</style>
     </Card>
   );
 };

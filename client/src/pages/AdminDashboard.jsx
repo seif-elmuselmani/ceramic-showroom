@@ -141,7 +141,21 @@ const AdminDashboard = ({ settings, onSettingsUpdated }) => {
         inStock: product.inStock !== false,
         featured: Boolean(product.featured),
         hasVariants: Boolean(product.hasVariants),
-        variants: Array.isArray(product.variants) ? product.variants : []
+        variants: Array.isArray(product.variants) ? product.variants.map(v => {
+          const orig = parseFloat(v.originalPrice) || 0;
+          const prc = parseFloat(v.price) || 0;
+          let disc = (v.discountPercent !== undefined && v.discountPercent !== null && v.discountPercent !== '') ? v.discountPercent : '';
+          if (disc === '' && orig > 0 && prc > 0 && orig > prc) {
+            disc = Math.round(((orig - prc) / orig) * 100);
+          }
+          return {
+            ...v,
+            originalPrice: v.originalPrice !== undefined ? v.originalPrice : '',
+            discountPercent: disc,
+            price: v.price !== undefined ? v.price : '',
+            inStock: v.inStock !== false,
+          };
+        }) : []
       });
     } else {
       setEditingProduct(null);
@@ -268,13 +282,19 @@ const AdminDashboard = ({ settings, onSettingsUpdated }) => {
     e.preventDefault();
     try {
       const defaultImg = 'https://images.unsplash.com/photo-1615873968403-89e068629265?auto=format&fit=crop&w=800&q=80';
+      const hasVariants = formData.hasVariants && Array.isArray(formData.variants) && formData.variants.length > 0;
+      const computedInStock = hasVariants
+        ? formData.variants.some(v => v.inStock !== false)
+        : (formData.inStock !== false);
+
       const payload = {
         ...formData,
         code: formData.code?.trim() || ('SER-' + Math.floor(1000 + Math.random() * 9000)),
         price: Number(formData.price),
         originalPrice: Number(formData.originalPrice) || 0,
         boxCoverage: Number(formData.boxCoverage) || 1.44,
-        image: formData.image?.trim() || defaultImg
+        image: formData.image?.trim() || defaultImg,
+        inStock: computedInStock
       };
 
       if (editingProduct) {
@@ -331,11 +351,29 @@ const AdminDashboard = ({ settings, onSettingsUpdated }) => {
     }
   };
 
-  // Toggle Stock Status
+  // Toggle Stock Status (Master switch for product & variants)
   const handleToggleStock = async (prod) => {
     try {
-      await updateProduct(prod.id, { ...prod, inStock: !prod.inStock });
-      showSuccess(`تم تغيير حالة توفر الصنف "${prod.name}"`);
+      const currentInStock = prod.hasVariants && Array.isArray(prod.variants) && prod.variants.length > 0
+        ? prod.variants.some(v => v.inStock !== false)
+        : Boolean(prod.inStock);
+
+      const newStockStatus = !currentInStock;
+      let updatedVariants = prod.variants || [];
+
+      if (prod.hasVariants && Array.isArray(prod.variants) && prod.variants.length > 0) {
+        updatedVariants = prod.variants.map(v => ({
+          ...v,
+          inStock: newStockStatus
+        }));
+      }
+
+      await updateProduct(prod.id, { 
+        ...prod, 
+        inStock: newStockStatus,
+        variants: updatedVariants
+      });
+      showSuccess(`تم تغيير حالة توفر الصنف "${prod.name}" ${newStockStatus ? 'إلى متوفر بالكامل ✅' : 'إلى غير متوفر ❌'}`);
       fetchDashboardData();
     } catch (err) {
       console.error('Toggle stock error:', err);

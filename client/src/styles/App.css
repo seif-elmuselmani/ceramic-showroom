@@ -1755,3 +1755,114 @@ img {
   gap: 4px;
 }
 
+/* ==========================================================================
+   LUXURY SKELETON & SHIMMER LOADING SYSTEM (GOLD & PORCELAIN GLOSS)
+   ========================================================================== */
+.luxury-skeleton-card {
+  background: #ffffff;
+  border-radius: 20px !important;
+  border: 1px solid rgba(226, 232, 240, 0.8) !important;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.04), 0 8px 10px -6px rgba(0, 0, 0, 0.02) !important;
+  overflow: hidden;
+  transition: transform 0.3s ease;
+  position: relative;
+}
+
+.skeleton-shimmer {
+  background: linear-gradient(
+    90deg,
+    #f1f5f9 0%,
+    #f8fafc 20%,
+    #fef9ec 40%,
+    #fef3c7 50%,
+    #fef9ec 60%,
+    #f8fafc 80%,
+    #f1f5f9 100%
+  );
+  background-size: 200% 100%;
+  animation: luxuryShimmer 2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  position: relative;
+  overflow: hidden;
+}
+
+@keyframes luxuryShimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.skeleton-img-box {
+  height: 250px;
+  width: 100%;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-bottom: 1px solid rgba(241, 245, 249, 0.8);
+}
+
+.skeleton-watermark-icon {
+  width: 60px;
+  height: 60px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+  color: #d97706;
+  opacity: 0.7;
+  animation: skeletonPulse 2s infinite ease-in-out;
+}
+
+@keyframes skeletonPulse {
+  0%, 100% {
+    transform: scale(0.95);
+    opacity: 0.5;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.85;
+  }
+}
+
+.skeleton-badge {
+  height: 24px;
+  border-radius: 20px;
+  display: inline-block;
+}
+
+.skeleton-dot {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: inline-block;
+  border: 1.5px solid #ffffff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.skeleton-text {
+  border-radius: 8px;
+  display: block;
+}
+
+.skeleton-btn {
+  border-radius: 12px;
+  display: inline-block;
+}
+
+/* Staggered Delay Utility Classes */
+.skeleton-delay-0 .skeleton-shimmer { animation-delay: 0s; }
+.skeleton-delay-1 .skeleton-shimmer { animation-delay: 0.15s; }
+.skeleton-delay-2 .skeleton-shimmer { animation-delay: 0.3s; }
+.skeleton-delay-3 .skeleton-shimmer { animation-delay: 0.45s; }
+.skeleton-delay-4 .skeleton-shimmer { animation-delay: 0.6s; }
+.skeleton-delay-5 .skeleton-shimmer { animation-delay: 0.75s; }
+.skeleton-delay-6 .skeleton-shimmer { animation-delay: 0.9s; }
+.skeleton-delay-7 .skeleton-shimmer { animation-delay: 1.05s; }
+
+

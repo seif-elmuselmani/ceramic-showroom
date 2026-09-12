@@ -78,12 +78,22 @@ const ProductModal = ({ product, show, onHide, settings, onOpenCalculator, onSel
   const effectiveImage = activeVariant && activeVariant.image ? activeVariant.image : product.image;
   const effectiveColor = selectedColor || (activeVariant && activeVariant.color) || product.color;
   const effectiveCoverType = selectedCoverType || (activeVariant && activeVariant.coverType) || product.coverType;
+  const effectiveInStock = activeVariant && activeVariant.inStock !== undefined ? (activeVariant.inStock !== false) : (product.inStock !== false);
+
+  const isColorInStock = (colorName) => {
+    if (!hasVariants) return product.inStock !== false;
+    const variantsForColor = product.variants.filter(v => (v.color || '').trim() === colorName.trim());
+    if (variantsForColor.length === 0) return true;
+    return variantsForColor.some(v => v.inStock !== false);
+  };
 
   const { hasDiscount, discountPercent, savingsAmount, durationText } = getProductDiscount(product, activeVariant);
 
   const whatsappNumber = settings?.whatsappNumber || '201000000000';
   const productLink = `${window.location.origin}${window.location.pathname}?product=${product.id || product._id}`;
-  const messageText = `السلام عليكم، أود الاستفسار وحجز الصنف التالي:\n\n📦 ${product.name}\n🏷️ الكود: ${effectiveCode || 'غير محدد'}\n\n🔗 الرابط:\n${productLink}\n\nهل الصنف متوفر في المعرض حالياً؟`;
+  const messageText = effectiveInStock
+    ? `السلام عليكم، أود الاستفسار وحجز الصنف التالي:\n\n📦 ${product.name}\n🏷️ الكود: ${effectiveCode || 'غير محدد'}${hasVariants && effectiveColor ? `\n🎨 اللون: ${effectiveColor}` : ''}${hasVariants && effectiveCoverType ? `\n🔘 المواصفة: ${effectiveCoverType}` : ''}\n\n🔗 الرابط:\n${productLink}\n\nهل الصنف متوفر في المعرض حالياً؟`
+    : `السلام عليكم، أود الاستفسار عن موعد توفر الصنف التالي:\n\n📦 ${product.name}\n🏷️ الكود: ${effectiveCode || 'غير محدد'}${hasVariants && effectiveColor ? `\n🎨 اللون: ${effectiveColor} (يظهر كغير متوفر حالياً)` : ''}\n\n🔗 الرابط:\n${productLink}\n\nمتى يتوقع توفر هذا اللون بالمعرض؟`;
   const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(messageText)}`;
 
   const handleShare = async (e) => {
@@ -199,13 +209,13 @@ const ProductModal = ({ product, show, onHide, settings, onOpenCalculator, onSel
                     ⭐ صنف مميز
                   </Badge>
                 )}
-                {product.inStock ? (
+                {effectiveInStock ? (
                   <Badge bg="success" className="bg-opacity-10 text-success px-3 py-1.5 rounded-pill border border-success fw-bold d-flex align-items-center gap-1">
                     <CheckCircle2 size={14} /> متوفر بالمعرض
                   </Badge>
                 ) : (
                   <Badge bg="danger" className="bg-opacity-10 text-danger px-3 py-1.5 rounded-pill border border-danger fw-bold d-flex align-items-center gap-1">
-                    <ShieldAlert size={14} /> غير متوفر
+                    <ShieldAlert size={14} /> غير متوفر حالياً {hasVariants && selectedColor ? `(${selectedColor})` : ''}
                   </Badge>
                 )}
               </div>
@@ -274,19 +284,24 @@ const ProductModal = ({ product, show, onHide, settings, onOpenCalculator, onSel
                       <div className="d-flex flex-wrap gap-3">
                         {availableColors.map((colorName) => {
                           const isSelected = selectedColor === colorName;
-                          
+                          const inStockForThisColor = isColorInStock(colorName);
                           const colorHex = getColorHexFromName(colorName);
 
                           return (
                             <div
                               key={colorName}
-                              title={colorName}
+                              title={`${colorName} ${!inStockForThisColor ? '(نفذت الكمية)' : ''}`}
                               onClick={() => handleColorClick(colorName)}
-                              className={`color-swatch-luxury ${isSelected ? 'active' : ''}`}
+                              className={`color-swatch-luxury ${isSelected ? 'active' : ''} ${!inStockForThisColor ? 'opacity-60 position-relative' : ''}`}
                               style={{
                                 backgroundColor: colorHex,
+                                border: isSelected ? '2px solid #000' : (!inStockForThisColor ? '2px dashed #dc3545' : '1px solid #e2e8f0')
                               }}
-                            />
+                            >
+                              {!inStockForThisColor && (
+                                <span className="position-absolute top-50 start-50 translate-middle text-danger fw-black" style={{ fontSize: '10px', pointerEvents: 'none', textShadow: '0 0 2px #fff' }}>✕</span>
+                              )}
+                            </div>
                           );
                         })}
                       </div>
@@ -301,6 +316,7 @@ const ProductModal = ({ product, show, onHide, settings, onOpenCalculator, onSel
                         {availableCoverTypes.map((coverName) => {
                           const isSelected = selectedCoverType === coverName;
                           const v = product.variants.find(v => (v.coverType || '').trim() === coverName && (v.color || '').trim() === selectedColor);
+                          const coverInStock = v && v.inStock !== undefined ? v.inStock !== false : true;
                           const currentBasePrice = Number(product.price) || 0;
                           const variantPrice = v && v.price ? Number(v.price) : currentBasePrice;
                           const diff = variantPrice - currentBasePrice;
@@ -314,9 +330,11 @@ const ProductModal = ({ product, show, onHide, settings, onOpenCalculator, onSel
                               key={coverName}
                               type="button"
                               onClick={() => handleCoverClick(coverName)}
-                              className={`variant-pill-luxury ${isSelected ? 'active' : ''}`}
+                              className={`variant-pill-luxury ${isSelected ? 'active' : ''} ${!coverInStock ? 'border-danger text-muted opacity-75' : ''}`}
                             >
-                              {coverName} <small className={diff > 0 ? 'text-warning' : ''}>{priceBadge}</small>
+                              {coverName} 
+                              {!coverInStock && <small className="text-danger ms-1 fw-bold">(نفذ)</small>}
+                              {coverInStock && diff !== 0 && <small className={diff > 0 ? 'text-warning' : ''}>{priceBadge}</small>}
                             </button>
                           );
                         })}
@@ -368,10 +386,10 @@ const ProductModal = ({ product, show, onHide, settings, onOpenCalculator, onSel
                   href={whatsappUrl} 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="whatsapp-btn-luxury"
+                  className={effectiveInStock ? "whatsapp-btn-luxury" : "whatsapp-btn-luxury bg-secondary border-secondary"}
                 >
                   <MessageCircle size={24} />
-                  استفسر أو اطلب معاينة عبر الواتساب مباشرة
+                  {effectiveInStock ? "استفسر أو اطلب معاينة عبر الواتساب مباشرة" : "استفسار عن موعد توفر هذا اللون عبر الواتساب"}
                 </a>
 
                 {onOpenCalculator && (

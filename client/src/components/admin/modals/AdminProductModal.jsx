@@ -7,7 +7,7 @@ const AdminProductModal = ({ showProductModal, setShowProductModal, editingProdu
     setFormData(prev => ({
       ...prev,
       hasVariants: true,
-      variants: [...(prev.variants || []), { color: '', coverType: '', price: '', originalPrice: '' }]
+      variants: [...(prev.variants || []), { color: '', coverType: '', originalPrice: '', discountPercent: '', price: '', inStock: true, image: '' }]
     }));
   };
 
@@ -15,6 +15,44 @@ const AdminProductModal = ({ showProductModal, setShowProductModal, editingProdu
     setFormData(prev => {
       const newVariants = [...(prev.variants || [])];
       newVariants[index] = { ...newVariants[index], [field]: value };
+      let newInStock = prev.inStock;
+      if (field === 'inStock') {
+        newInStock = newVariants.some(v => v.inStock !== false);
+      }
+      return { ...prev, variants: newVariants, inStock: newInStock };
+    });
+  };
+
+  const handleUpdateVariantPricing = (index, field, value) => {
+    setFormData(prev => {
+      const newVariants = [...(prev.variants || [])];
+      const current = { ...newVariants[index], [field]: value };
+
+      const orig = parseFloat(field === 'originalPrice' ? value : current.originalPrice) || 0;
+      const disc = parseFloat(field === 'discountPercent' ? value : current.discountPercent) || 0;
+      const finalPrc = parseFloat(field === 'price' ? value : current.price) || 0;
+
+      if (field === 'originalPrice') {
+        if (disc > 0 && disc < 100) {
+          current.price = Math.round(orig * (1 - disc / 100));
+        } else if (finalPrc > 0 && finalPrc < orig) {
+          current.discountPercent = Math.round(((orig - finalPrc) / orig) * 100);
+        } else if (finalPrc >= orig && orig > 0) {
+          current.discountPercent = 0;
+        }
+      } else if (field === 'discountPercent') {
+        if (orig > 0 && disc >= 0 && disc < 100) {
+          current.price = Math.round(orig * (1 - disc / 100));
+        }
+      } else if (field === 'price') {
+        if (orig > 0 && finalPrc > 0 && finalPrc < orig) {
+          current.discountPercent = Math.round(((orig - finalPrc) / orig) * 100);
+        } else if (finalPrc >= orig) {
+          current.discountPercent = 0;
+        }
+      }
+
+      newVariants[index] = current;
       return { ...prev, variants: newVariants };
     });
   };
@@ -386,14 +424,16 @@ const AdminProductModal = ({ showProductModal, setShowProductModal, editingProdu
                   {formData.hasVariants && (
                     <div className="mt-3">
                       <div className="table-responsive rounded-4 border shadow-sm" style={{ maxHeight: '350px', overflowY: 'auto' }}>
-                        <table className="table table-borderless table-hover align-middle mb-0" style={{ minWidth: '700px' }}>
+                        <table className="table table-borderless table-hover align-middle mb-0" style={{ minWidth: '860px' }}>
                           <thead className="bg-light sticky-top" style={{ zIndex: 1 }}>
                             <tr>
                               <th className="text-muted fw-bold fs-8 py-3 text-center">#</th>
                               <th className="text-muted fw-bold fs-8 py-3">اللون</th>
                               <th className="text-muted fw-bold fs-8 py-3">نوع الغطاء</th>
-                              <th className="text-muted fw-bold fs-8 py-3">السعر</th>
-                              <th className="text-muted fw-bold fs-8 py-3">السعر القديم</th>
+                              <th className="text-secondary fw-bold fs-8 py-3">السعر القديم</th>
+                              <th className="text-danger fw-bold fs-8 py-3">الخصم (%)</th>
+                              <th className="text-success fw-bold fs-8 py-3">السعر النهائي</th>
+                              <th className="text-muted fw-bold fs-8 py-3 text-center">الإتاحة</th>
                               <th className="text-muted fw-bold fs-8 py-3">صورة مخصصة</th>
                               <th className="text-muted fw-bold fs-8 py-3 text-center">حذف</th>
                             </tr>
@@ -401,7 +441,7 @@ const AdminProductModal = ({ showProductModal, setShowProductModal, editingProdu
                           <tbody className="bg-white">
                             {formData.variants.length === 0 ? (
                               <tr>
-                                <td colSpan="7" className="text-center text-muted py-5 border-bottom-0">
+                                <td colSpan="9" className="text-center text-muted py-5 border-bottom-0">
                                   <div className="d-flex flex-column align-items-center gap-2">
                                     <Sparkles size={24} className="text-slate-300" />
                                     <span className="fw-bold text-slate-400">لم تقم بإضافة أي خيارات بعد</span>
@@ -410,7 +450,7 @@ const AdminProductModal = ({ showProductModal, setShowProductModal, editingProdu
                               </tr>
                             ) : (
                               formData.variants.map((vItem, vIdx) => (
-                                <tr key={vItem.id || vIdx} className="border-bottom border-light">
+                                <tr key={vItem.id || vIdx} className={`border-bottom border-light ${vItem.inStock === false ? 'opacity-75 bg-light' : ''}`}>
                                   <td className="text-center"><Badge bg="dark" className="rounded-circle px-2 py-1 fs-9 shadow-sm">{vIdx + 1}</Badge></td>
                                   <td>
                                     <Form.Control type="text" placeholder="مثال: أسود" value={vItem.color || ''} onChange={(e) => handleUpdateVariant(vIdx, 'color', e.target.value)} className="bg-light border-0 shadow-none fs-7 fw-bold" style={{ borderRadius: '8px' }} />
@@ -419,18 +459,56 @@ const AdminProductModal = ({ showProductModal, setShowProductModal, editingProdu
                                     <Form.Control type="text" placeholder="مثال: هيدروليك" value={vItem.coverType || ''} onChange={(e) => handleUpdateVariant(vIdx, 'coverType', e.target.value)} className="bg-light border-0 shadow-none fs-7 fw-bold" style={{ borderRadius: '8px' }} />
                                   </td>
                                   <td style={{width: '110px'}}>
-                                    <Form.Control type="number" placeholder="0" value={vItem.price || ''} onChange={(e) => handleUpdateVariant(vIdx, 'price', e.target.value)} className="bg-light border-0 shadow-none fs-7 text-success fw-bold" style={{ borderRadius: '8px' }} />
+                                    <Form.Control 
+                                      type="number" 
+                                      step="0.5" 
+                                      placeholder="مثال: 1000" 
+                                      value={vItem.originalPrice || ''} 
+                                      onChange={(e) => handleUpdateVariantPricing(vIdx, 'originalPrice', e.target.value)} 
+                                      className="bg-light border-0 shadow-none fs-7 text-secondary" 
+                                      style={{ borderRadius: '8px' }} 
+                                    />
+                                  </td>
+                                  <td style={{width: '95px'}}>
+                                    <Form.Control 
+                                      type="number" 
+                                      min="0" 
+                                      max="99" 
+                                      placeholder="0%" 
+                                      value={vItem.discountPercent !== undefined && vItem.discountPercent !== null ? vItem.discountPercent : ''} 
+                                      onChange={(e) => handleUpdateVariantPricing(vIdx, 'discountPercent', e.target.value)} 
+                                      className="bg-light border-0 shadow-none fs-7 text-danger fw-bold" 
+                                      style={{ borderRadius: '8px' }} 
+                                    />
                                   </td>
                                   <td style={{width: '110px'}}>
-                                    <Form.Control type="number" placeholder="0" value={vItem.originalPrice || ''} onChange={(e) => handleUpdateVariant(vIdx, 'originalPrice', e.target.value)} className="bg-light border-0 shadow-none fs-7 text-muted" style={{ borderRadius: '8px' }} />
+                                    <Form.Control 
+                                      type="number" 
+                                      step="0.5" 
+                                      placeholder="مثال: 800" 
+                                      value={vItem.price || ''} 
+                                      onChange={(e) => handleUpdateVariantPricing(vIdx, 'price', e.target.value)} 
+                                      className="bg-light border-0 shadow-none fs-7 text-success fw-bold" 
+                                      style={{ borderRadius: '8px' }} 
+                                    />
                                   </td>
-                                  <td style={{width: '200px'}}>
+                                  <td style={{width: '100px'}} className="text-center">
+                                    <Form.Check 
+                                      type="switch" 
+                                      id={`variant-instock-${vIdx}`} 
+                                      label={vItem.inStock !== false ? <span className="small text-success fw-bold">متوفر</span> : <span className="small text-danger fw-bold">نفذ</span>} 
+                                      checked={vItem.inStock !== false} 
+                                      onChange={(e) => handleUpdateVariant(vIdx, 'inStock', e.target.checked)} 
+                                      className="fs-8 d-inline-flex align-items-center gap-1 cursor-pointer" 
+                                    />
+                                  </td>
+                                  <td style={{width: '180px'}}>
                                     <div className="d-flex align-items-center gap-2">
                                       {vItem.image && <img src={vItem.image} alt="variant" className="rounded-3 border" style={{width: '32px', height: '32px', objectFit: 'cover'}} />}
                                       <Form.Control 
                                         type="file" 
-                                        size="sm"
-                                        accept="image/*"
+                                        size="sm" 
+                                        accept="image/*" 
                                         onChange={(e) => handleVariantImageUpload(e, vIdx)} 
                                         className="bg-light border-0 shadow-none text-muted" 
                                         style={{ borderRadius: '8px', fontSize: '11px' }} 
@@ -477,10 +555,19 @@ const AdminProductModal = ({ showProductModal, setShowProductModal, editingProdu
                 <Form.Check
                   type="switch"
                   id="stock-switch"
-                  label="متوفر حالياً"
+                  label={formData.inStock ? "متوفر حالياً بالمعرض ✅" : "غير متوفر بالمعرض (نفذ) ❌"}
                   checked={formData.inStock}
-                  onChange={(e) => setFormData({ ...formData, inStock: e.target.checked })}
-                  className="fw-bold"
+                  onChange={(e) => {
+                    const isChecked = e.target.checked;
+                    setFormData(prev => ({
+                      ...prev,
+                      inStock: isChecked,
+                      variants: prev.hasVariants && Array.isArray(prev.variants)
+                        ? prev.variants.map(v => ({ ...v, inStock: isChecked }))
+                        : prev.variants
+                    }));
+                  }}
+                  className={`fw-bold ${formData.inStock ? 'text-success' : 'text-danger'}`}
                 />
               </Col>
 

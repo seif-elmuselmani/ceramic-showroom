@@ -78,13 +78,23 @@ const ProductCard = ({ product, onSelectProduct, onOpenCalculator, settings, onS
   const effectiveImage = activeVariant && activeVariant.image ? activeVariant.image : product.image;
   const effectiveColor = selectedColor || (activeVariant && activeVariant.color) || product.color;
   const effectiveCoverType = selectedCoverType || (activeVariant && activeVariant.coverType) || product.coverType;
+  const effectiveInStock = activeVariant && activeVariant.inStock !== undefined ? (activeVariant.inStock !== false) : (product.inStock !== false);
+
+  const isColorInStock = (colorName) => {
+    if (!hasVariants) return product.inStock !== false;
+    const variantsForColor = product.variants.filter(v => (v.color || '').trim() === colorName.trim());
+    if (variantsForColor.length === 0) return true;
+    return variantsForColor.some(v => v.inStock !== false);
+  };
 
   const { hasDiscount, discountPercent, savingsAmount, durationText } = getProductDiscount(product, activeVariant);
 
   const whatsappNumber = settings?.whatsappNumber || '201012345678';
   
   const productLink = `${window.location.origin}${window.location.pathname}?product=${product.id || product._id}`;
-  const messageText = `السلام عليكم، أود الاستفسار وحجز الصنف التالي:\n\n📦 ${product.name}\n🏷️ الكود: ${effectiveCode || 'غير محدد'}\n\n🔗 الرابط:\n${productLink}\n\nهل الصنف متوفر في المعرض حالياً؟`;
+  const messageText = effectiveInStock
+    ? `السلام عليكم، أود الاستفسار وحجز الصنف التالي:\n\n📦 ${product.name}\n🏷️ الكود: ${effectiveCode || 'غير محدد'}${hasVariants && effectiveColor ? `\n🎨 اللون: ${effectiveColor}` : ''}${hasVariants && effectiveCoverType ? `\n🔘 المواصفة: ${effectiveCoverType}` : ''}\n\n🔗 الرابط:\n${productLink}\n\nهل الصنف متوفر في المعرض حالياً؟`
+    : `السلام عليكم، أود الاستفسار عن موعد توفر الصنف التالي:\n\n📦 ${product.name}\n🏷️ الكود: ${effectiveCode || 'غير محدد'}${hasVariants && effectiveColor ? `\n🎨 اللون: ${effectiveColor} (يظهر كغير متوفر حالياً)` : ''}\n\n🔗 الرابط:\n${productLink}\n\nمتى يتوقع توفر هذا اللون بالمعرض؟`;
   const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(messageText)}`;
 
   const [copiedToast, setCopiedToast] = React.useState(false);
@@ -125,6 +135,22 @@ const ProductCard = ({ product, onSelectProduct, onOpenCalculator, settings, onS
     return product.variants.findIndex(v => v === activeVariant);
   }, [hasVariants, product.variants, activeVariant]);
 
+  const getSmartFallback = () => {
+    const text = `${product?.name || ''} ${product?.category || ''} ${product?.subcategory || ''}`.toLowerCase();
+    if (text.includes('خلاط') || text.includes('دش') || text.includes('مياه') || text.includes('شاور')) {
+      return 'https://images.unsplash.com/photo-1584622781564-1d987f7333c1?auto=format&fit=crop&w=800&q=80';
+    }
+    if (text.includes('قاعد') || text.includes('تواليت') || text.includes('ساني') || text.includes('مرحاض') || text.includes('طقم صحي')) {
+      return 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=800&q=80';
+    }
+    if (text.includes('أسود') || text.includes('اسود') || text.includes('جرانيت') || text.includes('ترازو')) {
+      return 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80';
+    }
+    return 'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=800&q=80';
+  };
+
+  const fallbackImg = getSmartFallback();
+
   return (
     <div className={`ceramic-card position-relative shadow-sm rounded-4 border-0 h-100 d-flex flex-column transition-all ${hasDiscount ? 'on-sale-card' : ''}`}>
       {copiedToast && (
@@ -136,34 +162,50 @@ const ProductCard = ({ product, onSelectProduct, onOpenCalculator, settings, onS
         </div>
       )}
 
-      {/* Main Product Image Container with Badges */}
-      <div 
-        className="card-img-wrapper cursor-pointer"
-        onClick={() => onSelectProduct({ ...product, activeVariantIndex: selectedVariantIndex })}
-      >
-        <img 
-          src={effectiveImage || product.image || 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=800&q=80'} 
-          alt={product.name}
-          className="card-img-top-luxury"
-          loading="lazy"
-          referrerPolicy="no-referrer"
-          onError={(e) => {
-            e.target.onerror = null;
-            e.target.src = 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=800&q=80';
-          }}
-        />
+      {/* Main Product Image Container with Gallery Inset Frame & Quick View */}
+      <div className="card-gallery-frame-wrapper">
+        <div 
+          className="card-gallery-frame cursor-pointer"
+          onClick={() => onSelectProduct({ ...product, activeVariantIndex: selectedVariantIndex })}
+        >
+          <img 
+            src={effectiveImage || product.image || fallbackImg} 
+            alt={product.name}
+            className="card-gallery-img"
+            loading="lazy"
+            referrerPolicy="no-referrer"
+            onError={(e) => {
+              e.target.onerror = null;
+              e.target.src = fallbackImg;
+            }}
+          />
 
-        {/* Floating Badges */}
-        <div className="card-floating-badges">
-          {hasDiscount && (
-            <span className="badge-luxury-gold shadow-sm animate-pulse">
-              🔥 خصم {discountPercent}%
+          {/* Frosted Glass Quick View Overlay Button */}
+          <div className="card-quick-view-overlay">
+            <span className="card-quick-view-btn">
+              <Eye size={15} /> معاينة الصنف
             </span>
-          )}
-          {product.featured && (
-            <span className="badge-luxury-dark shadow-sm">
-              ⭐ مميز
-            </span>
+          </div>
+
+          {/* Floating Badges */}
+          <div className="card-floating-badges">
+            {hasDiscount && (
+              <span className="badge-luxury-gold shadow-sm animate-pulse">
+                🔥 خصم {discountPercent}%
+              </span>
+            )}
+            {product.featured && (
+              <span className="badge-luxury-dark shadow-sm">
+                ⭐ مميز
+              </span>
+            )}
+          </div>
+
+          {/* Inset Corner Spec Pill */}
+          {(product.dimensions || cleanOrigin) && (
+            <div className="card-gallery-corner-pill">
+              {product.dimensions || cleanOrigin}
+            </div>
           )}
         </div>
       </div>
@@ -228,6 +270,7 @@ const ProductCard = ({ product, onSelectProduct, onOpenCalculator, settings, onS
                       const isSelected = selectedColor === colorName;
                       const variantForColor = product.variants.find(v => (v.color || '').trim() === colorName);
                       const colorHex = getColorHexFromName(colorName);
+                      const inStockForThisColor = isColorInStock(colorName);
 
                       return (
                         <button
@@ -237,17 +280,21 @@ const ProductCard = ({ product, onSelectProduct, onOpenCalculator, settings, onS
                             e.stopPropagation();
                             handleColorClick(colorName);
                           }}
-                          title={`اللون: ${colorName}`}
-                          className="rounded-circle border p-0 cursor-pointer transition-all d-inline-block flex-shrink-0"
+                          title={`اللون: ${colorName} ${!inStockForThisColor ? '(نفذ)' : ''}`}
+                          className={`rounded-circle border p-0 cursor-pointer transition-all d-inline-block flex-shrink-0 position-relative ${!inStockForThisColor ? 'opacity-60' : ''}`}
                           style={{
                             width: '22px',
                             height: '22px',
                             backgroundColor: colorHex,
-                            border: isSelected ? '2px solid #0f172a' : '1px solid #cbd5e1',
+                            border: isSelected ? '2px solid #0f172a' : (!inStockForThisColor ? '1.5px dashed #dc3545' : '1px solid #cbd5e1'),
                             boxShadow: isSelected ? '0 0 0 2px #d4af37' : 'none',
                             transform: isSelected ? 'scale(1.1)' : 'scale(1)'
                           }}
-                        />
+                        >
+                          {!inStockForThisColor && (
+                            <span className="position-absolute top-50 start-50 translate-middle text-danger fw-black" style={{ fontSize: '8px', pointerEvents: 'none' }}>✕</span>
+                          )}
+                        </button>
                       );
                     })}
                   </div>
@@ -258,16 +305,20 @@ const ProductCard = ({ product, onSelectProduct, onOpenCalculator, settings, onS
                 <div className="d-flex align-items-center gap-2 mt-1">
                   <span className="text-muted fw-semibold flex-shrink-0" style={{ fontSize: '0.75rem' }}>🚽 الغطاء:</span>
                   <div className="d-flex flex-wrap gap-1">
-                    {availableCoverTypes.map(cover => (
-                      <button
-                        key={cover}
-                        onClick={(e) => { e.stopPropagation(); handleCoverClick(cover); }}
-                        className={`badge ${selectedCoverType === cover ? 'bg-dark text-white border-dark' : 'bg-light text-secondary border-secondary'} border cursor-pointer px-2 py-1 fw-normal rounded-pill`}
-                        style={{ fontSize: '0.7rem' }}
-                      >
-                        {cover}
-                      </button>
-                    ))}
+                    {availableCoverTypes.map(cover => {
+                      const v = product.variants.find(v => (v.coverType || '').trim() === cover && (v.color || '').trim() === selectedColor);
+                      const coverInStock = v && v.inStock !== undefined ? v.inStock !== false : true;
+                      return (
+                        <button
+                          key={cover}
+                          onClick={(e) => { e.stopPropagation(); handleCoverClick(cover); }}
+                          className={`badge ${selectedCoverType === cover ? 'bg-dark text-white border-dark' : 'bg-light text-secondary border-secondary'} ${!coverInStock ? 'border-danger text-muted opacity-75' : ''} border cursor-pointer px-2 py-1 fw-normal rounded-pill`}
+                          style={{ fontSize: '0.7rem' }}
+                        >
+                          {cover} {!coverInStock && <span className="text-danger fw-bold">(نفذ)</span>}
+                        </button>
+                      );
+                    })}
                   </div>
                 </div>
               )}
@@ -312,12 +363,12 @@ const ProductCard = ({ product, onSelectProduct, onOpenCalculator, settings, onS
               href={whatsappUrl} 
               target="_blank" 
               rel="noopener noreferrer"
-              className="btn btn-success flex-grow-1 text-nowrap d-flex align-items-center justify-content-center gap-2 rounded-3 text-white fw-bold shadow-sm"
+              className={`btn ${effectiveInStock ? 'btn-success text-white' : 'btn-secondary text-white'} flex-grow-1 text-nowrap d-flex align-items-center justify-content-center gap-2 rounded-3 fw-bold shadow-sm`}
               title="تواصل مباشر عبر الواتساب"
               style={{ minHeight: '44px' }}
             >
               <MessageCircle size={18} />
-              <span style={{ fontSize: '0.9rem' }}>تواصل واتساب</span>
+              <span style={{ fontSize: '0.9rem' }}>{effectiveInStock ? "تواصل واتساب" : "استفسار عن التوفر"}</span>
             </a>
 
             <Button 

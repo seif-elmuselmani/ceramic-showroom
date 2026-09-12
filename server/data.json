@@ -117,6 +117,62 @@
   ],
   "products": [
     {
+      "id": "prod-1789212398183",
+      "inStock": true,
+      "featured": false,
+      "isDeleted": false,
+      "priceUnit": "متر مربع",
+      "boxCoverage": 1.44,
+      "name": "Test",
+      "code": "SER-7364",
+      "brand": "ماركة فاخرة",
+      "category": "بورسلين مستورد",
+      "subcategory": "إسباني",
+      "originalPrice": 0,
+      "discountPercent": 0,
+      "price": 1000,
+      "offerEndDate": "",
+      "offerNote": "",
+      "dimensions": "",
+      "finish": "",
+      "grade": "",
+      "origin": "",
+      "usage": "",
+      "description": "",
+      "image": "https://images.unsplash.com/photo-1615873968403-89e068629265?auto=format&fit=crop&w=800&q=80",
+      "images": [],
+      "hasVariants": true,
+      "variants": [
+        {
+          "color": "اسود",
+          "coverType": "Test",
+          "originalPrice": "900",
+          "discountPercent": "12",
+          "price": 792,
+          "inStock": true,
+          "image": ""
+        },
+        {
+          "color": "ابيض",
+          "coverType": "Test1",
+          "originalPrice": "800",
+          "discountPercent": "15",
+          "price": 680,
+          "inStock": true,
+          "image": ""
+        },
+        {
+          "color": "برتقال",
+          "coverType": "Test2",
+          "originalPrice": "500",
+          "discountPercent": "9",
+          "price": 455,
+          "inStock": true,
+          "image": ""
+        }
+      ]
+    },
+    {
       "id": "prod-1787328604112",
       "inStock": true,
       "featured": true,
@@ -138,22 +194,33 @@
           "coverType": "",
           "price": 6500,
           "originalPrice": 7200,
-          "image": "https://images.unsplash.com/photo-1595514535415-84955b4104bd?auto=format&fit=crop&q=80&w=800"
+          "image": "https://images.unsplash.com/photo-1595514535415-84955b4104bd?auto=format&fit=crop&q=80&w=800",
+          "inStock": true
         },
         {
           "color": "أبيض لاكيه",
           "coverType": "",
           "price": 6800,
           "originalPrice": 7500,
-          "image": "https://images.unsplash.com/photo-1595514535415-84955b4104bd?auto=format&fit=crop&q=80&w=800"
+          "image": "https://images.unsplash.com/photo-1595514535415-84955b4104bd?auto=format&fit=crop&q=80&w=800",
+          "inStock": true
         }
       ],
       "image": "https://images.unsplash.com/photo-1595514535415-84955b4104bd?auto=format&fit=crop&q=80&w=800",
-      "brand": "ماركة فاخرة"
+      "brand": "ماركة فاخرة",
+      "discountPercent": 10,
+      "offerEndDate": "",
+      "offerNote": "",
+      "dimensions": "",
+      "finish": "",
+      "grade": "",
+      "origin": "",
+      "usage": "",
+      "images": []
     },
     {
       "id": "prod-1787328604109",
-      "inStock": false,
+      "inStock": true,
       "featured": true,
       "isDeleted": false,
       "priceUnit": "متر مربع",
@@ -1019,5 +1086,22 @@
       "description": "طقم قاعدة مرحاض كومبي معلق مع خزان ومشتملات سانيبور SANIPURE الممتازة مع خيارات الألوان والصور المتغيرة والصور الخاصة لكل لون.",
       "image": "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=1000&q=80"
     }
-  ]
+  ],
+  "analytics": {
+    "totalVisitors": 0,
+    "totalPageViews": 0,
+    "totalTimeSpentSeconds": 0,
+    "whatsappClicks": 0,
+    "whatsappClickDetails": {
+      "floating_badge": 0,
+      "product_card": 0,
+      "product_modal": 0,
+      "tile_calculator": 0
+    },
+    "productViews": {},
+    "searchQueries": {},
+    "mobileCount": 0,
+    "desktopCount": 0,
+    "lastActivity": "2026-09-12T13:16:12.676Z"
+  }
 }

@@ -94,14 +94,22 @@ const AdminProductsTab = ({
                                 </span>
                               )}
                             </div>
-                            <Button 
-                              size="sm"
-                              variant={prod.inStock ? "outline-success" : "outline-danger"}
-                              className="rounded-pill px-3 py-1 fw-bold"
-                              onClick={() => handleToggleStock(prod)}
-                            >
-                              {prod.inStock ? 'متوفر' : 'غير متوفر'}
-                            </Button>
+                            {(() => {
+                              const isProdInStock = prod.hasVariants && Array.isArray(prod.variants) && prod.variants.length > 0
+                                ? prod.variants.some(v => v.inStock !== false)
+                                : Boolean(prod.inStock);
+                              return (
+                                <Button 
+                                  size="sm"
+                                  variant={isProdInStock ? "outline-success" : "outline-danger"}
+                                  className="rounded-pill px-3 py-1 fw-bold"
+                                  onClick={() => handleToggleStock(prod)}
+                                  title={prod.hasVariants ? "تبديل حالة توفر الصنف وجميع ألوانه" : "تبديل حالة توفر الصنف"}
+                                >
+                                  {isProdInStock ? 'متوفر' : 'غير متوفر'}
+                                </Button>
+                              );
+                            })()}
                           </div>
 
                           <div className="d-flex gap-2">
@@ -205,14 +213,22 @@ const AdminProductsTab = ({
                                 </span>
                               </td>
                               <td>
-                                <Button 
-                                  size="sm"
-                                  variant={prod.inStock ? "outline-success" : "outline-danger"}
-                                  className="rounded-pill px-3 fw-bold"
-                                  onClick={() => handleToggleStock(prod)}
-                                >
-                                  {prod.inStock ? 'متوفر' : 'غير متوفر'}
-                                </Button>
+                                {(() => {
+                                  const isProdInStock = prod.hasVariants && Array.isArray(prod.variants) && prod.variants.length > 0
+                                    ? prod.variants.some(v => v.inStock !== false)
+                                    : Boolean(prod.inStock);
+                                  return (
+                                    <Button 
+                                      size="sm"
+                                      variant={isProdInStock ? "outline-success" : "outline-danger"}
+                                      className="rounded-pill px-3 fw-bold"
+                                      onClick={() => handleToggleStock(prod)}
+                                      title={prod.hasVariants ? "تبديل حالة توفر الصنف وجميع ألوانه" : "تبديل حالة توفر الصنف"}
+                                    >
+                                      {isProdInStock ? 'متوفر' : 'غير متوفر'}
+                                    </Button>
+                                  );
+                                })()}
                               </td>
                               <td>
                                 <div className="d-flex justify-content-center gap-2">

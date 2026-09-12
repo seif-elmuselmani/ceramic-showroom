@@ -147,9 +147,12 @@ const Home = ({ settings, categoryFilter = 'الكل', setCategoryFilter, mode =
           return false;
         }
 
-        // 6. In-Stock Filter
-        if (inStockOnly && !p.inStock) {
-          return false;
+        // 6. In-Stock Filter (variant-aware)
+        if (inStockOnly) {
+          const hasStock = p.hasVariants && Array.isArray(p.variants) && p.variants.length > 0
+            ? p.variants.some(v => v.inStock !== false)
+            : Boolean(p.inStock);
+          if (!hasStock) return false;
         }
 
         // 7. On-Sale Filter
@@ -166,7 +169,7 @@ const Home = ({ settings, categoryFilter = 'الكل', setCategoryFilter, mode =
           }
         }
 
-        // 8. Instant Search Term Filter (Matches name, code, category, subcategory, brand, finish, grade, dimensions, origin, description)
+        // 8. Instant Search Term Filter (Matches name, code, category, subcategory, brand, finish, grade, dimensions, origin, description, variants)
         if (searchTerm) {
           const q = searchTerm.trim().toLowerCase();
           const nameMatch = safeStr(p.name).toLowerCase().includes(q);
@@ -177,8 +180,11 @@ const Home = ({ settings, categoryFilter = 'الكل', setCategoryFilter, mode =
           const dimMatch = safeStr(p.dimensions).toLowerCase().includes(q);
           const originMatch = safeStr(p.origin).toLowerCase().includes(q);
           const descMatch = safeStr(p.description).toLowerCase().includes(q);
+          const variantMatch = p.variants && Array.isArray(p.variants) && p.variants.some(v => 
+            safeStr(v.colorName).toLowerCase().includes(q) || safeStr(v.colorCode).toLowerCase().includes(q)
+          );
 
-          if (!nameMatch && !codeMatch && !catMatch && !subMatch && !brandMatch && !dimMatch && !originMatch && !descMatch) {
+          if (!nameMatch && !codeMatch && !catMatch && !subMatch && !brandMatch && !dimMatch && !originMatch && !descMatch && !variantMatch) {
             return false;
           }
         }
@@ -207,126 +213,175 @@ const Home = ({ settings, categoryFilter = 'الكل', setCategoryFilter, mode =
 
   return (
     <div>
-      {/* Hero Banner Section with Dynamic Mode Styling */}
-      <section className="hero-section text-center text-md-end">
+      {/* Split Luxury Showroom Showcase Banner (Kohler & Porcelanosa Standard) */}
+      <section className="py-3 py-md-4">
         <Container>
-          <Row className="align-items-center">
-            <Col lg={7}>
-              <Badge bg="warning" text="dark" className="px-3 py-2 fs-6 mb-3 fw-bold shadow-sm">
-                {mode === 'featured' 
-                  ? '🔥 التشكيلة الحصرية 2026 - أحدث موديلات السيراميك والبورسلين الواصلة حديثاً للمعرض' 
-                  : '✨ الوكيل المعتمد لأحدث ماركات السيراميك والبورسلين العالمية والمحلية'
-                }
-              </Badge>
-              <h1 className="hero-title glow-text-primary">
-                {mode === 'featured' ? (
-                  <>أحدث <span>تصاميم وموديلات 2026</span> الواصلة حديثاً</>
-                ) : (
-                  <>فخامة <span>السيراميك والبورسلين</span> في مكان واحد بأفضل الأسعار</>
-                )}
-              </h1>
-              <p className="hero-subtitle">
-                {mode === 'featured' 
-                  ? 'استكشف التشكيلة الجديدة الفاخرة الواصلة حديثاً لمعارض الجزار من أرقى البورسلين الهندي والإسباني وسيراميك الأرضيات والحوائط ذات المظهر العصري 2026.'
-                  : 'تصفح الكتالوج المباشر لأرقى الأصناف الإسبانية والإيطالية والمحلية (كليوباترا، الجوهرة، رويال، فينيسيا) مع تحديث فوري للأسعار وحاسبة الأمتار والكراتين.'
-                }
-              </p>
-              
-              <div className="d-flex flex-wrap gap-3 mt-4">
-                <Button 
-                  className="hero-btn-gradient rounded-pill py-3 px-4 fs-6 fw-bold"
-                  onClick={() => {
-                    const el = document.getElementById('catalog-grid');
-                    if (el) el.scrollIntoView({ behavior: 'smooth' });
-                  }}
-                >
-                  <Layers size={20} className="me-2" />
-                  تصفح الكتالوج والأسعار
-                </Button>
+          <div className="split-luxury-hero">
+            <Row className="g-0 align-items-center">
+              {/* Right Column (RTL text & actions) */}
+              <Col lg={7} className="order-2 order-lg-1">
+                <div className="split-hero-content text-center text-lg-end">
+                  <div className="split-hero-badge mx-auto mx-lg-0">
+                    <Sparkles size={14} className="text-warning-dark" />
+                    <span>
+                      {mode === 'featured' 
+                        ? 'التشكيلة الحصرية 2026 - الوكيل المعتمد' 
+                        : (settings?.siteTitle || 'معرض السيد الجزار للسيراميك والبورسلين')
+                      }
+                    </span>
+                  </div>
 
-                <a 
-                  href={`https://wa.me/${settings?.whatsappNumber || '201012345678'}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn btn-outline-light rounded-pill py-3 px-4 fw-bold fs-6 border-2"
-                >
-                  <PhoneCall size={20} className="me-2" />
-                  طلب معاينة عينات بالمعرض
-                </a>
-              </div>
-            </Col>
-            
-            <Col lg={5} className="mt-4 mt-lg-0">
-              <Row className="g-3">
-                <Col xs={6} sm={6}>
-                  <div className="glass-stat-card">
-                    <Sparkles size={28} className="text-warning mb-2 opacity-90" />
-                    <div className="stat-number">+1000</div>
-                    <div className="stat-label">تصميم فريد بالمعرض</div>
+                  <h1 className="split-hero-title">
+                    {mode === 'featured' ? (
+                      <>أحدث <span className="text-gold">موديلات وتصاميم 2026</span> الحصرية</>
+                    ) : (
+                      <>أرقى تشكيلات <span className="text-gold">السيراميك والبورسلين</span> والأدوات الصحية</>
+                    )}
+                  </h1>
+
+                  <p className="split-hero-subtitle">
+                    {settings?.siteSubtitle || 'استكشف أحدث الموديلات العالمية الإسبانية والهندية والمحلية مع تحديث فوري للأسعار وحاسبة الكراتين.'}
+                  </p>
+
+                  <div className="split-hero-trust-row justify-content-center justify-content-lg-start">
+                    <span className="split-hero-trust-item">
+                      <CheckCircle2 size={16} /> فرز أول ممتاز مضمون
+                    </span>
+                    <span className="split-hero-trust-item">
+                      <CheckCircle2 size={16} /> تسليم فوري للمشروعات
+                    </span>
+                    <span className="split-hero-trust-item">
+                      <CheckCircle2 size={16} /> إمكانية التقسيط الميسر
+                    </span>
                   </div>
-                </Col>
-                <Col xs={6} sm={6}>
-                  <div className="glass-stat-card">
-                    <CheckCircle2 size={28} className="text-warning mb-2 opacity-90" />
-                    <div className="stat-number">100%</div>
-                    <div className="stat-label">فرز أول ممتاز مضمون</div>
+
+                  <div className="d-flex flex-wrap gap-2.5 justify-content-center justify-content-lg-start">
+                    <Button 
+                      className="btn-hero-gold"
+                      onClick={() => {
+                        const el = document.getElementById('catalog-grid');
+                        if (el) el.scrollIntoView({ behavior: 'smooth' });
+                      }}
+                    >
+                      <Layers size={18} />
+                      تصفح الكتالوج والأسعار
+                    </Button>
+
+                    <a 
+                      href={`https://wa.me/${settings?.whatsappNumber || '201012345678'}?text=${encodeURIComponent('مرحباً، أود الاستفسار عن عروض وتصاميم المعرض')}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="btn-hero-light"
+                    >
+                      <PhoneCall size={18} className="text-success" />
+                      طلب استشارة بالمعرض
+                    </a>
                   </div>
-                </Col>
-                <Col xs={6} sm={6}>
-                  <div className="glass-stat-card">
-                    <Award size={28} className="text-warning mb-2 opacity-90" />
-                    <div className="stat-number">60x120</div>
-                    <div className="stat-label">أحجام بورسلين عملاقة</div>
+                </div>
+              </Col>
+
+              {/* Left Column (Crystal Clear High-Res Image) */}
+              <Col lg={5} className="order-1 order-lg-2">
+                <div className="split-hero-img-wrap">
+                  <img 
+                    src="https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=1000&q=85" 
+                    alt="معرض السيد الجزار للسيراميك والبورسلين والأدوات الصحية"
+                    className="split-hero-img"
+                    loading="eager"
+                  />
+                  <div className="split-hero-img-badge">
+                    <Sparkles size={13} className="text-warning" /> تشكيلة 2026 الفاخرة
                   </div>
-                </Col>
-                <Col xs={6} sm={6}>
-                  <div className="glass-stat-card">
-                    <Calculator size={28} className="text-warning mb-2 opacity-90" />
-                    <div className="stat-number">حاسبة</div>
-                    <div className="stat-label">حساب الكراتين تلقائياً</div>
-                  </div>
-                </Col>
-              </Row>
-            </Col>
-          </Row>
+                </div>
+              </Col>
+            </Row>
+          </div>
         </Container>
       </section>
 
-      {/* Filter and Search Container - LUXURY REDESIGN */}
-      <Container className="position-relative" style={{ zIndex: 10, marginTop: '-30px', marginBottom: '60px' }} id="catalog-grid">
+      {/* Filter and Search Container - LUXURY CATEGORY CHIPS & SEARCH */}
+      <Container className="position-relative mb-5" id="catalog-grid">
         
-        {/* TOP LEVEL: Luxury Category Tabs */}
-        <div className="luxury-tabs-container mb-3 px-2">
+        {/* Modern Category Chips Wrap Grid */}
+        <div className="category-chips-grid mb-3 px-1">
+          {/* 1. All Products Chip */}
           <button 
-            className={`luxury-tab ${selectedCategory === 'الكل' ? 'active' : ''}`}
-            onClick={() => { setSelectedCategory('الكل'); setSelectedSubcategory('الكل'); if (setCategoryFilter) setCategoryFilter('الكل'); }}
+            type="button"
+            className={`category-chip-pill ${selectedCategory === 'الكل' ? 'active' : ''}`}
+            onClick={() => { 
+              setSelectedCategory('الكل'); 
+              setSelectedSubcategory('الكل'); 
+              if (setCategoryFilter) setCategoryFilter('الكل'); 
+            }}
           >
-            الكل
+            <span className="chip-icon">✨</span>
+            <span>جميع الأصناف (الكل)</span>
+            <span className="category-chip-count">{products.length}</span>
           </button>
-          {categories.filter(c => c.name !== 'الكل').map((cat) => (
-            <button
-              key={cat.id}
-              className={`luxury-tab ${selectedCategory === cat.name ? 'active' : ''}`}
-              onClick={() => { 
-                setSelectedCategory(cat.name); 
-                setSelectedSubcategory('الكل'); 
-                if (setCategoryFilter) setCategoryFilter(cat.name);
-              }}
-            >
-              {cat.name}
-            </button>
-          ))}
+
+          {/* 2. Dynamic Category Chips */}
+          {categories.filter(c => c.name !== 'الكل').map((cat) => {
+            const count = products.filter(p => safeStr(p.category) === safeStr(cat.name)).length;
+            const getIcon = (name) => {
+              const n = String(name || '').toLowerCase();
+              if (n.includes('خلاط') || n.includes('مياه')) return '🚰';
+              if (n.includes('وحد') || n.includes('بانيو') || n.includes('طقم')) return '🛁';
+              if (n.includes('بورسلين') || n.includes('أرضيات') || n.includes('سيراميك') || n.includes('حوائط')) return '🏛️';
+              if (n.includes('شاور') || n.includes('كباين')) return '🚿';
+              if (n.includes('حوض') || n.includes('مطبخ') || n.includes('ديكور')) return '🥣';
+              if (n.includes('مراي') || n.includes('ليد')) return '🪞';
+              if (n.includes('قواعد') || n.includes('تواليت')) return '🚽';
+              return '🏷️';
+            };
+
+            return (
+              <button
+                key={cat.id}
+                type="button"
+                className={`category-chip-pill ${selectedCategory === cat.name ? 'active' : ''}`}
+                onClick={() => { 
+                  setSelectedCategory(cat.name); 
+                  setSelectedSubcategory('الكل'); 
+                  if (setCategoryFilter) setCategoryFilter(cat.name);
+                }}
+              >
+                <span className="chip-icon">{getIcon(cat.name)}</span>
+                <span>{cat.name}</span>
+                {count > 0 && <span className="category-chip-count">{count}</span>}
+              </button>
+            );
+          })}
+
+          {/* 3. Quick Action Chips: On Sale & In Stock */}
+          <button
+            type="button"
+            className={`category-chip-pill category-chip-sale ${onSaleOnly ? 'active' : ''}`}
+            onClick={() => setOnSaleOnly(!onSaleOnly)}
+          >
+            <span className="chip-icon">🔥</span>
+            <span>عروض وخصومات</span>
+          </button>
+
+          <button
+            type="button"
+            className={`category-chip-pill category-chip-instock ${inStockOnly ? 'active' : ''}`}
+            onClick={() => setInStockOnly(!inStockOnly)}
+          >
+            <span className="chip-icon">🟢</span>
+            <span>المتوفر بالمخزن</span>
+          </button>
         </div>
 
-        {/* Subcategories (if active) */}
+        {/* Dynamic Subcategories Row (if active) */}
         {showSubcategories && (
-          <div className="luxury-tabs-container mb-3 px-2 animate-fade-in" style={{ opacity: 0.9 }}>
-            <span className="text-muted fw-bold d-flex align-items-center gap-1 me-2 flex-shrink-0" style={{ fontSize: '0.85rem' }}>
+          <div className="subcategories-bar-luxury mb-4 animate-fade-in">
+            <span className="text-muted fw-bold d-flex align-items-center gap-1 me-1" style={{ fontSize: '0.85rem' }}>
               <Sparkles size={14} className="text-warning" /> الأنواع:
             </span>
             <button
-              className={`luxury-tab ${selectedSubcategory === 'الكل' ? 'active' : ''}`}
-              style={{ padding: '6px 16px', fontSize: '0.85rem' }}
+              type="button"
+              className={`category-chip-pill ${selectedSubcategory === 'الكل' ? 'active' : ''}`}
+              style={{ padding: '6px 14px', fontSize: '0.82rem' }}
               onClick={() => setSelectedSubcategory('الكل')}
             >
               الكل
@@ -334,8 +389,9 @@ const Home = ({ settings, categoryFilter = 'الكل', setCategoryFilter, mode =
             {activeCategoryObj.subcategories.map((sub, sIdx) => (
               <button
                 key={sIdx}
-                className={`luxury-tab ${selectedSubcategory === sub ? 'active' : ''}`}
-                style={{ padding: '6px 16px', fontSize: '0.85rem' }}
+                type="button"
+                className={`category-chip-pill ${selectedSubcategory === sub ? 'active' : ''}`}
+                style={{ padding: '6px 14px', fontSize: '0.82rem' }}
                 onClick={() => setSelectedSubcategory(sub)}
               >
                 {sub}
@@ -538,12 +594,27 @@ const Home = ({ settings, categoryFilter = 'الكل', setCategoryFilter, mode =
         <div className="d-flex justify-content-between align-items-center mb-4">
           <div>
             <h3 className="fw-bold text-dark mb-1">
-              {mode === 'featured' ? '🔥 التشكيلة الجديدة وأحدث الأصناف 2026' : '📐 كتالوج أصناف السيراميك والبورسلين بالمعرض'}
+              {mode === 'featured' 
+                ? '🔥 التشكيلة الجديدة وأحدث الأصناف 2026'
+                : searchTerm.trim() 
+                  ? `🔍 نتائج البحث عن: "${searchTerm}"`
+                  : onSaleOnly 
+                    ? '🔥 عروض وخصومات المعرض الحصرية'
+                    : selectedCategory !== 'الكل'
+                      ? `✨ كتالوج معروضات ${selectedCategory}`
+                      : '🏛️ كتالوج المعروضات والأدوات الصحية والديكور بالمعرض'
+              }
             </h3>
             <p className="text-muted small mb-0">
               {mode === 'featured' 
                 ? `معروض حالياً أحدث (${filteredProducts.length}) صنف واصل حديثاً للمعرض` 
-                : `معروض حالياً (${filteredProducts.length}) صنف مع الأسعار المحدثة وحاسبة الكراتين`
+                : searchTerm.trim()
+                  ? `تم العثور على (${filteredProducts.length}) صنف مطابق لبحثك`
+                  : onSaleOnly
+                    ? `معروض حالياً (${filteredProducts.length}) صنف عليها تخفيضات وعروض خاصة`
+                    : selectedCategory !== 'الكل'
+                      ? `معروض حالياً (${filteredProducts.length}) صنف في قسم ${selectedCategory} بالأسعار والمواصفات الكاملة`
+                      : `معروض حالياً (${filteredProducts.length}) صنف تشمل السيراميك، البورسلين، الأطقم الصحية، الخلاطات، وكافة الديكورات`
               }
             </p>
           </div>
@@ -556,10 +627,10 @@ const Home = ({ settings, categoryFilter = 'الكل', setCategoryFilter, mode =
         )}
 
         {loading ? (
-          <Row className="g-4 mb-5">
+          <Row className="g-2 g-sm-3 g-lg-4 mb-5">
             {[...Array(8)].map((_, idx) => (
-              <Col key={idx} sm={6} lg={4} xl={3}>
-                <ProductSkeleton />
+              <Col key={idx} xs={6} md={4} lg={4} xl={3}>
+                <ProductSkeleton index={idx} />
               </Col>
             ))}
           </Row>
@@ -626,9 +697,9 @@ const Home = ({ settings, categoryFilter = 'الكل', setCategoryFilter, mode =
 
               return (
                 <>
-                  <Row className="g-4">
+                  <Row className="g-2 g-sm-3 g-lg-4">
                     {paginatedProducts.map((product) => (
-                      <Col key={product.id} sm={6} lg={4} xl={3}>
+                      <Col key={product.id} xs={6} md={4} lg={4} xl={3}>
                         <ProductCard 
                           product={product} 
                           onSelectProduct={(p) => setSelectedProduct(p)}
