@@ -35,6 +35,50 @@ const ProductModal = ({ product, show, onHide, settings, onOpenCalculator, onSel
     }
   }, [product, availableColors, availableCoverTypes]);
 
+  // Dynamic Schema.org Product JSON-LD injection for Google Rich Snippets
+  React.useEffect(() => {
+    if (!product || !show) return;
+    const effectivePrice = (product.discountPercent > 0 && product.discountPrice) ? product.discountPrice : product.price;
+    const schemaData = {
+      "@context": "https://schema.org/",
+      "@type": "Product",
+      "name": product.name,
+      "image": [product.image, ...(product.gallery || [])].filter(Boolean),
+      "description": product.description || `${product.name} - فرز ${product.grade || 'أول'} متاح لدى معرض السيد الجزار للسيراميك والبورسلين`,
+      "brand": {
+        "@type": "Brand",
+        "name": product.brand || 'معرض السيد الجزار'
+      },
+      "category": product.category,
+      "offers": {
+        "@type": "Offer",
+        "url": typeof window !== 'undefined' ? window.location.href : 'https://ceramic-showroom.vercel.app',
+        "priceCurrency": "EGP",
+        "price": effectivePrice || 0,
+        "availability": product.inStock !== false ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+        "itemCondition": "https://schema.org/NewCondition",
+        "seller": {
+          "@type": "Organization",
+          "name": settings?.showroomName || "معرض السيد الجزار للسيراميك والبورسلين"
+        }
+      }
+    };
+
+    let scriptEl = document.getElementById('product-schema-jsonld');
+    if (!scriptEl) {
+      scriptEl = document.createElement('script');
+      scriptEl.id = 'product-schema-jsonld';
+      scriptEl.type = 'application/ld+json';
+      document.head.appendChild(scriptEl);
+    }
+    scriptEl.textContent = JSON.stringify(schemaData);
+
+    return () => {
+      const el = document.getElementById('product-schema-jsonld');
+      if (el) el.remove();
+    };
+  }, [product, show, settings?.showroomName]);
+
   const activeVariant = React.useMemo(() => {
     if (!hasVariants) return null;
     let match = product.variants.find(v => 
