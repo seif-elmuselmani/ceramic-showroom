@@ -1,0 +1,18 @@
+# Robots.txt for Elgazar Ceramic & Sanitary Showroom
+# https://ceramic-showroom.vercel.app
+
+User-agent: *
+Allow: /
+Allow: /api/products
+Allow: /api/categories
+Allow: /api/settings
+Disallow: /api/admin/
+Disallow: /api/owner/
+Disallow: /admin
+Disallow: /owner-analytics
+
+# Crawl delay
+Crawl-delay: 1
+
+# Sitemap Location
+Sitemap: https://ceramic-showroom.vercel.app/sitemap.xml

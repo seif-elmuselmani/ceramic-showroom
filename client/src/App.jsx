@@ -77,6 +77,24 @@ function App() {
     };
   }, []);
 
+  // Dynamic SEO Title & Meta update based on state
+  useEffect(() => {
+    const brand = settings?.showroomName || 'معرض السيراميك والبورسلين الفاخر';
+    if (activeTab === 'featured') {
+      document.title = `أحدث الموديلات والمنتجات المميزة 2026 | ${brand}`;
+    } else if (activeTab === 'contact') {
+      document.title = `تواصل معنا وعناوين الفروع وأرقام الهاتف | ${brand}`;
+    } else if (activeTab === 'admin' || activeTab === 'login') {
+      document.title = `لوحة إدارة المعرض والكتالوج | ${brand}`;
+    } else if (activeTab === 'promo' || activeTab === 'hamour') {
+      document.title = `العرض الحصري والخصومات الخاصة | ${brand}`;
+    } else if (categoryFilter && categoryFilter !== 'الكل') {
+      document.title = `${categoryFilter} - تشكيلة فاخرة وفرز أول | ${brand}`;
+    } else {
+      document.title = `${brand} | سيراميك، بورسلين، أطقم حمامات وخلاطات`;
+    }
+  }, [activeTab, categoryFilter, settings?.showroomName]);
+
   const fetchSettings = async () => {
     try {
       const res = await getSettings();
