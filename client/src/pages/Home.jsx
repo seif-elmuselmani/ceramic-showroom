@@ -200,10 +200,23 @@ const Home = ({ settings, categoryFilter = 'الكل', setCategoryFilter, mode =
       if (sortBy === 'priceDesc') return (Number(b?.price) || 0) - (Number(a?.price) || 0);
       
       if (mode === 'featured') {
-        // Dynamic Multi-Factor Ranking Engine for scalable MongoDB/Database products
-        const scoreA = (a?.featured ? 100000 : 0) + (Number(a?.originalPrice) > Number(a?.price) ? 50000 : 0) + (a?.createdAt ? new Date(a.createdAt).getTime() : 0);
-        const scoreB = (b?.featured ? 100000 : 0) + (Number(b?.originalPrice) > Number(b?.price) ? 50000 : 0) + (b?.createdAt ? new Date(b.createdAt).getTime() : 0);
-        if (scoreA !== scoreB) return scoreB - scoreA;
+        // Multi-Tier Strict Ranking for New & Featured Mode:
+        // 1. Featured items come first
+        const featA = a?.featured ? 1 : 0;
+        const featB = b?.featured ? 1 : 0;
+        if (featA !== featB) return featB - featA;
+
+        // 2. On-Sale items come second (highest discount amount first)
+        const discountA = Math.max(0, (Number(a?.originalPrice) || 0) - (Number(a?.price) || 0));
+        const discountB = Math.max(0, (Number(b?.originalPrice) || 0) - (Number(b?.price) || 0));
+        if (discountA !== discountB) return discountB - discountA;
+
+        // 3. Newest created date
+        const timeA = a?.createdAt ? new Date(a.createdAt).getTime() : 0;
+        const timeB = b?.createdAt ? new Date(b.createdAt).getTime() : 0;
+        if (timeA !== timeB) return timeB - timeA;
+
+        return 0;
       }
       return 0;
     });
