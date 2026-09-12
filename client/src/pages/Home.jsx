@@ -235,7 +235,7 @@ const Home = ({ settings, categoryFilter = 'الكل', setCategoryFilter, mode =
                     {mode === 'featured' ? (
                       <>أحدث <span className="text-gold">موديلات وتصاميم 2026</span> الحصرية</>
                     ) : (
-                      <>أرقى تشكيلات <span className="text-gold">السيراميك والبورسلين</span> والأدوات الصحية</>
+                      <>أرقى تشكيلات <span className="text-gold">السيراميك والبورسلين</span> وأطقم الحمامات والخلاطات</>
                     )}
                   </h1>
 
@@ -285,7 +285,7 @@ const Home = ({ settings, categoryFilter = 'الكل', setCategoryFilter, mode =
                 <div className="split-hero-img-wrap">
                   <img 
                     src="https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=1000&q=85" 
-                    alt="معرض السيد الجزار للسيراميك والبورسلين والأدوات الصحية"
+                    alt="معرض السيد الجزار للسيراميك والبورسلين وأطقم الحمامات"
                     className="split-hero-img"
                     loading="eager"
                   />
@@ -602,7 +602,7 @@ const Home = ({ settings, categoryFilter = 'الكل', setCategoryFilter, mode =
                     ? '🔥 عروض وخصومات المعرض الحصرية'
                     : selectedCategory !== 'الكل'
                       ? `✨ كتالوج معروضات ${selectedCategory}`
-                      : '🏛️ كتالوج المعروضات والأدوات الصحية والديكور بالمعرض'
+                      : '🏛️ كتالوج السيراميك والبورسلين وأطقم الحمامات والخلاطات'
               }
             </h3>
             <p className="text-muted small mb-0">
@@ -614,7 +614,7 @@ const Home = ({ settings, categoryFilter = 'الكل', setCategoryFilter, mode =
                     ? `معروض حالياً (${filteredProducts.length}) صنف عليها تخفيضات وعروض خاصة`
                     : selectedCategory !== 'الكل'
                       ? `معروض حالياً (${filteredProducts.length}) صنف في قسم ${selectedCategory} بالأسعار والمواصفات الكاملة`
-                      : `معروض حالياً (${filteredProducts.length}) صنف تشمل السيراميك، البورسلين، الأطقم الصحية، الخلاطات، وكافة الديكورات`
+                      : `معروض حالياً (${filteredProducts.length}) صنف تشمل السيراميك، البورسلين، أطقم الحمامات، الخلاطات، وكافة الديكورات`
               }
             </p>
           </div>

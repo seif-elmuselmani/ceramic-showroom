@@ -33,7 +33,7 @@ const Header = ({ settings, isAdmin, onNavigate, activeTab, onLogout }) => {
             </div>
             <div className="d-flex flex-column text-end">
               <span className="brand-title-luxury">{settings?.showroomName || 'معرض السيد الجزار'}</span>
-              <span className="brand-subtitle-luxury">صرح السيراميك والبورسلين والأدوات الصحية</span>
+              <span className="brand-subtitle-luxury">سيراميك • بورسلين • أطقم حمامات وخلاطات</span>
             </div>
           </Navbar.Brand>
 

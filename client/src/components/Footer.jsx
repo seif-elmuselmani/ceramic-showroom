@@ -27,7 +27,7 @@ const Footer = ({ settings, onNavigate, categories = [] }) => {
               />
               <div>
                 <h4 className="footer-title mb-0">{settings?.showroomName || 'السيد الجزار للسيراميك'}</h4>
-                <span className="footer-tagline-sub">سيراميك - بورسلين - أدوات صحية</span>
+                <span className="footer-tagline-sub">سيراميك • بورسلين • أطقم حمامات وخلاطات</span>
               </div>
             </div>
             <p className="footer-desc mb-4">
