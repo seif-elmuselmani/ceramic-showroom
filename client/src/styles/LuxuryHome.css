@@ -311,13 +311,15 @@
 }
 
 .nav-capsule-item.active {
-  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-  color: #fbbf24;
-  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.2);
+  background: #ffffff !important;
+  color: #b45309 !important;
+  border: 1.5px solid #f59e0b !important;
+  box-shadow: 0 4px 14px rgba(245, 158, 11, 0.18) !important;
+  font-weight: 800 !important;
 }
 
 .nav-capsule-item.active .nav-item-icon {
-  color: #fbbf24 !important;
+  color: #d97706 !important;
 }
 
 /* Luxury Quick VIP Consultation Button */
@@ -686,15 +688,16 @@
 }
 
 .category-chip-pill.active {
-  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-  border-color: #0f172a;
-  color: #fbbf24;
-  box-shadow: 0 6px 20px rgba(15, 23, 42, 0.2);
+  background: #ffffff !important;
+  border-color: #f59e0b !important;
+  color: #b45309 !important;
+  box-shadow: 0 6px 18px rgba(245, 158, 11, 0.18) !important;
   transform: translateY(-2px);
+  font-weight: 800 !important;
 }
 
 .category-chip-pill.active .chip-icon {
-  filter: drop-shadow(0 0 4px rgba(251, 191, 36, 0.6));
+  filter: drop-shadow(0 0 4px rgba(245, 158, 11, 0.5));
 }
 
 .category-chip-sale {
@@ -738,8 +741,8 @@
 }
 
 .category-chip-pill.active .category-chip-count {
-  background: rgba(251, 191, 36, 0.25);
-  color: #fbbf24;
+  background: #fef3c7 !important;
+  color: #b45309 !important;
 }
 
 .subcategories-bar-luxury {
