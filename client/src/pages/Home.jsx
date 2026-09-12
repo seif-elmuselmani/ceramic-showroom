@@ -264,7 +264,7 @@ const Home = ({ settings, categoryFilter = 'الكل', setCategoryFilter, mode =
                       <CheckCircle2 size={16} /> تسليم فوري للمشروعات
                     </span>
                     <span className="split-hero-trust-item">
-                      <CheckCircle2 size={16} /> إمكانية التقسيط الميسر
+                      <CheckCircle2 size={16} /> أفضل أسعار الجملة والقطاعي
                     </span>
                   </div>
 
