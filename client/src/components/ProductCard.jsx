@@ -201,6 +201,16 @@ const ProductCard = ({ product, onSelectProduct, onOpenCalculator, settings, onS
             )}
           </div>
 
+          {/* Multiple Images Count Badge */}
+          {Array.isArray(product.images) && product.images.length > 0 && (
+            <div 
+              className="position-absolute top-0 start-0 m-2 px-2 py-0.5 rounded-pill text-white fw-bold d-flex align-items-center gap-1 shadow-sm"
+              style={{ background: 'rgba(15, 23, 42, 0.72)', backdropFilter: 'blur(4px)', fontSize: '0.68rem', zIndex: 3 }}
+            >
+              <span>📷 {1 + product.images.length} صور</span>
+            </div>
+          )}
+
           {/* Inset Corner Spec Pill */}
           {(product.dimensions || cleanOrigin) && (
             <div className="card-gallery-corner-pill">

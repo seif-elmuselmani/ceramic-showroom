@@ -1,6 +1,6 @@
 import React from 'react';
-import { Modal, Button, Badge, Row, Col, Carousel } from 'react-bootstrap';
-import { MessageCircle, CheckCircle2, ShieldAlert, Share2, Calculator, Sparkles, X } from 'lucide-react';
+import { Modal, Button, Badge, Row, Col } from 'react-bootstrap';
+import { MessageCircle, CheckCircle2, ShieldAlert, Share2, Calculator, Sparkles, X, ChevronLeft, ChevronRight, Images } from 'lucide-react';
 import { getProductDiscount } from '../utils/discount';
 import { getColorHexFromName } from '../utils/colorMapper';
 
@@ -80,6 +80,55 @@ const ProductModal = ({ product, show, onHide, settings, onOpenCalculator, onSel
   const effectiveCoverType = selectedCoverType || (activeVariant && activeVariant.coverType) || product.coverType;
   const effectiveInStock = activeVariant && activeVariant.inStock !== undefined ? (activeVariant.inStock !== false) : (product.inStock !== false);
 
+  // Collect all unique images for the interactive gallery
+  const galleryImages = React.useMemo(() => {
+    const list = [];
+    if (effectiveImage && typeof effectiveImage === 'string' && effectiveImage.trim()) {
+      list.push(effectiveImage.trim());
+    } else if (product.image && typeof product.image === 'string' && product.image.trim()) {
+      list.push(product.image.trim());
+    }
+
+    if (Array.isArray(product.images)) {
+      product.images.forEach(img => {
+        if (img && typeof img === 'string' && img.trim() && !list.includes(img.trim())) {
+          list.push(img.trim());
+        }
+      });
+    }
+
+    // Also include other variant images if present
+    if (Array.isArray(product.variants)) {
+      product.variants.forEach(v => {
+        if (v && v.image && typeof v.image === 'string' && v.image.trim() && !list.includes(v.image.trim())) {
+          list.push(v.image.trim());
+        }
+      });
+    }
+
+    if (list.length === 0) {
+      list.push('https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=1000&q=80');
+    }
+    return list;
+  }, [product, effectiveImage]);
+
+  const [activeImageIndex, setActiveImageIndex] = React.useState(0);
+
+  // Reset active image when product or selected variant changes
+  React.useEffect(() => {
+    setActiveImageIndex(0);
+  }, [product?.id, effectiveImage]);
+
+  const handlePrevImage = (e) => {
+    if (e) e.stopPropagation();
+    setActiveImageIndex((prev) => (prev === 0 ? galleryImages.length - 1 : prev - 1));
+  };
+
+  const handleNextImage = (e) => {
+    if (e) e.stopPropagation();
+    setActiveImageIndex((prev) => (prev === galleryImages.length - 1 ? 0 : prev + 1));
+  };
+
   const isColorInStock = (colorName) => {
     if (!hasVariants) return product.inStock !== false;
     const variantsForColor = product.variants.filter(v => (v.color || '').trim() === colorName.trim());
@@ -151,46 +200,84 @@ const ProductModal = ({ product, show, onHide, settings, onOpenCalculator, onSel
       <Modal.Body className="p-4 pt-4">
         <Row className="g-5 align-items-start">
           
-          {/* Image Gallery Column */}
+          {/* Interactive Multi-Image Gallery Column */}
           <Col lg={6}>
-            <div className="modal-img-container rounded-4 overflow-hidden shadow-sm bg-light text-center position-relative">
-              {product.images && product.images.length > 0 ? (
-                <Carousel slide={false} interval={null} className="product-carousel">
-                  <Carousel.Item>
-                    <img
-                      src={effectiveImage || product.image || 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=1000&q=80'}
-                      alt={`${product.name} - الرئيسية`}
-                      className="img-fluid w-100 style-modal-product-img"
-                      style={{ height: '500px', objectFit: 'cover' }}
-                      referrerPolicy="no-referrer"
-                      onError={(e) => { e.target.onerror = null; e.target.src = 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=1000&q=80'; }}
-                    />
-                  </Carousel.Item>
-                  {product.images.map((imgUrl, idx) => (
-                    <Carousel.Item key={idx}>
-                      <img
-                        src={imgUrl}
-                        alt={`${product.name} - ${idx + 1}`}
-                        className="img-fluid w-100 style-modal-product-img"
-                        style={{ height: '500px', objectFit: 'cover' }}
-                        referrerPolicy="no-referrer"
-                        onError={(e) => { e.target.onerror = null; e.target.src = 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=1000&q=80'; }}
-                      />
-                    </Carousel.Item>
-                  ))}
-                </Carousel>
-              ) : (
+            <div className="modal-gallery-wrapper">
+              {/* Main Active Large Image */}
+              <div className="modal-main-img-box rounded-4 overflow-hidden shadow-sm bg-light text-center position-relative border">
                 <img 
-                  src={effectiveImage || product.image || 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=1000&q=80'} 
-                  alt={product.name}
+                  src={galleryImages[activeImageIndex] || galleryImages[0]} 
+                  alt={`${product.name} - صورة ${activeImageIndex + 1}`}
                   className="img-fluid w-100 style-modal-product-img"
-                  style={{ height: '500px', objectFit: 'cover' }}
+                  style={{ height: '440px', objectFit: 'cover', transition: 'all 0.3s ease' }}
                   referrerPolicy="no-referrer"
                   onError={(e) => {
                     e.target.onerror = null;
                     e.target.src = 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=1000&q=80';
                   }}
                 />
+
+                {/* Photo Counter Badge */}
+                {galleryImages.length > 1 && (
+                  <div 
+                    className="position-absolute top-0 start-0 m-3 px-3 py-1 rounded-pill text-white fw-bold d-flex align-items-center gap-1 shadow-sm"
+                    style={{ background: 'rgba(15, 23, 42, 0.75)', backdropFilter: 'blur(6px)', fontSize: '0.78rem', zIndex: 5 }}
+                  >
+                    <Images size={14} className="text-warning" />
+                    <span>{activeImageIndex + 1} / {galleryImages.length}</span>
+                  </div>
+                )}
+
+                {/* Left / Right Carousel Navigation Arrows */}
+                {galleryImages.length > 1 && (
+                  <>
+                    <button
+                      type="button"
+                      className="btn position-absolute top-50 start-0 translate-middle-y ms-2 rounded-circle d-flex align-items-center justify-content-center shadow-lg border-0"
+                      style={{ width: '42px', height: '42px', backgroundColor: 'rgba(255, 255, 255, 0.9)', color: '#0f172a', zIndex: 6 }}
+                      onClick={handlePrevImage}
+                      aria-label="الصورة السابقة"
+                    >
+                      <ChevronRight size={22} />
+                    </button>
+                    <button
+                      type="button"
+                      className="btn position-absolute top-50 end-0 translate-middle-y me-2 rounded-circle d-flex align-items-center justify-content-center shadow-lg border-0"
+                      style={{ width: '42px', height: '42px', backgroundColor: 'rgba(255, 255, 255, 0.9)', color: '#0f172a', zIndex: 6 }}
+                      onClick={handleNextImage}
+                      aria-label="الصورة التالية"
+                    >
+                      <ChevronLeft size={22} />
+                    </button>
+                  </>
+                )}
+              </div>
+
+              {/* Clickable Thumbnail Strip */}
+              {galleryImages.length > 1 && (
+                <div className="d-flex align-items-center gap-2 mt-3 overflow-x-auto pb-1 justify-content-center flex-wrap">
+                  {galleryImages.map((thumbUrl, tIdx) => (
+                    <button
+                      key={tIdx}
+                      type="button"
+                      onClick={() => setActiveImageIndex(tIdx)}
+                      className={`btn p-1 rounded-3 transition-all ${activeImageIndex === tIdx ? 'border border-2 border-warning shadow-sm' : 'border border-light opacity-75'}`}
+                      style={{ width: '70px', height: '70px', backgroundColor: '#ffffff' }}
+                      title={`عرض صورة ${tIdx + 1}`}
+                    >
+                      <img
+                        src={thumbUrl}
+                        alt={`Thumbnail ${tIdx + 1}`}
+                        className="rounded-2 w-100 h-100"
+                        style={{ objectFit: 'cover' }}
+                        onError={(e) => {
+                          e.target.onerror = null;
+                          e.target.src = 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=150&q=80';
+                        }}
+                      />
+                    </button>
+                  ))}
+                </div>
               )}
             </div>
           </Col>
