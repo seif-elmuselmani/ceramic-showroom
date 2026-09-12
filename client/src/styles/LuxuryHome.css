@@ -226,48 +226,118 @@
 }
 
 .glass-navbar {
-  background: rgba(255, 255, 255, 0.85) !important;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.03);
+  background: rgba(255, 255, 255, 0.92) !important;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(226, 232, 240, 0.85);
+  box-shadow: 0 4px 25px rgba(15, 23, 42, 0.04);
   transition: all 0.3s ease;
 }
 
-.luxury-nav-link {
-  color: #475569 !important;
+/* Brand Logo Ring & Typography */
+.brand-logo-ring {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  padding: 2px;
+  background: linear-gradient(135deg, #fbbf24 0%, #d97706 100%);
+  box-shadow: 0 4px 14px rgba(217, 119, 6, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: transform 0.3s ease;
+}
+
+.brand-logo:hover .brand-logo-ring {
+  transform: scale(1.06) rotate(3deg);
+}
+
+.brand-logo-img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #ffffff;
+}
+
+.brand-title-luxury {
+  font-weight: 900;
+  font-size: 1.15rem;
+  color: #0f172a;
+  line-height: 1.2;
+  letter-spacing: -0.3px;
+}
+
+.brand-subtitle-luxury {
+  font-size: 0.72rem;
   font-weight: 700;
-  font-size: 1.05rem;
-  padding: 8px 16px !important;
-  margin: 0 4px;
-  position: relative;
-  transition: all 0.3s ease;
+  color: #b45309;
+  letter-spacing: 0.2px;
+}
+
+/* Floating Glass Capsule Navigation Dock */
+.nav-capsule-dock {
+  background: rgba(241, 245, 249, 0.85);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(203, 213, 225, 0.8);
+  border-radius: 50px;
+  padding: 4px 6px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.02);
+}
+
+.nav-capsule-item {
+  background: transparent;
+  border: none;
+  color: #475569;
+  font-weight: 700;
+  font-size: 0.88rem;
+  padding: 7px 18px;
+  border-radius: 50px;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
   white-space: nowrap;
 }
 
-.luxury-nav-link:hover {
-  color: #0f172a !important;
+.nav-capsule-item:hover {
+  color: #0f172a;
+  background: rgba(255, 255, 255, 0.7);
 }
 
-.luxury-nav-link::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 0;
-  height: 2.5px;
-  background: linear-gradient(90deg, #fbbf24, #f59e0b);
-  transition: width 0.3s ease;
-  border-radius: 4px;
+.nav-capsule-item.active {
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  color: #fbbf24;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.2);
 }
 
-.luxury-nav-link:hover::after, .luxury-nav-link.active::after {
-  width: 80%;
+.nav-capsule-item.active .nav-item-icon {
+  color: #fbbf24 !important;
 }
 
-.luxury-nav-link.active {
-  color: #0f172a !important;
+/* Luxury Quick VIP Consultation Button */
+.btn-nav-gold {
+  background: linear-gradient(135deg, #c5a059 0%, #b38e46 100%);
+  color: #ffffff !important;
+  font-weight: 700;
+  font-size: 0.86rem;
+  padding: 8px 18px;
+  border-radius: 50px;
+  box-shadow: 0 4px 14px rgba(197, 160, 89, 0.28);
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  border: none;
+}
+
+.btn-nav-gold:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(197, 160, 89, 0.45);
+  color: #ffffff !important;
 }
 
 .btn-luxury-dark {
@@ -275,11 +345,12 @@
   color: #fbbf24;
   border: 1px solid rgba(251, 191, 36, 0.3);
   font-weight: 700;
-  padding: 8px 24px;
+  padding: 8px 20px;
   border-radius: 50px;
   transition: all 0.3s ease;
   box-shadow: 0 4px 15px rgba(18, 18, 18, 0.2);
   white-space: nowrap;
+  font-size: 0.86rem;
 }
 
 .btn-luxury-dark:hover {
@@ -687,6 +758,32 @@
 /* ==========================================================================
    ADVANCED RESPONSIVE DESIGN MEDIA QUERIES (MOBILE, TABLET, LAPTOP, 4K)
    ========================================================================== */
+
+/* Navbar Mobile Drawer Layout */
+@media (max-width: 991px) {
+  .nav-capsule-dock {
+    flex-direction: column !important;
+    width: 100% !important;
+    border-radius: 18px !important;
+    padding: 8px !important;
+    margin: 12px 0 !important;
+    gap: 6px !important;
+  }
+
+  .nav-capsule-item {
+    width: 100% !important;
+    justify-content: center !important;
+    padding: 10px 16px !important;
+  }
+
+  .brand-title-luxury {
+    font-size: 1rem !important;
+  }
+
+  .brand-subtitle-luxury {
+    font-size: 0.68rem !important;
+  }
+}
 
 /* 1. Extra Small & Standard Phones (< 576px) */
 @media (max-width: 576px) {

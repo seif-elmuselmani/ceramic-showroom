@@ -1,6 +1,6 @@
 import React from 'react';
-import { Navbar, Container, Nav, Button } from 'react-bootstrap';
-import { Layers, LogOut, LayoutDashboard, UserCheck, Megaphone, Menu } from 'lucide-react';
+import { Navbar, Container } from 'react-bootstrap';
+import { Layers, LogOut, LayoutDashboard, Megaphone, Menu, Sparkles, PhoneCall } from 'lucide-react';
 
 const Header = ({ settings, isAdmin, onNavigate, activeTab, onLogout }) => {
   return (
@@ -15,65 +15,85 @@ const Header = ({ settings, isAdmin, onNavigate, activeTab, onLogout }) => {
         </div>
       )}
 
-      {/* Main Navbar */}
-      <Navbar expand="lg" className="glass-navbar">
+      {/* Main Luxury Glass Navbar */}
+      <Navbar expand="lg" className="glass-navbar py-2.5">
         <Container>
+          {/* Brand Logo & Name */}
           <Navbar.Brand 
             href="#" 
             onClick={(e) => { e.preventDefault(); onNavigate('catalog'); }}
-            className="brand-logo d-flex align-items-center gap-2"
+            className="brand-logo d-flex align-items-center gap-2.5 text-decoration-none"
           >
-            <img 
-              src="/Logo.png" 
-              alt={settings?.showroomName || 'معرض السيراميك والبورسلين'} 
-              style={{ width: '45px', height: '45px', objectFit: 'cover', borderRadius: '50%', border: '2px solid var(--primary-gold)' }} 
-            />
-            <div>
-              <div className="fw-black">{settings?.showroomName || 'معرض السيراميك والبورسلين'}</div>
-              <div style={{ fontSize: '0.72rem', fontWeight: '600', color: '#b45309' }}>
-                كتالوج أصناف وأسعار المعرض
-              </div>
+            <div className="brand-logo-ring">
+              <img 
+                src="/Logo.png" 
+                alt={settings?.showroomName || 'معرض السيد الجزار'} 
+                className="brand-logo-img"
+              />
+            </div>
+            <div className="d-flex flex-column text-end">
+              <span className="brand-title-luxury">{settings?.showroomName || 'معرض السيد الجزار'}</span>
+              <span className="brand-subtitle-luxury">صرح السيراميك والبورسلين والأدوات الصحية</span>
             </div>
           </Navbar.Brand>
 
           <Navbar.Toggle 
             aria-controls="luxury-nav" 
             className="border-0 p-2 shadow-none rounded-3"
-            style={{ background: '#f1f5f9', border: '1.5px solid #cbd5e1' }}
+            style={{ background: '#f8fafc', border: '1.5px solid #e2e8f0' }}
           >
-            <Menu size={26} className="text-dark fw-bold" />
+            <Menu size={24} className="text-dark fw-bold" />
           </Navbar.Toggle>
           
           <Navbar.Collapse id="luxury-nav" className="navbar-collapse-custom">
-            <Nav className="mx-auto my-2 my-lg-0">
-              <Nav.Link 
-                className={`luxury-nav-link ${activeTab === 'catalog' ? 'active' : ''}`}
+            {/* Center Floating Glass Capsule Navigation Dock */}
+            <div className="nav-capsule-dock mx-auto my-2 my-lg-0">
+              <button 
+                type="button"
+                className={`nav-capsule-item ${activeTab === 'catalog' ? 'active' : ''}`}
                 onClick={() => onNavigate('catalog')}
               >
-                كتالوج المنتجات
-              </Nav.Link>
-              <Nav.Link 
-                className={`luxury-nav-link ${activeTab === 'featured' ? 'active' : ''}`}
+                <Layers size={16} className="nav-item-icon" />
+                <span>الكتالوج العام</span>
+              </button>
+              <button 
+                type="button"
+                className={`nav-capsule-item ${activeTab === 'featured' ? 'active' : ''}`}
                 onClick={() => onNavigate('featured')}
               >
-                أحدث الأصناف
-              </Nav.Link>
-              <Nav.Link 
-                className={`luxury-nav-link ${activeTab === 'contact' ? 'active' : ''}`}
+                <Sparkles size={16} className="nav-item-icon text-warning" />
+                <span>أحدث الموديلات</span>
+              </button>
+              <button 
+                type="button"
+                className={`nav-capsule-item ${activeTab === 'contact' ? 'active' : ''}`}
                 onClick={() => onNavigate('contact')}
               >
-                العنوان والتواصل
-              </Nav.Link>
-            </Nav>
+                <PhoneCall size={16} className="nav-item-icon text-success" />
+                <span>العنوان والتواصل</span>
+              </button>
+            </div>
 
-            <div className="d-flex align-items-center gap-2 mt-3 mt-lg-0">
+            {/* Left Action Buttons */}
+            <div className="d-flex align-items-center gap-2 mt-3 mt-lg-0 justify-content-center justify-content-lg-start">
+              {/* WhatsApp Quick VIP Consultation Button */}
+              <a 
+                href={`https://wa.me/${settings?.whatsappNumber || '201012345678'}?text=${encodeURIComponent('مرحباً، أود الاستفسار عن عروض وتصاميم المعرض')}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-nav-gold d-inline-flex align-items-center gap-2 text-decoration-none"
+              >
+                <PhoneCall size={16} />
+                <span>تواصل مع المعرض</span>
+              </a>
+
               {isAdmin && (
                 <>
                   <button 
                     className="btn btn-luxury-dark d-flex align-items-center justify-content-center gap-2"
                     onClick={() => onNavigate('admin')}
                   >
-                    <LayoutDashboard size={18} />
+                    <LayoutDashboard size={17} />
                     <span>لوحة التحكم</span>
                   </button>
                   <button 
@@ -81,7 +101,7 @@ const Header = ({ settings, isAdmin, onNavigate, activeTab, onLogout }) => {
                     title="تسجيل الخروج"
                     onClick={onLogout}
                   >
-                    <LogOut size={18} />
+                    <LogOut size={17} />
                   </button>
                 </>
               )}
