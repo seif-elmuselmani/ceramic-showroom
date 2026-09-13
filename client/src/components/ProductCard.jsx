@@ -368,27 +368,25 @@ const ProductCard = ({ product, onSelectProduct, onOpenCalculator, settings, onS
           </div>
 
           {/* Minimal 2 Action Buttons */}
-          <div className="d-flex gap-2 align-items-center">
+          <div className="card-actions-wrapper d-flex align-items-center">
             <a 
               href={whatsappUrl} 
               target="_blank" 
               rel="noopener noreferrer"
-              className={`btn ${effectiveInStock ? 'btn-success text-white' : 'btn-secondary text-white'} flex-grow-1 text-nowrap d-flex align-items-center justify-content-center gap-2 rounded-3 fw-bold shadow-sm`}
+              className={`btn card-whatsapp-btn ${effectiveInStock ? 'btn-success text-white' : 'btn-secondary text-white'} flex-grow-1 text-nowrap d-flex align-items-center justify-content-center rounded-3 fw-bold shadow-sm`}
               title="تواصل مباشر عبر الواتساب"
-              style={{ minHeight: '44px' }}
             >
-              <MessageCircle size={18} />
-              <span style={{ fontSize: '0.9rem' }}>{effectiveInStock ? "تواصل واتساب" : "استفسار عن التوفر"}</span>
+              <MessageCircle size={17} className="card-whatsapp-icon flex-shrink-0" />
+              <span className="card-whatsapp-text text-truncate">{effectiveInStock ? "تواصل واتساب" : "استفسار توفر"}</span>
             </a>
 
             <Button 
               variant="light"
-              className="btn-details-minimal text-nowrap d-flex align-items-center justify-content-center gap-2 rounded-3 fw-bold border shadow-sm"
+              className="btn-details-minimal flex-shrink-0 text-nowrap d-flex align-items-center justify-content-center rounded-3 fw-bold border shadow-sm"
               onClick={() => onSelectProduct({ ...product, activeVariantIndex: selectedVariantIndex })}
               title="عرض التفاصيل والحساب"
-              style={{ minHeight: '44px', width: '44px', padding: '0' }}
             >
-              <Eye size={18} className="text-dark" />
+              <Eye size={17} className="card-eye-icon" />
             </Button>
           </div>
         </div>

@@ -1003,7 +1003,7 @@
 .card-quick-view-overlay {
   position: absolute;
   inset: 0;
-  background: rgba(15, 23, 42, 0.3);
+  background: rgba(15, 23, 42, 0.35);
   backdrop-filter: blur(2px);
   display: flex;
   align-items: center;
@@ -1014,12 +1014,20 @@
   z-index: 3;
 }
 
-.ceramic-card:hover .card-quick-view-overlay {
-  opacity: 1;
+@media (hover: hover) and (pointer: fine) {
+  .ceramic-card:hover .card-quick-view-overlay {
+    opacity: 1;
+  }
+}
+
+@media (hover: none), (max-width: 768px) {
+  .card-quick-view-overlay {
+    display: none !important;
+  }
 }
 
 .card-quick-view-btn {
-  background: rgba(255, 255, 255, 0.94);
+  background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(8px);
   color: #0f172a;
   font-weight: 700;
@@ -1056,18 +1064,112 @@
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
 }
 
+/* Card Action Buttons (WhatsApp & Details Eye) */
+.card-actions-wrapper {
+  gap: 8px;
+  width: 100%;
+}
+
+.card-whatsapp-btn {
+  min-height: 42px;
+  padding: 8px 12px;
+  font-size: 0.88rem;
+  font-weight: 700;
+  border-radius: 10px;
+  transition: all 0.2s ease;
+  overflow: hidden;
+}
+
+.card-whatsapp-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(34, 197, 94, 0.32) !important;
+}
+
+.card-whatsapp-btn:active {
+  transform: scale(0.98);
+}
+
+.btn-details-minimal {
+  min-height: 42px;
+  width: 42px;
+  padding: 0 !important;
+  background: #f8fafc !important;
+  border: 1px solid #e2e8f0 !important;
+  color: #1e293b !important;
+  border-radius: 10px !important;
+  transition: all 0.2s ease;
+}
+
+.btn-details-minimal:hover {
+  background: #0f172a !important;
+  border-color: #0f172a !important;
+  color: #ffffff !important;
+  transform: translateY(-1px);
+}
+
+.btn-details-minimal:hover .card-eye-icon {
+  color: #ffffff !important;
+}
+
+.btn-details-minimal:active {
+  transform: scale(0.96);
+}
+
 @media (max-width: 576px) {
   .card-gallery-frame-wrapper {
-    padding: 7px 7px 0 7px;
+    padding: 6px 6px 0 6px;
   }
   
   .card-gallery-frame {
-    height: 165px;
+    height: 150px;
     border-radius: 12px;
   }
 
+  .card-body-luxury {
+    padding: 10px !important;
+  }
+
   .ceramic-card {
-    border-radius: 16px !important;
+    border-radius: 14px !important;
+  }
+
+  .card-title-luxury {
+    font-size: 0.85rem !important;
+    min-height: 2.2rem !important;
+    line-height: 1.25 !important;
+    margin-bottom: 6px !important;
+  }
+
+  .price-tag-luxury {
+    margin-bottom: 8px !important;
+  }
+
+  .card-actions-wrapper {
+    gap: 6px;
+  }
+
+  .card-whatsapp-btn {
+    min-height: 38px;
+    padding: 6px 8px;
+    font-size: 0.78rem;
+    border-radius: 8px !important;
+    gap: 4px !important;
+  }
+
+  .card-whatsapp-icon {
+    width: 15px;
+    height: 15px;
+  }
+
+  .btn-details-minimal {
+    min-height: 38px;
+    width: 38px;
+    border-radius: 8px !important;
+  }
+
+  .card-eye-icon {
+    width: 15px;
+    height: 15px;
   }
 }
 
