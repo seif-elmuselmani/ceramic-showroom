@@ -7,7 +7,7 @@
   <!-- Homepage & Main Catalog -->
   <url>
     <loc>https://ceramic-showroom.vercel.app/</loc>
-    <lastmod>2026-09-12</lastmod>
+    <lastmod>2026-09-16</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.00</priority>
   </url>
@@ -15,7 +15,7 @@
   <!-- Featured Products & New Arrivals -->
   <url>
     <loc>https://ceramic-showroom.vercel.app/?tab=featured</loc>
-    <lastmod>2026-09-12</lastmod>
+    <lastmod>2026-09-16</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.90</priority>
   </url>
@@ -23,7 +23,7 @@
   <!-- Contact & Showroom Location -->
   <url>
     <loc>https://ceramic-showroom.vercel.app/?tab=contact</loc>
-    <lastmod>2026-09-12</lastmod>
+    <lastmod>2026-09-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
@@ -31,7 +31,7 @@
   <!-- Porcelain & Ceramic Floor Tiles Section -->
   <url>
     <loc>https://ceramic-showroom.vercel.app/?category=%D8%A8%D9%88%D8%B1%D8%B3%D9%84%D9%8A%D9%86%20%D9%85%D8%B3%D8%AA%D9%88%D8%B1%D8%AF</loc>
-    <lastmod>2026-09-12</lastmod>
+    <lastmod>2026-09-16</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.85</priority>
   </url>
@@ -39,7 +39,7 @@
   <!-- Sanitary Ware & Bathroom Sets Section -->
   <url>
     <loc>https://ceramic-showroom.vercel.app/?category=%D8%A3%D8%B7%D9%82%D9%85%20%D8%AD%D9%85%D8%A7%D9%85%D8%A7%D8%AA%20%D9%88%D8%AE%D9%84%D8%A7%D8%B7%D8%A7%D8%AA</loc>
-    <lastmod>2026-09-12</lastmod>
+    <lastmod>2026-09-16</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.85</priority>
   </url>
@@ -47,7 +47,7 @@
   <!-- Natural Marble & Granite Section -->
   <url>
     <loc>https://ceramic-showroom.vercel.app/?category=%D8%B1%D8%AE%D8%A7%D9%85%20%D9%88%D8%AC%D8%B1%D8%A7%D9%86%D9%8A%D8%AA%20%D8%B7%D8%A8%D9%8A%D8%B9%D9%8A</loc>
-    <lastmod>2026-09-12</lastmod>
+    <lastmod>2026-09-16</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.80</priority>
   </url>
