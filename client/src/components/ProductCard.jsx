@@ -3,6 +3,7 @@ import { Button } from 'react-bootstrap';
 import { MessageCircle, Eye } from 'lucide-react';
 import { getProductDiscount } from '../utils/discount';
 import { getColorHexFromName } from '../utils/colorMapper';
+import { getOptimizedImageUrl } from '../utils/imageOptimizer';
 
 const ProductCard = ({ product, onSelectProduct, onOpenCalculator, settings, onSelectBrand }) => {
   if (!product) return null;
@@ -169,10 +170,11 @@ const ProductCard = ({ product, onSelectProduct, onOpenCalculator, settings, onS
           onClick={() => onSelectProduct({ ...product, activeVariantIndex: selectedVariantIndex })}
         >
           <img 
-            src={effectiveImage || product.image || fallbackImg} 
+            src={getOptimizedImageUrl(effectiveImage || product.image || fallbackImg, { width: 520 })} 
             alt={product.name}
             className="card-gallery-img"
             loading="lazy"
+            decoding="async"
             referrerPolicy="no-referrer"
             onError={(e) => {
               e.target.onerror = null;

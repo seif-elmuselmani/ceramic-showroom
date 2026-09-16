@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Modal, Form, Row, Col, Button, Card, Badge } from 'react-bootstrap';
 import { Calculator, MessageCircle, Sparkles, Box, Check, HelpCircle } from 'lucide-react';
 import { getProductDiscount } from '../utils/discount';
+import { getOptimizedImageUrl } from '../utils/imageOptimizer';
 
 const TileCalculatorModal = ({ product, show, onHide, settings }) => {
   const [length, setLength] = useState('4');
@@ -57,9 +58,11 @@ const TileCalculatorModal = ({ product, show, onHide, settings }) => {
       <Modal.Body className="p-4">
         <div className="d-flex align-items-center gap-3 p-3 bg-light rounded-4 border mb-4">
           <img 
-            src={product.image} 
+            src={getOptimizedImageUrl(product.image, { width: 140 })} 
             alt={product.name} 
             style={{ width: '70px', height: '70px', objectFit: 'cover', borderRadius: '12px' }}
+            loading="lazy"
+            decoding="async"
           />
           <div>
             <h6 className="fw-bold text-dark mb-1">{product.name}</h6>

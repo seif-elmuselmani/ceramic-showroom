@@ -3,6 +3,7 @@ import { Modal, Button, Badge, Row, Col } from 'react-bootstrap';
 import { MessageCircle, CheckCircle2, ShieldAlert, Share2, Calculator, Sparkles, X, ChevronLeft, ChevronRight, Images } from 'lucide-react';
 import { getProductDiscount } from '../utils/discount';
 import { getColorHexFromName } from '../utils/colorMapper';
+import { getOptimizedImageUrl } from '../utils/imageOptimizer';
 
 const ProductModal = ({ product, show, onHide, settings, onOpenCalculator, onSelectBrand }) => {
   if (!product) return null;
@@ -250,10 +251,11 @@ const ProductModal = ({ product, show, onHide, settings, onOpenCalculator, onSel
               {/* Main Active Large Image */}
               <div className="modal-main-img-box rounded-4 overflow-hidden shadow-sm bg-light text-center position-relative border">
                 <img 
-                  src={galleryImages[activeImageIndex] || galleryImages[0]} 
+                  src={getOptimizedImageUrl(galleryImages[activeImageIndex] || galleryImages[0], { width: 900 })} 
                   alt={`${product.name} - صورة ${activeImageIndex + 1}`}
                   className="img-fluid w-100 style-modal-product-img"
                   style={{ height: '440px', objectFit: 'cover', transition: 'all 0.3s ease' }}
+                  decoding="async"
                   referrerPolicy="no-referrer"
                   onError={(e) => {
                     e.target.onerror = null;
@@ -310,10 +312,12 @@ const ProductModal = ({ product, show, onHide, settings, onOpenCalculator, onSel
                       title={`عرض صورة ${tIdx + 1}`}
                     >
                       <img
-                        src={thumbUrl}
+                        src={getOptimizedImageUrl(thumbUrl, { width: 150 })}
                         alt={`Thumbnail ${tIdx + 1}`}
                         className="rounded-2 w-100 h-100"
                         style={{ objectFit: 'cover' }}
+                        decoding="async"
+                        loading="lazy"
                         onError={(e) => {
                           e.target.onerror = null;
                           e.target.src = 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=150&q=80';
