@@ -795,8 +795,7 @@ const Home = ({ settings, categoryFilter = 'الكل', setCategoryFilter, mode =
                             setItemsPerPage(e.target.value === 'all' ? 'all' : Number(e.target.value));
                             setCurrentPage(1);
                           }}
-                          className="rounded-3 border-secondary custom-input py-1"
-                          style={{ width: '90px' }}
+                          className="rounded-3 border-secondary custom-input items-per-page-select py-1"
                         >
                           <option value={12}>12</option>
                           <option value={24}>24</option>

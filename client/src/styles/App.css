@@ -273,6 +273,26 @@ p, h1, h2, h3, h4, h5, h6, span, div, a {
   box-shadow: 0 0 0 3px var(--gold-glow);
 }
 
+/* Global RTL Select & Dropdown Arrow Alignment Fix */
+html[dir="rtl"] .form-select,
+html[dir="rtl"] select.custom-input {
+  background-position: left 0.75rem center !important;
+  padding-left: 2.25rem !important;
+  padding-right: 0.85rem !important;
+  text-align: right;
+}
+
+html[dir="rtl"] .items-per-page-select {
+  width: 95px !important;
+  min-height: 38px !important;
+  padding-left: 2rem !important;
+  padding-right: 0.75rem !important;
+  font-weight: 700;
+  font-size: 0.9rem;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
 /* Category Chips Horizontal Scrollable Container */
 .category-scroll-container {
   display: flex;
