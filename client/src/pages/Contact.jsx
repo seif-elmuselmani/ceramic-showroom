@@ -112,7 +112,7 @@ const Contact = ({ settings }) => {
               <Col lg={5} className="order-1 order-lg-2">
                 <div className="split-hero-img-wrap">
                   <img 
-                    src="https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=1000&q=85" 
+                    src="/hero_luxury_2026.jpg" 
                     alt="معرض السيد الجزار للسيراميك والبورسلين"
                     className="split-hero-img"
                     loading="eager"
