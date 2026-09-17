@@ -358,22 +358,29 @@ html[dir="rtl"] .items-per-page-select {
 }
 
 .card-img-wrapper {
+  position: relative;
   height: 220px;
   overflow: hidden;
-  position: relative;
-  background-color: #f8fafc;
+  border-radius: 16px 16px 0 0;
+  background-color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
 }
 
 @media (max-width: 576px) {
   .card-img-wrapper {
-    height: 190px;
+    height: 170px;
+    padding: 6px;
   }
 }
 
 .card-img-wrapper img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
+  object-position: center;
   transition: transform 0.7s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
@@ -1668,8 +1675,8 @@ img {
   }
 
   .card-img-wrapper img {
-    height: 200px !important;
-    object-fit: cover !important;
+    height: 100% !important;
+    object-fit: contain !important;
   }
 
   .card-body-luxury {

@@ -254,7 +254,7 @@ const ProductModal = ({ product, show, onHide, settings, onOpenCalculator, onSel
                   src={getOptimizedImageUrl(galleryImages[activeImageIndex] || galleryImages[0], { width: 900 })} 
                   alt={`${product.name} - صورة ${activeImageIndex + 1}`}
                   className="img-fluid w-100 style-modal-product-img"
-                  style={{ height: '440px', objectFit: 'cover', transition: 'all 0.3s ease' }}
+                  style={{ height: '440px', objectFit: 'contain', backgroundColor: '#ffffff', padding: '12px', transition: 'all 0.3s ease' }}
                   decoding="async"
                   referrerPolicy="no-referrer"
                   onError={(e) => {
