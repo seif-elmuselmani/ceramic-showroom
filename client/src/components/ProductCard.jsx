@@ -192,7 +192,7 @@ const ProductCard = ({ product, onSelectProduct, onOpenCalculator, settings, onS
           {/* Floating Badges */}
           <div className="card-floating-badges">
             {hasDiscount && (
-              <span className="badge-luxury-gold shadow-sm animate-pulse">
+              <span className="badge-luxury-gold shadow-sm">
                 🔥 خصم {discountPercent}%
               </span>
             )}
